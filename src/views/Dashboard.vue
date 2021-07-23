@@ -24,6 +24,7 @@
               :key="item.title"
               link
               id="btnLnk"
+              :disabled="!activa"
               @click="stateSelected(item.id)"
             >
               <v-list-item-icon>
@@ -36,6 +37,12 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
+        <v-footer app style="padding:0px;">
+          <v-btn block tile color="blue" dark href="/login" style="height: 60px;">
+            <v-icon left> mdi-logout </v-icon>
+            Cerrar Sesión
+          </v-btn>
+        </v-footer>
       </v-navigation-drawer>
 
       <v-app-bar id="appBarStyle" app>
@@ -44,7 +51,7 @@
           <span id="spanSubtitle">{{ str_company_name }}</span></span
         >
       </v-app-bar>
-      <v-main >
+      <v-main>
         <router-view />
       </v-main>
       <v-footer app>
@@ -69,6 +76,7 @@ export default {
     str_slogan: Constants.str_slogan,
     str_legal_name: "",
     str_company_name: "",
+    activa: true,
 
     menu: [
       {
@@ -114,9 +122,14 @@ export default {
   created() {
     this.str_legal_name = new Utils().GetValue("legal_name");
     this.str_company_name = new Utils().GetValue("company_name");
+    this.activa = (/true/i).test(new Utils().GetValue("EmpresaActiva"));
   },
 
   methods: {
+    cerrarSesion()
+    {
+
+    },
     stateSelected(itemID) {
       switch (itemID) {
         case 1: //registro diario

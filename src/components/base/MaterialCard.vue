@@ -3,6 +3,7 @@
     v-bind="$attrs"
     :class="classes"
     class="v-card--material pa-3"
+    :disabled="disabled"
   >
     <div class="d-flex grow flex-wrap">
       <v-avatar
@@ -104,6 +105,10 @@
         default: undefined,
       },
       image: {
+        type: Boolean,
+        default: false,
+      },
+      disabled: {
         type: Boolean,
         default: false,
       },

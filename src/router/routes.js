@@ -11,6 +11,11 @@ const routes = [
     component: () => import('../views/Dashboard'),
     children: [
       {
+        path: '/usuarios',
+        name: 'usuarios',
+        component: () => import('../components/Usuarios')
+      },
+      {
         path: '/registro-diario',
         name: 'registro-diario',
         component: () => import('../components/RegistroDiario')
@@ -18,7 +23,7 @@ const routes = [
       {
         path: '/estado-resultados',
         name: 'estado-resultados',
-        component: () => import('../components/RegistroDiario')
+        component: () => import('../components/EstadoResultados')
       },
       {
         path: '/balance-general',

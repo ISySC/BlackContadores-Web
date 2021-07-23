@@ -2,11 +2,21 @@ import Vue from 'vue'
 import moment from 'moment'
 
 Vue.filter('formatoMoneda', value => {
-    return "$" + value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    if (value)
+        return "$" + value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    else
+        return "$0.00"
 });
 
 Vue.filter('formatoFecha', function (value) {
     if (value) {
         return moment(String(value)).format('DD/MM/YYYY')
     }
+});
+
+Vue.filter('formatoPorcentaje', value => {
+    if (value)
+        return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + "%"
+    else
+        return "0.00%"
 });

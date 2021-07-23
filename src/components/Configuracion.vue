@@ -32,9 +32,45 @@
                 sub-text="Ajuste de cuentas para futuros movimientos."
               />
             </v-col>
+            <v-col cols="12" sm="3" class="px-4">
+              <router-link
+                :to="membresiaID == 1 ? '' : '/usuarios'"
+                style="text-decoration: none; color: inherit"
+                disabled
+              >
+                <base-material-stats-card
+                  style="cursor: pointer"
+                  title="Categoria"
+                  color="green"
+                  icon="mdi-48px mdi-account-group"
+                  value="Usuarios"
+                  :sub-icon="membresiaID == 1 ? '' : 'mdi-cog'"
+                  :disabled="membresiaID == 1"
+                  :sub-text="membresiaID == 1 ? 'Para tener esta funcionalidad adquiera una membresia para mas de 1 usuario.' : 'Gestiona los usuarios que acceden a tu empresa.'"
+                  :subTextColor="membresiaID == 1 ? 'red' : 'gray'"
+                />
+              </router-link>
+            </v-col>
           </v-row>
         </v-container>
       </v-card-text>
     </base-material-card>
   </v-main>
 </template>
+<script>
+import Utils from "../util/utils";
+
+export default {
+  components: {},
+  data: () => ({
+    membresiaID: 0,
+  }),
+
+  created() {
+    this.membresiaID = new Utils().GetValue("MembresiaID");
+    //this.membresiaID = 2;
+  },
+  methods: {},
+};
+</script>
+

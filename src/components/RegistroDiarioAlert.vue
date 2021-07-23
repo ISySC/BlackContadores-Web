@@ -140,7 +140,7 @@
 <script>
 import DatePicker from "../components/DatePicker";
 import CompanyServices from "../network/services/CompanyService";
-//import Utils from "../util/utils";
+import Utils from "../util/utils";
 import Vue from "vue";
 import Constants from "../util/constants";
 import AlertDialog from "../components/AlertDialog";
@@ -186,15 +186,17 @@ export default {
   },
   created() {
     this.CompanyServices = new CompanyServices();
+    this.Utils = new Utils();
   },
 
   mounted() {
     this.getCatalog();
+    
   },
   methods: {
     getCatalog() {
       this.overlay = true;
-      this.getbankaccount("1543832721"); //new Utils().GetValue("empresaTransID"));
+      this.getbankaccount(this.Utils.GetValue("EmpresaTransID")); //new Utils().GetValue("empresaTransID"));
       this.getclasifications();
       this.overlay = false;
     },
@@ -260,7 +262,7 @@ export default {
 
         this.overlay = true;
 
-        let empresaTransID = "1543832721";
+        let empresaTransID = this.Utils.GetValue("empresaTransID");
 
         let data = {
           empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
@@ -280,6 +282,7 @@ export default {
         else
           rs_registro = await this.CompanyServices.PostUpdateRegistryTransaction(data);
 
+        console.log(rs_registro);
         if (rs_registro.data.response[0].success) {
           this.overlay = false;
           this.descripcionMovimiento = "";

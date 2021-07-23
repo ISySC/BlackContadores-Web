@@ -20,7 +20,24 @@
       :vToolBarColor="vToolBarColor"
       :dialog.sync="dialogAlert"
     />
-    <!-- -->
+
+    <v-dialog v-model="eliminar" persistent max-width="490">
+      <v-card>
+        <v-card-title class="text-h5">
+          ¿Eliminar el registro seleccionado con el numero de folio
+          {{ folio }} ?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="eliminar = false">
+            Cancelar
+          </v-btn>
+          <v-btn color="green darken-1" text @click="DeleteRegistry">
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <base-material-card color="blue pa-0" style="height: 100%">
       <template v-slot:heading>
@@ -32,7 +49,7 @@
           >
         </p>
       </template>
-      <v-card-text style="height: 95%" >
+      <v-card-text style="height: 95%">
         <v-simple-table style="height: 100%" class="grey lighten-3">
           <template v-slot:default>
             <thead>
@@ -123,6 +140,14 @@
                     white--text
                   "
                 ></th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
               </tr>
             </thead>
             <tbody v-if="items.length > 0">
@@ -144,7 +169,7 @@
                   >
                 </td>
                 <td style="width: 200px">{{ item.Descripcion }}</td>
-                <td style="width: 50px">
+                <td style="width: 40px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -158,7 +183,7 @@
                     mdi-pencil
                   </v-icon>
                 </td>
-                <td style="width: 50px">
+                <td style="width: 40px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -170,6 +195,11 @@
                     "
                   >
                     mdi-file-search
+                  </v-icon>
+                </td>
+                <td style="width: 40px">
+                  <v-icon @click="onDelete(item.FolioID, item.Folio)">
+                    mdi-delete
                   </v-icon>
                 </td>
               </tr>
@@ -201,7 +231,7 @@
 <script>
 import RegistroDiarioAlert from "../components/RegistroDiarioAlert";
 import CompanyServices from "../network/services/CompanyService";
-//import Utils from "../util/utils";
+import Utils from "../util/utils";
 import Vue from "vue";
 import Constants from "../util/constants";
 import Loading from "../components/Loading";
@@ -214,6 +244,8 @@ export default {
     AlertDialog,
   },
   data: () => ({
+    eliminar: false,
+    value: null,
     items: [],
     dialog: false,
     dialogAlert: false,
@@ -231,9 +263,39 @@ export default {
 
   created() {
     this.CompanyServices = new CompanyServices();
+    this.Utils = new Utils();
     this.getRegistriesOfDay();
   },
   methods: {
+    async DeleteRegistry() {
+      this.overlay = true;
+
+      let params = {
+        folioID: this.folioID,
+      };
+
+      const rs_registriesitems =
+        await this.CompanyServices.PostDeleteRegistryTransaction(params);
+
+      if (rs_registriesitems.status === 0 || rs_registriesitems.status === 500)
+        this.messageCreateAccountResponse(
+          rs_registriesitems.message,
+          false,
+          true,
+          "red"
+        );
+      else if (rs_registriesitems.data.success) {
+        this.getRegistriesOfDay();
+      }
+      this.getRegistriesOfDay();
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    onDelete(folioID, folio) {
+      this.folioID = folioID;
+      this.folio = folio;
+      this.eliminar = true;
+    },
     getColorClasification(clasificacionID) {
       if (clasificacionID == 2) return "red";
       else if (clasificacionID == 1) return "green";
@@ -250,8 +312,8 @@ export default {
       this.overlay = true;
 
       let params = {
-        empresaTransID: '1543832721',//new Utils().GetValue("empresaTransID"),
-        fechaRegistro: Vue.filter("formatoFecha")(
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"), //new Utils().GetValue("empresaTransID"),
+        FechaRegistro: Vue.filter("formatoFecha")(
           new Date().toISOString().substr(0, 10)
         ),
       };

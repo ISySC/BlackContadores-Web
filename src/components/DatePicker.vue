@@ -1,28 +1,27 @@
 <template>
-      
-        <v-menu
-          ref="menu1"
-          v-model="menu1"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-            outlined
-              v-model="dateFormatted"
-              label="Fecha movimiento"
-              v-bind="attrs"
-              @blur="date = parseDate(dateFormatted)"
-              v-on="on"
-            ></v-text-field>
-          </template>
+  <v-menu
+    ref="menu1"
+    v-model="menu1"
+    :close-on-content-click="false"
+    transition="scale-transition"
+    offset-y
+    max-width="290px"
+    min-width="auto"
+  >
+    <template v-slot:activator="{ on, attrs }">
+      <v-text-field
+        outlined
+        v-model="dateFormatted"
+        label="Fecha movimiento"
+        v-bind="attrs"
+        @blur="date = parseDate(dateFormatted)"
+        v-on="on"
+      ></v-text-field>
+    </template>
 
-          <v-date-picker v-model="date" no-title @input="menu1 = false">
-          </v-date-picker>
-        </v-menu>
+    <v-date-picker v-model="date" no-title @input="menu1 = false">
+    </v-date-picker>
+  </v-menu>
 </template>
 
 <script>
@@ -43,7 +42,7 @@ export default {
   watch: {
     date() {
       this.dateFormatted = this.formatDate(this.date);
-      this.$emit("fechaSeleccionada", this.dateFormatted)
+      this.$emit("fechaSeleccionada", this.dateFormatted);
     },
   },
 

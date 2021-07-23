@@ -37,6 +37,7 @@
                 v-on="on"
                 fab
                 small
+                :disabled="!activa"
                 @click="editar = !editar"
                 :color="editar ? 'green' : ''"
               >
@@ -235,6 +236,35 @@
                     @input="(_) => (password = _)"
                   ></v-text-field>
                   <v-divider />
+                  <br />
+                  <h3>Tu Membresia</h3>
+                  <v-text-field
+                    :disabled="true"
+                    label="Plan Contratado"
+                    prepend-icon="mdi-card-account-details"
+                    :value="plan"
+                  ></v-text-field>
+                  <v-text-field
+                    :disabled="true"
+                    label="Precio"
+                    prepend-icon="mdi-currency-usd"
+                    :value="precio"
+                  ></v-text-field>
+                  <v-text-field
+                    :disabled="true"
+                    label="Fecha Activación"
+                    prepend-icon="mdi-calendar-account"
+                    :value="fechaActivacion"
+                  ></v-text-field>
+                  <v-text-field
+                    :disabled="true"
+                    label="Fecha Vencimiento"
+                    prepend-icon="mdi-calendar-lock"
+                    :value="fechaVencimiento"
+                  ></v-text-field>
+                  <h2 class="red--text" v-if="!activa">
+                    Tu Membresia se encuentra vencida, favor de realizar su pago
+                  </h2>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -261,6 +291,12 @@ export default {
     Membresias,
   },
   data: () => ({
+    activa: true,
+    plan: "",
+    precio: "",
+    fechaActivacion: "",
+    fechaVencimiento: "",
+    //fechaProximoPago: "",
     loading: false,
     Actividades: [],
     itemsActividades: [],
@@ -317,6 +353,7 @@ export default {
   }),
 
   created() {
+    this.activa = (/true/i).test(new Utils().GetValue("EmpresaActiva"));
     this.AccountService = new AccountService();
     this.Utils = new Utils();
     this.getProfile();
@@ -330,7 +367,7 @@ export default {
     async updateProfile() {
       this.loading = true;
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      let empresaTransID = "1543832721";
+      let empresaTransID = Utils.GetValue("EmpresaTransID");
 
       const accountData = {
         RepresentanteLegal: this.Nombre,
@@ -372,16 +409,17 @@ export default {
       this.overlay = true;
 
       let params = {
-        EmpresaTransID: "1543832721", //new Utils().GetValue("empresaTransID"),
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        UsuarioID: this.Utils.GetValue("UsuarioID"), //new Utils().GetValue("empresaTransID"),
       };
 
       var response = await this.AccountService.GetProfile(params);
-      console.log(response);
+
       if (response.data.success !== false) {
         this.membershipsList = JSON.parse(
           response.data.response.membresias[0].Membresias
         );
-        console.log(response.data.response);
+
         this.itemsGiros = response.data.response.giros;
         this.SubGiros = response.data.response.subgiros;
         this.Actividades = response.data.response.actividades;
@@ -395,6 +433,15 @@ export default {
         this.Nombre = response.data.response.perfil[0].RepresentanteLegal;
         this.Empresa = response.data.response.perfil[0].NombreEmpresa;
         this.MembresiaID = response.data.response.perfil[0].MembresiaID;
+        this.plan = response.data.response.perfil[0].PeriodoVigente;
+        this.precio = response.data.response.perfil[0].PrecioVigente;
+        this.fechaActivacion = response.data.response.perfil[0].FechaActivacion;
+        this.fechaVencimiento =
+          response.data.response.perfil[0].FechaVencimiento;
+
+        if (Date.now() > new Date(this.fechaVencimiento)) this.vencida = true;
+        //this.fechaProximoPago =
+        //response.data.response.perfil[0].FechaProximoPago;
       } else {
         this.messageCreateAccountResponse(
           response.data.message,

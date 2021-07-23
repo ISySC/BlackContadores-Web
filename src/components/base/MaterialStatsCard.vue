@@ -4,6 +4,7 @@
     class="v-card--material-stats"
     v-bind="$attrs"
     v-on="$listeners"
+    :disabled="disabled"
   >
     <template v-slot:after-heading>
       <div class="ml-auto text-right">
@@ -34,8 +35,8 @@
     </v-icon>
 
     <span
-      :class="subTextColor"
-      class="caption grey--text font-weight-light"
+      
+      :class="'caption '+ subTextColor + '--text font-weight-light'"
       v-text="subText"
     />
   </base-material-card>
@@ -54,6 +55,10 @@
       icon: {
         type: String,
         required: true,
+      },
+      disabled: {
+        type: Boolean,
+        default: false,
       },
       subIcon: {
         type: String,

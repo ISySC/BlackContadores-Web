@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-content>
+    <v-main>
       <!-- mostrar pantalla alerta para mensajes -->
       <AlertDialog
         :titulo="titulo"
@@ -36,6 +36,7 @@
                           <v-col cols="12" class="d-flex justify-center">
                             <v-form class="">
                               <v-text-field
+                                ref="email"
                                 :label="str_txt_email"
                                 name="email"
                                 prepend-icon="email"
@@ -45,6 +46,7 @@
                                 v-model="usuario"
                               />
                               <v-text-field
+                                ref="contra"
                                 id="Contraseña"
                                 :label="str_txt_password"
                                 name="password"
@@ -139,15 +141,17 @@
                       :key="items.MembresiaID"
                       v-for="items in membershipsList"
                     >
-                      <v-card-text>  
+                      <v-card-text>
                         <Membresias
-                        :NombreMembresia="items.TipoMembresia[0].Descripcion"
+                          :NombreMembresia="items.TipoMembresia[0].Descripcion"
                           :PrecioMes="items.PrecioMes"
                           :PrecioAnual="items.PrecioAnual"
                           :MembresiaID="items.MembresiaID"
                           :EsSugerido="items.TipoMembresia[0].EsSugerido"
                           :NoUsuarios="items.NoUsuarios"
-                          :Caracteristicas="items.TipoMembresia[0].Caracteristicas"
+                          :Caracteristicas="
+                            items.TipoMembresia[0].Caracteristicas
+                          "
                           @createAccountPage="createAccountPage"
                         />
                       </v-card-text>
@@ -169,7 +173,7 @@
         <ContentFooter />
       </v-container>
       <br />
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -223,9 +227,12 @@ export default {
   },
 
   async mounted() {
+    this.Utils.SetValue("", "authToken");
+    this.Utils.SetValue("", "empresaTransID");
+    this.$refs.contra.focus();
+    this.$refs.email.focus();
     const rs_mermershiplist = await this.MembershipsService.GetMembershipList();
     //rs_mermershiplist
-    console.log(rs_mermershiplist.data[0].Membresias);
 
     if (rs_mermershiplist.status === 200)
       this.membershipsList = JSON.parse(rs_mermershiplist.data[0].Membresias);
@@ -260,21 +267,58 @@ export default {
 
         var response = await this.AccountService.PostLogin(accountData);
 
-        console.log(response);
-
         if (response.data.response.success !== "false") {
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(
             response.data.response.EmpresaTransID,
-            "empresaTransID"
+            "EmpresaTransID"
           );
-
+          this.Utils.SetValue(
+            response.data.response[0].EmpresaActiva,
+            "EmpresaActiva"
+          );
+          this.Utils.SetValue(
+            response.data.response[0].AltaDeUsuarios,
+            "AltaDeUsuarios"
+          );
+          this.Utils.SetValue(
+            response.data.response[0].NoUsuarios,
+            "NoUsuarios"
+          );
+          this.Utils.SetValue(
+            response.data.response[0].NombreUsuario,
+            "legal_name"
+          );
+          this.Utils.SetValue(
+            response.data.response[0].NombreEmpresa,
+            "company_name"
+          );
+          this.Utils.SetValue(
+            response.data.response[0].EmpresaTransID,
+            "EmpresaTransID"
+          );
+          this.Utils.SetValue(response.data.response[0].UsuarioID, "UsuarioID");
+          this.Utils.SetValue(
+            response.data.response[0].MembresiaID,
+            "MembresiaID"
+          );
           if (this.membershipID == 1) {
             this.mensaje = response.data.response.message;
             //this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
             this.dashboardPage();
           }
-          this.dashboardPage();
+          
+          if (response.data.response[0].EmpresaActiva)
+            this.$router.push("/registro-diario");
+          else {
+            this.messageCreateAccountResponse(
+              response.data.response[0].message,
+              false,
+              true,
+              "red"
+            );
+            this.$router.push("/perfil");
+          }
         } else {
           this.Utils.SetValue("", "authToken");
           this.Utils.SetValue(response.data.token, "authToken");
