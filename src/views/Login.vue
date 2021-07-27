@@ -269,6 +269,7 @@ export default {
 
         if (response.data.response.success !== "false") {
           this.Utils.SetValue(response.data.token, "authToken");
+          this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
             response.data.response.EmpresaTransID,
             "EmpresaTransID"

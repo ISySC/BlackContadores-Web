@@ -16,6 +16,11 @@ const routes = [
         component: () => import('../components/Usuarios')
       },
       {
+        path: '/cuentas',
+        name: 'cuentas',
+        component: () => import('../components/Cuentas')
+      },
+      {
         path: '/registro-diario',
         name: 'registro-diario',
         component: () => import('../components/RegistroDiario')

@@ -22,15 +22,21 @@
               />
             </v-col>
             <v-col cols="12" sm="3" class="px-4">
-              <base-material-stats-card
-                style="cursor: pointer"
-                title="Categoria"
-                color="indigo"
-                icon="mdi-48px mdi-account-cash"
-                value="Cuentas"
-                sub-icon="mdi-cog"
-                sub-text="Ajuste de cuentas para futuros movimientos."
-              />
+              <router-link
+                to="/cuentas"
+                style="text-decoration: none; color: inherit"
+                disabled
+              >
+                <base-material-stats-card
+                  style="cursor: pointer"
+                  title="Categoria"
+                  color="indigo"
+                  icon="mdi-48px mdi-account-cash"
+                  value="Cuentas"
+                  sub-icon="mdi-cog"
+                  sub-text="Ajuste de cuentas para futuros movimientos."
+                />
+              </router-link>
             </v-col>
             <v-col cols="12" sm="3" class="px-4">
               <router-link
@@ -46,7 +52,11 @@
                   value="Usuarios"
                   :sub-icon="membresiaID == 1 ? '' : 'mdi-cog'"
                   :disabled="membresiaID == 1"
-                  :sub-text="membresiaID == 1 ? 'Para tener esta funcionalidad adquiera una membresia para mas de 1 usuario.' : 'Gestiona los usuarios que acceden a tu empresa.'"
+                  :sub-text="
+                    membresiaID == 1
+                      ? 'Para tener esta funcionalidad adquiera una membresia para mas de 1 usuario.'
+                      : 'Gestiona los usuarios que acceden a tu empresa.'
+                  "
                   :subTextColor="membresiaID == 1 ? 'red' : 'gray'"
                 />
               </router-link>

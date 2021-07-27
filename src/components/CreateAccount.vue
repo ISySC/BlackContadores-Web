@@ -13,7 +13,7 @@
 
     <Loading :overlay="overlay" />
 
-    <AlertMessage :showMessage="showMessage" :message="mensaje"/>
+    <AlertMessage :showMessage="showMessage" :message="mensaje" />
 
     <v-col cols="12" md="3" class="black">
       <v-card-text class="white--text mt-12">
@@ -25,9 +25,7 @@
         </p>
       </v-card-text>
       <v-col cols="12" md="3">
-        <v-btn dark color="light-blue" @click="backToPlans()"
-          >Ver planes</v-btn
-        >
+        <v-btn dark color="light-blue" @click="backToPlans()">Ver planes</v-btn>
       </v-col>
     </v-col>
     <v-col cols="12" md="9" style="height: auto">
@@ -166,7 +164,7 @@ export default {
   components: {
     AlertDialog,
     Loading,
-    AlertMessage
+    AlertMessage,
   },
   props: {
     ItemMembership: { type: Array, require: true },
@@ -191,14 +189,15 @@ export default {
     str_txt_company_name: Constants.str_txt_company_name,
     str_txt_email: Constants.str_txt_email,
     str_txt_password: Constants.str_txt_password,
-    vToolBarColor: 'green',
+    vToolBarColor: "green",
     value: true,
     overlay: false,
     rules: {
       required: (value) => !!value || "Este campo es requerido",
 
       password: (value) => {
-        const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#/$%/^&/*])(?=.{8,})/;
+        const pattern =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#/$%/^&/*])(?=.{8,})/;
 
         return (
           pattern.test(value) ||
@@ -228,13 +227,13 @@ export default {
       this.membershipSelectedMonth = false;
       this.$emit("backToPlans");
     },
-    dashboardPage(){
-      this.showMessage = true
-      this.overlay = false
-     
-      this.Utils.SetValue(this.legalNamePerson, 'legal_name')
-      this.Utils.SetValue(this.companyName, 'company_name')
-      this.$emit("dashboardPage")
+    dashboardPage() {
+      this.showMessage = true;
+      this.overlay = false;
+
+      this.Utils.SetValue(this.legalNamePerson, "legal_name");
+      this.Utils.SetValue(this.companyName, "company_name");
+      this.$emit("dashboardPage");
     },
     paymentPage() {},
     memberships(selected, membershipID) {
@@ -250,13 +249,13 @@ export default {
       }
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
-      this.mensaje = message
-      this.esCancelar = esCancelar
-      this.esAceptar = esAceptar
-      this.vToolBarColor = color
-      this.dialog = true
-      
-      this.overlay = false
+      this.mensaje = message;
+      this.esCancelar = esCancelar;
+      this.esAceptar = esAceptar;
+      this.vToolBarColor = color;
+      this.dialog = true;
+
+      this.overlay = false;
     },
     async createAccount() {
       if (
@@ -269,7 +268,7 @@ export default {
           this.Utils.RegExpEmail(this.email)
         ) {
           if (this.membershipSelectedMonth || this.membershipSelectedYear) {
-            this.overlay = true;
+            //this.overlay = true;
 
             const accountData = {
               legalNamePerson: this.legalNamePerson,
@@ -283,26 +282,70 @@ export default {
             var response = await this.AccountService.PostCreateAccount(
               accountData
             );
-
-            if (response.data.token != '') {
-              this.Utils.SetValue(response.data.token, 'authToken');
-              this.Utils.SetValue(response.data.response[0].empresaTransID, 'empresaTransID')
-
-              if (this.membershipID == 1) {
-                this.mensaje = response.data.response[0].message
-                //this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
-                this.dashboardPage();
-              } else {
-                this.paymentPage();
-              }
+            console.log(response.data);
+            if (response.data.token != "") {
+              this.Utils.SetValue(response.data.token, "authToken");
+              this.Utils.SetValue(
+                response.data.response[0].empresaTransID,
+                "empresaTransID"
+              );
+              this.Utils.SetValue(this.email, "correoUsuario");
+              this.Utils.SetValue(true, "EmpresaActiva");
+              this.Utils.SetValue(
+                response.data.response[0].AltaDeUsuarios,
+                "AltaDeUsuarios"
+              );
+              this.Utils.SetValue(
+                response.data.response[0].NoUsuarios,
+                "NoUsuarios"
+              );
+              this.Utils.SetValue(this.legalNamePerson, "legal_name");
+              this.Utils.SetValue(this.companyName, "company_name");
+              this.Utils.SetValue(
+                response.data.response[0].UsuarioID,
+                "UsuarioID"
+              );
+              this.Utils.SetValue(
+                response.data.response[0].MembresiaID,
+                "MembresiaID"
+              );
+              this.messageCreateAccountResponse(
+                response.data.response[0].message,
+                false,
+                true,
+                "green"
+              );
+              this.dashboardPage();
             } else {
-              this.Utils.SetValue("", 'authToken');
-              this.messageCreateAccountResponse(response.data.response.message, false, true, "red")
+              this.Utils.SetValue("", "authToken");
+              this.messageCreateAccountResponse(
+                response.data.response.message,
+                false,
+                true,
+                "red"
+              );
             }
-          } else this.messageCreateAccountResponse(Constants.str_membership_no_selected, false, true, "red");
+          } else
+            this.messageCreateAccountResponse(
+              Constants.str_membership_no_selected,
+              false,
+              true,
+              "red"
+            );
         } else
-          this.messageCreateAccountResponse(Constants.str_error_validate_email_password, false, true, "red");
-      } else this.messageCreateAccountResponse(Constants.str_error_create_account, false, true, "red");
+          this.messageCreateAccountResponse(
+            Constants.str_error_validate_email_password,
+            false,
+            true,
+            "red"
+          );
+      } else
+        this.messageCreateAccountResponse(
+          Constants.str_error_create_account,
+          false,
+          true,
+          "red"
+        );
     },
   },
 };

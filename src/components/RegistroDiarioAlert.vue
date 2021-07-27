@@ -1,5 +1,10 @@
 <template>
   <v-row justify="center">
+    <CuentaAlert
+      :dialog.sync="dialogaccount"
+      title="Agregar nueva cuenta"
+      @getCuentas="getbankaccount"
+    />
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
       titulo="Black Administrativo - [ Registro diario ]"
@@ -86,7 +91,7 @@
                       color="blue"
                       large
                       dark
-                      @click.native="limpiar"
+                      @click.native="mostrarRegistroCuentaAlert"
                     >
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
@@ -145,12 +150,14 @@ import Vue from "vue";
 import Constants from "../util/constants";
 import AlertDialog from "../components/AlertDialog";
 import Loading from "../components/Loading";
+import CuentaAlert from "../components/CuentaAlert";
 
 export default {
   components: {
     DatePicker,
     AlertDialog,
     Loading,
+    CuentaAlert,
   },
   props: {
     dialog: { type: Boolean, default: false },
@@ -176,6 +183,7 @@ export default {
     mensaje: "",
     overlay: false,
     vToolBarColor: "green",
+    dialogaccount: false,
   }),
   watch: {
     dialog(visible) {
@@ -191,18 +199,16 @@ export default {
 
   mounted() {
     this.getCatalog();
-    
   },
   methods: {
     getCatalog() {
       this.overlay = true;
-      this.getbankaccount(this.Utils.GetValue("EmpresaTransID")); //new Utils().GetValue("empresaTransID"));
+      this.getbankaccount(); //new Utils().GetValue("empresaTransID"));
       this.getclasifications();
       this.overlay = false;
     },
 
     async getInfoRegistry() {
-
       let params = {
         folioID: this.folioID,
       };
@@ -227,10 +233,13 @@ export default {
       }
     },
 
-    async getbankaccount(empresaTransID) {
-      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(
-        empresaTransID
-      );
+    async getbankaccount() {
+      let data = {
+        empresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+
+      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(data);
 
       if (rs_itemscuentas.status === 200)
         this.itemsCuentas = rs_itemscuentas.data.response;
@@ -262,7 +271,7 @@ export default {
 
         this.overlay = true;
 
-        let empresaTransID = this.Utils.GetValue("empresaTransID");
+        let empresaTransID = this.Utils.GetValue("EmpresaTransID");
 
         let data = {
           empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
@@ -273,14 +282,17 @@ export default {
           cuentaID: this.cuentaID,
           observaciones: this.observaciones,
           importe: this.importe,
-          folioID: this.folioID
+          folioID: this.folioID,
         };
 
         let rs_registro = null;
-        if(this.accion == 0 )
-          rs_registro = await this.CompanyServices.PostRegistryTransaction(data);
+        if (this.accion == 0)
+          rs_registro = await this.CompanyServices.PostRegistryTransaction(
+            data
+          );
         else
-          rs_registro = await this.CompanyServices.PostUpdateRegistryTransaction(data);
+          rs_registro =
+            await this.CompanyServices.PostUpdateRegistryTransaction(data);
 
         console.log(rs_registro);
         if (rs_registro.data.response[0].success) {
@@ -321,6 +333,9 @@ export default {
     },
     cuentaSeleccionada(value) {
       this.cuentaID = value.CuentaID;
+    },
+    mostrarRegistroCuentaAlert() {
+      this.dialogaccount = true;
     },
     limpiar() {},
     validarNumero(e) {
