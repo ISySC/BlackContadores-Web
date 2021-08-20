@@ -22,7 +22,7 @@
           >
           <div
             class="d-flex justify-end"
-            style="margin-left: 40px; width: 200px"
+            style="margin-left: 40px; width: 150px"
           >
             <v-menu
               v-model="menu2"
@@ -52,7 +52,7 @@
           </div>
           <div
             class="d-flex justify-end"
-            style="margin-left: 40px; width: 200px"
+            style="margin-left: 15px; width: 150px"
           >
             <v-menu
               v-model="menu"
@@ -82,7 +82,7 @@
           </div>
           <div
             class="d-flex justify-end"
-            style="margin-left: 40px; width: 400px"
+            style="margin-left: 15px; width: 200px"
           >
             <v-select
               :value="clasificacionID"
@@ -96,6 +96,24 @@
               item-key="itemsClasificacion"
               return-object
               @change="clasificacionSeleccionada"
+            ></v-select>
+          </div>
+          <div
+            class="d-flex justify-end"
+            style="margin-left: 30px; width: 350px"
+          >
+            <v-select
+              :value="subclasificacionID"
+              ref="subclasificaciones"
+              filled
+              label="Subclasificación (*)"
+              required
+              :items="itemsSubClasificacion"
+              item-text="Concepto"
+              item-value="ConceptoID"
+              item-key="itemsSubClasificacion"
+              return-object
+              @change="subclasificacionSeleccionada"
             ></v-select>
             <v-btn
               class="ma-1 ml-7"
@@ -221,54 +239,100 @@
                 </template>
               </v-simple-table>
             </v-col>
-            <v-col cols="12" sm="2">
-              <h3>Totales</h3>
-              <br />
-              <v-text-field
-                readonly
-                :label="clasificacionID == 0 ? 'Total Ingresos' : 'Total'"
-                :value="totalIngresos | formatoMoneda"
-                filled
-              ></v-text-field>
-              <v-text-field
-                readonly
-                label="Total Gastos"
-                :value="totalGastos | formatoMoneda"
-                filled
-                v-if="clasificacionID == 0"
-              ></v-text-field>
-              <v-text-field
-                readonly
-                label="Total Compras"
-                :value="totalCompras | formatoMoneda"
-                filled
-                v-if="clasificacionID == 0"
-              ></v-text-field>
-              <v-divider />
-              <br />
-              <h3 v-if="clasificacionID == 0">Utilidades</h3>
-              <br />
-              <v-text-field
-                readonly
-                label="Utilidad Costos"
-                :value="utilidadCostos | formatoPorcentaje"
-                filled
-                v-if="clasificacionID == 0"
-              ></v-text-field>
-              <v-text-field
-                readonly
-                label="Utilidad Gastos"
-                :value="utilidadGastos | formatoPorcentaje"
-                filled
-                v-if="clasificacionID == 0"
-              ></v-text-field>
-              <v-text-field
-                readonly
-                label="Utilidad Neta"
-                :value="utilidadNeta | formatoMoneda"
-                filled
-                v-if="clasificacionID == 0"
-              ></v-text-field>
+            <v-col cols="12" sm="2" style="height: 100%">
+              <v-card
+                :elevation="6"
+                class="px-4 pt-5 blue-grey darken-4"
+                style="height: 100%"
+              >
+                <h2 class="text-center white--text">Totales</h2>
+                <br />
+                <v-text-field
+                  dark
+                  readonly
+                  :label="clasificacionID == 0 ? 'Total Ingresos' : 'Total'"
+                  :value="totalIngresos | formatoMoneda"
+                  outlined
+                  rounded
+                  dense
+                  class="right-input"
+                ></v-text-field>
+                <v-text-field
+                  dark
+                  readonly
+                  label="Total Compras"
+                  :value="totalCompras | formatoMoneda"
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <v-text-field
+                  dark
+                  readonly
+                  label="Utilidad Bruta"
+                  :value="
+                    (totalIngresos - totalCompras - totalGastos) | formatoMoneda
+                  "
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <v-text-field
+                  dark
+                  readonly
+                  label="Total Gastos"
+                  :value="totalGastos | formatoMoneda"
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <v-text-field
+                  dark
+                  readonly
+                  label="Utilidad Neta"
+                  :value="utilidadNeta | formatoMoneda"
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <v-divider />
+                <br />
+                <h2 class="text-center white--text" v-if="clasificacionID == 0">
+                  Margenes de Utilidad
+                </h2>
+                <br />
+                <v-text-field
+                  dark
+                  readonly
+                  label="Utilidad Costos"
+                  :value="utilidadCostos | formatoPorcentaje"
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <v-text-field
+                  dark
+                  readonly
+                  label="Utilidad Gastos"
+                  :value="utilidadGastos | formatoPorcentaje"
+                  outlined
+                  rounded
+                  dense
+                  v-if="clasificacionID == 0"
+                  class="right-input"
+                ></v-text-field>
+                <br />
+              </v-card>
             </v-col>
           </v-row>
         </v-container>
@@ -321,7 +385,10 @@ export default {
     overlay: false,
     vToolBarColor: "",
     itemsClasificacion: [],
+    subclasificacionID: 0,
+    itemsSubClasificacion: [],
     str_no_data: Constants.str_no_data,
+    SubClasificaciones: [],
   }),
 
   created() {
@@ -329,6 +396,7 @@ export default {
     this.Utils = new Utils();
     this.getRegistriesOfDay();
     this.getclasifications();
+    this.getsubclasifications();
   },
   computed: {
     computedDateFormatted() {
@@ -339,22 +407,47 @@ export default {
     FechaInicio() {
       var datefin = new Date(this.FechaFin);
       var date = new Date(this.FechaInicio);
-      var newDate = new Date(datefin.setMonth(date.getMonth()));
-      this.FechaFin = new Date(newDate).toISOString().substr(0, 10);
-      this.dateFormatted = this.formatDate(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
       this.dateFormatted2 = this.formatDate(this.FechaFin);
     },
     FechaFin() {
-      this.dateFormatted = this.formatDate(this.FechaInicio);
+      var datefin = new Date(this.FechaFin);
+      var date = new Date(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
       this.dateFormatted2 = this.formatDate(this.FechaFin);
     },
   },
   methods: {
+    async getsubclasifications() {
+      let data = {
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+      const response = await this.CompanyServices.GetSubclasifications(data);
+
+      if (response.status === 200)
+        this.itemsSubClasificacion = response.data.response;
+      this.SubClasificaciones = response.data.response;
+      this.itemsSubClasificacion.push({
+        ConceptoID: "0",
+        Concepto: "Todas",
+      });
+      this.SubClasificaciones.push({
+        ConceptoID: "0",
+        Concepto: "Todas",
+      });
+    },
     formatDate(date) {
       if (!date) return null;
 
       const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
+      return `${day}/${month}/${year}`;
     },
     parseDate(date) {
       if (!date) return null;
@@ -365,8 +458,17 @@ export default {
     onChangeFechaInicio(value) {
       console.log(value);
     },
+    subclasificacionSeleccionada(value)
+    {
+      this.subclasificacionID = value.ConceptoID;
+    },
     clasificacionSeleccionada(value) {
       this.clasificacionID = value.ClasificacionID;
+      this.itemsSubClasificacion = this.SubClasificaciones.filter(
+        (Subclasificacion) =>
+          Subclasificacion.ClasificacionID == value.ClasificacionID ||
+          Subclasificacion.ConceptoID == 0
+      );
     },
     async getclasifications() {
       const rs_itemsclasificacion =
@@ -374,7 +476,11 @@ export default {
 
       if (rs_itemsclasificacion.status === 200) {
         this.itemsClasificacion = rs_itemsclasificacion.data.response;
-        this.itemsClasificacion.push({ ClasificacionID: "0", Clasificacion: "Todas" });
+        this.itemsClasificacion.splice(3, 1);
+        this.itemsClasificacion.push({
+          ClasificacionID: "0",
+          Clasificacion: "Todas",
+        });
       }
     },
     fechaSeleccionada(fecha) {
@@ -399,7 +505,10 @@ export default {
 
       let params = {
         ClasificacionID: this.clasificacionID ? this.clasificacionID : 0,
-        empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
+        SubClasificacionID: this.subclasificacionID
+          ? this.subclasificacionID
+          : 0,
+        empresaTransID: empresaTransID,
         FechaInicio: Vue.filter("formatoFecha")(
           new Date(this.FechaInicio).toISOString().substr(0, 10)
         ),
@@ -473,5 +582,8 @@ export default {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 50px;
+}
+.right-input input {
+    text-align: right;
 }
 </style>

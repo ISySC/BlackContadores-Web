@@ -15,7 +15,7 @@
                 style="cursor: pointer"
                 color="orange darken-4"
                 icon="mdi-48px mdi-cash-refund"
-                title="Categoria"
+                title="Catálogo"
                 value="Deudas"
                 sub-icon="mdi-cog"
                 sub-text="Ajuste de deudas iniciales, nuevas deudas, etc."
@@ -29,12 +29,29 @@
               >
                 <base-material-stats-card
                   style="cursor: pointer"
-                  title="Categoria"
+                  title="Catálogo"
                   color="indigo"
                   icon="mdi-48px mdi-account-cash"
                   value="Cuentas"
                   sub-icon="mdi-cog"
                   sub-text="Ajuste de cuentas para futuros movimientos."
+                />
+              </router-link>
+            </v-col>
+            <v-col cols="12" sm="3" class="px-4">
+              <router-link
+                to="/subclasificaciones"
+                style="text-decoration: none; color: inherit"
+                disabled
+              >
+                <base-material-stats-card
+                  style="cursor: pointer"
+                  title="Catálogo"
+                  color="deep-purple"
+                  icon="mdi-48px mdi-file-tree"
+                  value="Clasificació..."
+                  sub-icon="mdi-cog"
+                  sub-text="Ajuste de clasificaciones para futuros movimientos."
                 />
               </router-link>
             </v-col>
@@ -46,7 +63,7 @@
               >
                 <base-material-stats-card
                   style="cursor: pointer"
-                  title="Categoria"
+                  title="Catálogo"
                   color="green"
                   icon="mdi-48px mdi-account-group"
                   value="Usuarios"

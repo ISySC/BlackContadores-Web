@@ -9,6 +9,14 @@
       :dialog.sync="dialog"
     />
 
+    <Pago
+      :dialog.sync="dialogPago"
+      :membresia="nombre_Nueva_Membresia"
+      :membresiaID="nueva_MembresiaID"
+      :precio="precio_nueva_membresia"
+      :precio_anual="precio_anual_nueva_membresia"
+    />
+
     <Loading :overlay="overlay" />
 
     <!-- mostrar pantalla alerta para mensajes -->
@@ -151,11 +159,11 @@
                           <v-row no-gutters>
                             <v-col
                               cols="12"
-                              md="3"
+                              :md="items.MembresiaID !== 1 ? 4 : 0"
                               :key="items.MembresiaID"
                               v-for="items in membershipsList"
                             >
-                              <v-card-text class="pa-1">
+                              <v-card-text class="pa-1" v-if="items.MembresiaID !== 1">
                                 <Membresias
                                   :Actual="
                                     MembresiaID == items.MembresiaID
@@ -283,14 +291,17 @@ import Enumerable from "linq";
 import Constants from "../util/constants";
 import Loading from "../components/Loading";
 import Membresias from "../components/Membresias";
+import Pago from "../components/Pago";
 
 export default {
   components: {
     Loading,
     AlertDialog,
     Membresias,
+    Pago,
   },
   data: () => ({
+    dialogPago: false,
     activa: true,
     plan: "",
     precio: "",
@@ -328,6 +339,10 @@ export default {
     str_no_data: Constants.str_no_data,
     str_txt_password: Constants.str_txt_password,
     value: true,
+    precio_nueva_membresia: 0,
+    precio_anual_nueva_membresia: 0,
+    nueva_MembresiaID: 0,
+    nombre_Nueva_Membresia: "",
     rules: {
       required: (value) => !!value || "Este campo es requerido",
 
@@ -353,7 +368,7 @@ export default {
   }),
 
   created() {
-    this.activa = (/true/i).test(new Utils().GetValue("EmpresaActiva"));
+    this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
     this.AccountService = new AccountService();
     this.Utils = new Utils();
     this.getProfile();
@@ -466,6 +481,14 @@ export default {
       this.ItemMembershipSelected = Enumerable.from(this.membershipsList)
         .where((m) => m.MembresiaID == MembresiaID)
         .toArray();
+
+      this.precio_nueva_membresia = this.ItemMembershipSelected[0].PrecioMes;
+      this.precio_anual_nueva_membresia = this.ItemMembershipSelected[0].PrecioAnual;
+      this.nueva_MembresiaID = this.ItemMembershipSelected[0].MembresiaID;
+      this.nombre_Nueva_Membresia =
+        this.ItemMembershipSelected[0].TipoMembresia[0].Descripcion;
+      this.dialogPago =
+        this.ItemMembershipSelected[0].MembresiaID !== this.MembresiaID && true;
     },
     giroSeleccionado(value) {
       this.GiroID = value.GiroID;

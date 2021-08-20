@@ -267,12 +267,18 @@ export default {
 
         var response = await this.AccountService.PostLogin(accountData);
 
+        console.log(response.data.response);
+
         if (response.data.response.success !== "false") {
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
             response.data.response.EmpresaTransID,
             "EmpresaTransID"
+          );
+          this.Utils.SetValue(
+            response.data.response.CustomerConektaID,
+            "CustomerConektaID"
           );
           this.Utils.SetValue(
             response.data.response[0].EmpresaActiva,
@@ -308,7 +314,7 @@ export default {
             //this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
             this.dashboardPage();
           }
-          
+
           if (response.data.response[0].EmpresaActiva)
             this.$router.push("/registro-diario");
           else {

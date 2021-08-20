@@ -16,6 +16,11 @@ const routes = [
         component: () => import('../components/Usuarios')
       },
       {
+        path: '/subclasificaciones',
+        name: 'subclasificaciones',
+        component: () => import('../components/Subclasificaciones')
+      },
+      {
         path: '/cuentas',
         name: 'cuentas',
         component: () => import('../components/Cuentas')

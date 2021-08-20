@@ -1,6 +1,6 @@
 
-export const URL_BASE = 'http://lnxsrvzeus.eastus.cloudapp.azure.com:3001/api/'
-//export const URL_BASE = 'http://localhost:3001/api/'
+//export const URL_BASE = 'http://lnxsrvzeus.eastus.cloudapp.azure.com:3001/api/'
+export const URL_BASE = 'http://localhost:3001/api/'
 
 export const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -18,6 +18,8 @@ export const users = 'users/'
 export const adduser = 'users/user/add/'
 export const user = 'users/user/'
 
+//Pagos Membresias
+export const payment = 'payment/'
 
 //Empresa Info
 export const bankaccounts = 'company/bankaccounts'
@@ -30,3 +32,7 @@ export const deleteregistry = 'company/deleteregistry/'
 export const addaccount = 'company/bankaccounts/addbankaccount'
 export const updateaccount = 'company/bankaccounts/'
 export const bankaccount = 'company/bankaccount/'
+export const subclasifications = 'company/subclasifications'
+export const subclasification = 'company/subclasification/'
+export const collection = 'company/collections'
+export const collections = 'company/collection/payment'

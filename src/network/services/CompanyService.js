@@ -1,7 +1,9 @@
 import axios from 'axios'
 import Vue from 'vue'
 import VueAxios from 'vue-axios'
-import { URL_BASE, bankaccounts, bankaccount, clasifications, addregistry, getregistries, registry, updateregistry, deleteregistry, addaccount, updateaccount } from '../api'
+import { URL_BASE, bankaccounts, bankaccount, clasifications, addregistry, 
+        getregistries, registry, updateregistry, deleteregistry, addaccount, 
+        updateaccount, subclasifications, subclasification, collection, collections  } from '../api'
 import handlererroapi from '../handlererroapi'
 
 Vue.use(VueAxios, axios)
@@ -11,7 +13,48 @@ export default class CompanyService {
     constructor() {
         axios.defaults.headers.common['access-token'] = localStorage.getItem('authToken');
     }
+    //Cxc and Cxp
+    GetCollections(data) {
 
+        return axios.post(URL_BASE + collection, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    PostCollection(data) {
+
+        return axios.post(URL_BASE + collections, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+    
+    //SubClasificaciones
+    GetSubclasifications(data) {
+
+        return axios.post(URL_BASE + subclasifications, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    PostSubclasifications(data) {
+
+        return axios.post(URL_BASE + subclasification, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    PostUpdateSubclasifications(data) {
+
+        return axios.put(URL_BASE + subclasification, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+    //
     GetBankaccounts(data) {
 
         return axios.post(URL_BASE + bankaccounts, data)

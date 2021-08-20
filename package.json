@@ -14,6 +14,7 @@
     "emailjs-com": "^2.6.4",
     "linq": "^3.2.3",
     "moment": "^2.29.1",
+    "v-mask": "^2.2.4",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",
     "vue-cryptojs": "^2.1.5",

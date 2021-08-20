@@ -49,7 +49,7 @@
           >
         </p>
       </template>
-      <v-card-text style="height: 95%">
+      <v-card-text style="height: 92%">
         <v-simple-table style="height: 100%" class="grey lighten-3">
           <template v-slot:default>
             <thead>
@@ -217,12 +217,13 @@
               bottom
               right
               fab
-              style="margin-bottom: 70px; margin-right: 40px"
+              style="margin-bottom: 90px; margin-right: 40px"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </template>
         </v-simple-table>
+        <h2 class="pt-3 pl-4">Total movimientos : {{ items.length }}</h2>
       </v-card-text>
     </base-material-card>
   </v-main>

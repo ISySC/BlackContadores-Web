@@ -11,6 +11,14 @@
     />
     <!-- -->
 
+    <Pago
+      :dialog.sync="dialogPago"
+      :membresia="ItemMembership[0].TipoMembresia[0].Descripcion"
+      :membresiaID="ItemMembership[0].MembresiaID"
+      :precio="ItemMembership[0].PrecioAnual"
+      :precio_anual="ItemMembership[0].PrecioMes"
+    />
+
     <Loading :overlay="overlay" />
 
     <AlertMessage :showMessage="showMessage" :message="mensaje" />
@@ -79,51 +87,6 @@
                   :rules="[rules.password]"
                   @input="(_) => (password = _)"
                 ></v-text-field>
-                <br />
-                <v-row no-gutters>
-                  <v-col cols="12">
-                    <v-btn
-                      block
-                      outlined
-                      depressed
-                      large
-                      @click="
-                        memberships('Mensual', ItemMembership[0].MembresiaID)
-                      "
-                      :class="
-                        membershipSelectedMonth
-                          ? 'light-blue font-weight-black dark'
-                          : 'darken-3 text-center'
-                      "
-                      :color="membershipSelectedMonth ? 'white' : 'light-blue'"
-                      >{{ ItemMembership[0].NombreMembresia }} mensual
-                      {{ ItemMembership[0].PrecioMes | formatoMoneda }}</v-btn
-                    >
-                  </v-col>
-                </v-row>
-                <v-row no-gutters>
-                  <v-col cols="12">
-                    <v-btn
-                      block
-                      outlined
-                      depressed
-                      large
-                      v-if="ItemMembership[0].PrecioAnual > 0"
-                      @click="
-                        memberships('Anual', ItemMembership[0].MembresiaID)
-                      "
-                      :class="
-                        membershipSelectedYear
-                          ? 'light-blue font-weight-black dark'
-                          : 'darken-3 text-center'
-                      "
-                      :color="membershipSelectedYear ? 'white' : 'light-blue'"
-                      >{{ ItemMembership[0].NombreMembresia }} anual
-                      {{ ItemMembership[0].PrecioAnual | formatoMoneda }}</v-btn
-                    >
-                  </v-col>
-                </v-row>
-
                 <v-row no-gutters>
                   <v-col cols="8"></v-col>
                   <v-col cols="4">
@@ -157,6 +120,7 @@ import Vue from "vue";
 import VueCryptojs from "vue-cryptojs";
 import Loading from "../components/Loading";
 import AlertMessage from "../components/AlertMessage";
+import Pago from "../components/Pago";
 
 Vue.use(VueCryptojs);
 
@@ -165,12 +129,14 @@ export default {
     AlertDialog,
     Loading,
     AlertMessage,
+    Pago,
   },
   props: {
     ItemMembership: { type: Array, require: true },
   },
 
   data: () => ({
+    dialogPago: false,
     legalNamePerson: "",
     companyName: "",
     email: "",
@@ -258,7 +224,8 @@ export default {
       this.overlay = false;
     },
     async createAccount() {
-      if (
+      this.dialogPago = true;
+      /*if (
         this.legalNamePerson != "" &&
         this.email != "" &&
         this.password != ""
@@ -345,7 +312,7 @@ export default {
           false,
           true,
           "red"
-        );
+        );*/
     },
   },
 };

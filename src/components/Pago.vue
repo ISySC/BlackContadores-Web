@@ -1,4 +1,13 @@
-<div class="wrapper" id="app">
+<template>
+  <v-dialog v-model="dialog">
+    <AlertDialog
+      titulo="Black Administrativo - [ Problemas con el pago ]"
+      :mensaje="mensaje"
+      :esCancelar="false"
+      :esAceptar="true"
+      :vToolBarColor="color"
+      :dialog.sync="Alertdialog"
+    />
     <div class="card-form">
       <div class="card-list">
         <div class="card-item" v-bind:class="{ '-active': isCardFlipped }">
@@ -124,13 +133,15 @@
                         <span
                           class="card-item__nameItem"
                           v-for="(n, $index) in cardName.replace(/\s\s+/g, ' ')"
-                          --v-if="$index === $index"
+                          :v-if="$index === $index"
                           v-bind:key="$index + 1"
                           >{{ n }}</span
                         >
                       </transition-group>
                     </div>
-                    <div class="card-item__name" v-else key="2">Nombre completo</div>
+                    <div class="card-item__name" v-else key="2">
+                      Nombre completo
+                    </div>
                   </transition>
                 </label>
                 <div class="card-item__date" ref="cardDate">
@@ -192,7 +203,9 @@
       </div>
       <div class="card-form__inner">
         <div class="card-input">
-          <label for="cardNumber" class="card-input__label">Numero de tarjeta</label>
+          <label for="cardNumber" class="card-input__label"
+            >Numero de tarjeta</label
+          >
           <input
             type="text"
             id="cardNumber"
@@ -239,7 +252,7 @@
                   v-bind:disabled="n < minCardMonth"
                   v-bind:key="n"
                 >
-                  {{ n >= 10 ? n : '0' + n }}
+                  {{ n >= 10 ? n : "0" + n }}
                 </option>
               </select>
               <select
@@ -268,7 +281,7 @@
                 type="text"
                 class="card-input__input"
                 id="cardCvv"
-                v-mask="'####'"
+                :v-mask="'####'"
                 maxlength="4"
                 v-model="cardCvv"
                 v-on:focus="flipCard(true)"
@@ -278,18 +291,91 @@
             </div>
           </div>
         </div>
-        <v-btn rounded block color="light-blue" dark x-large>Continuar</v-btn>
+        <div class="card-form__row">
+          <v-btn
+            block
+            outlined
+            depressed
+            large
+            @click="memberships('Mensual')"
+            :class="
+              membershipSelectedMonth
+                ? 'light-blue font-weight-black dark'
+                : 'darken-3 text-center'
+            "
+            :color="membershipSelectedMonth ? 'white' : 'light-blue'"
+            >{{ membresia }} mensual {{ precio | formatoMoneda }}</v-btn
+          >
+        </div>
+        <br />
+        <div class="card-form__row">
+          <v-btn
+            block
+            outlined
+            depressed
+            large
+            @click="memberships('Anual')"
+            :class="
+              membershipSelectedYear
+                ? 'light-blue font-weight-black dark'
+                : 'darken-3 text-center'
+            "
+            :color="membershipSelectedYear ? 'white' : 'light-blue'"
+            >{{ membresia }} anual {{ precio_anual | formatoMoneda }}</v-btn
+          >
+        </div>
+        <br />
+        <div class="card-form__row">
+          <v-btn
+            rounded
+            width="44%"
+            @click.native="cancelar"
+            color="red"
+            dark
+            x-large
+            style="margin-right: 5px"
+            >Cancelar</v-btn
+          ><v-btn
+            width="55%"
+            rounded
+            color="light-blue"
+            dark
+            x-large
+            @click.native="pagar"
+            >Continuar</v-btn
+          >
+        </div>
       </div>
     </div>
-  </div>
+  </v-dialog>
 </template>
 
 <script>
+import Vue from "vue";
+import { VueMaskDirective } from "v-mask";
+import AlertDialog from "./AlertDialog";
+import Utils from "../util/utils";
+import PaymentService from "../network/services/PaymentService";
+Vue.directive("mask", VueMaskDirective);
+
 export default {
+  components: {
+    AlertDialog,
+  },
   name: "Pago",
+  props: {
+    dialog: { type: Boolean, default: false },
+    membresia: { type: String, default: "" },
+    membresiaID: { type: Number, default: 0 },
+    precio: { type: Number, default: 0 },
+    precio_anual: { type: Number, default: 0 },
+  },
+  created() {
+    this.PaymentService = new PaymentService();
+  },
   data() {
     return {
-      currentCardBackground: Math.floor(Math.random() * 25 + 1), 
+      currentCardBackground: Math.floor(Math.random() * 25 + 1),
       cardName: "",
       cardNumber: "",
       cardMonth: "",
@@ -302,11 +388,23 @@ export default {
       isCardFlipped: false,
       focusElementStyle: null,
       isInputFocused: false,
+      Alertdialog: false,
+      mensaje: "",
+      color: "red",
+      costumerID: "cus_2qCao9nTwJmpY9SY3",
+      selectedFrecuency: "",
+      membershipSelectedMonth: false,
+      membershipSelectedYear: false,
     };
   },
   mounted() {
     this.cardNumberTemp = this.otherCardMask;
-    document.getElementById("cardNumber").focus();
+    const script = document.createElement("script");
+    script.src = "https://cdn.conekta.io/js/latest/conekta.js";
+    script.async = true;
+    this.membershipSelectedMonth = false;
+    this.membershipSelectedYear = false;
+    document.body.appendChild(script);
   },
   computed: {
     getCardType() {
@@ -346,6 +444,69 @@ export default {
     },
   },
   methods: {
+    memberships(selected) {
+      this.selectedFrecuency = selected;
+
+      if (selected == "Mensual") {
+        this.membershipSelectedMonth = true;
+        this.membershipSelectedYear = false;
+      } else {
+        this.membershipSelectedMonth = false;
+        this.membershipSelectedYear = true;
+      }
+    },
+    messageCreateAccountResponse(message, color) {
+      this.mensaje = message;
+      this.color = color;
+      this.Alertdialog = true;
+    },
+    async pagar() {
+      window.Conekta.setPublicKey("key_JbF6SRqYutX8TFQrpjRxFFw");
+      const tokenParams = {
+        card: {
+          number: this.cardNumber,
+          name: this.cardName,
+          exp_year: this.cardYear,
+          exp_month: this.cardMonth,
+          cvc: this.cardCvv,
+        },
+      };
+      window.Conekta.Token.create(
+        tokenParams,
+        async (token) => {
+          const data = {
+            MembresiaID: this.membresiaID,
+            Membresia: this.membresia,
+            Precio: this.precio,
+            Email: new Utils().GetValue("correoUsuario"),
+            Usuario: new Utils().GetValue("legal_name"),
+            Token: token.id,
+            CostumerID: this.costumerID,
+          };
+
+          var response = await this.PaymentService.PostPayment(data);
+
+          if (response.data.token != "") {
+            this.messageCreateAccountResponse(
+              response.data.response[0].message,
+              "green"
+            );
+          } else {
+            this.messageCreateAccountResponse(
+              response.data.response.message,
+              "red"
+            );
+          }
+        },
+        (error) => {
+          this.messageCreateAccountResponse(error.message_to_purchaser, "red");
+          console.log(error);
+        }
+      );
+    },
+    cancelar() {
+      this.$emit("update:dialog", false);
+    },
     flipCard(status) {
       this.isCardFlipped = status;
     },
@@ -374,7 +535,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600,700|Source+Sans+Pro:400,600,700&display=swap");
 body {
-  background: #ddeefc;
+  background: #7e8081;
   font-family: "Source Sans Pro", sans-serif;
   font-size: 16px;
 }
