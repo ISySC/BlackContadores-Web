@@ -24,6 +24,22 @@
 
         <v-container>
           <v-row no-gutters>
+            <v-col cols="12" sm="12">
+              <v-select
+                :value="tipoID"
+                ref="tipo"
+                outlined
+                label="Tipo de cuenta (*)"
+                required
+                :items="itemsTipo"
+                item-text="Descripcion"
+                item-value="TipoCuentaID"
+                item-key="itemsTipo"
+                return-object
+                prepend-icon="mdi-format-list-bulleted-type"
+                @change="tipoSeleccionada"
+              ></v-select>
+            </v-col>
             <v-col cols="12" sm="12" md="12">
               <v-text-field
                 label="Nombre de la cuenta (*)"
@@ -93,6 +109,8 @@ export default {
     value: true,
     overlay: false,
     vToolBarColor: "green",
+    itemsTipo: [],
+    tipoID: 0,
     rules: {
       required: (value) => !!value || "Este campo es requerido",
     },
@@ -100,13 +118,25 @@ export default {
   watch: {
     dialog() {
       if (this.accion != 0) this.getInfoCuenta();
+      
     },
   },
   created() {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
+    this.getTypeAccount();
   },
   methods: {
+    tipoSeleccionada(value){
+      this.tipoID = value.TipoCuentaID;
+    },
+    async getTypeAccount() {
+      const response = await this.CompanyServices.GetTypeAccount();
+
+      if (response.status === 200) {
+        this.itemsTipo = response.data.response;
+      }
+    },
     async getInfoCuenta() {
       let params = {
         cuentaID: this.cuentaID,
@@ -117,6 +147,7 @@ export default {
       if (response.data.success !== false) {
         this.nombre = response.data.response.Descripcion;
         this.activo = response.data.response.EsActivo;
+        this.tipoID = response.data.response.TipoCuentaID;
       } else {
         //this.Utils.SetValue("", "authToken");
         this.messageCreateAccountResponse(
@@ -139,6 +170,7 @@ export default {
           descripcionCuenta: this.nombre,
           correoUsuario: this.Utils.GetValue("correoUsuario"),
           esActivo: this.activo,
+          tipoCuentaID: this.tipoID
         };
 
         let rs_registro = null;
@@ -146,7 +178,6 @@ export default {
           rs_registro = await this.CompanyServices.PostCuenta(data);
         else rs_registro = await this.CompanyServices.PostUpdateCuenta(data);
 
-        console.log(rs_registro.data);
         if (rs_registro.data.success == "true") {
           this.overlay = false;
 

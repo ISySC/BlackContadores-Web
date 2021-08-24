@@ -207,7 +207,7 @@ export default {
     step: 1,
     usuario: "",
     contrasena: "",
-    titulo: "",
+    titulo: "Black Administrativo - [ Inicio de sesión ]",
     dialog: false,
     mensaje: "",
     esAceptar: false,
@@ -224,11 +224,10 @@ export default {
     this.MembershipsService = new MembershipsService();
     this.AccountService = new AccountService();
     this.Utils = new Utils();
+    localStorage.clear();
   },
 
   async mounted() {
-    this.Utils.SetValue("", "authToken");
-    this.Utils.SetValue("", "empresaTransID");
     this.$refs.contra.focus();
     this.$refs.email.focus();
     const rs_mermershiplist = await this.MembershipsService.GetMembershipList();

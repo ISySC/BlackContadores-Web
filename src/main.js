@@ -8,9 +8,7 @@ import "./util/filters"
 import './plugins/base'
 
 // configure router
-const router = new VueRouter({
-  routes, // short for routes: routes
-});
+const router = routes;
 
 Vue.use(VueRouter);
 

@@ -368,9 +368,9 @@ export default {
   }),
 
   created() {
-    this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
     this.AccountService = new AccountService();
     this.Utils = new Utils();
+    this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
     this.getProfile();
   },
 
@@ -381,8 +381,8 @@ export default {
   methods: {
     async updateProfile() {
       this.loading = true;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      let empresaTransID = Utils.GetValue("EmpresaTransID");
+      
+      let empresaTransID = new Utils().GetValue("EmpresaTransID");
 
       const accountData = {
         RepresentanteLegal: this.Nombre,
@@ -398,6 +398,7 @@ export default {
       var response = await this.AccountService.PostUpdateProfile(accountData);
 
       if (response.data.token != "") {
+        this.loading = false;
         this.messageCreateAccountResponse(
           response.data.response[0].message,
           true,
@@ -406,6 +407,7 @@ export default {
         );
         this.editar = false;
       } else {
+        this.loading = false;
         this.Utils.SetValue("", "authToken");
         this.messageCreateAccountResponse(
           response.data.response.message,

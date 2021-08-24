@@ -13,121 +13,124 @@
     />
     <!-- -->
 
-    <base-material-card color="blue pa-0" style="height: 97%">
+    <base-material-card color="blue" style="height: 97%">
       <template v-slot:heading>
-        <div class="text-left text-h5 d-flex">
+        <div class="text-left text-h5" style="height: 49px">
           ESTADO DE RESULTADOS |
           <span class="text-subtitle-1" id="textDescription"
             >Consulta los resultados de tus estados.</span
           >
-          <div
-            class="d-flex justify-end"
-            style="margin-left: 40px; width: 150px"
-          >
-            <v-menu
-              v-model="menu2"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  filled
-                  v-model="dateFormatted"
-                  label="Fecha Inicio"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                  @blur="date = parseDate(dateFormatted)"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="FechaInicio"
-                @input="menu2 = false"
-              ></v-date-picker>
-            </v-menu>
-          </div>
-          <div
-            class="d-flex justify-end"
-            style="margin-left: 15px; width: 150px"
-          >
-            <v-menu
-              v-model="menu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  filled
-                  v-model="dateFormatted2"
-                  label="Fecha Fin"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                  @blur="date = parseDate(dateFormatted2)"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="FechaFin"
-                @input="menu = false"
-              ></v-date-picker>
-            </v-menu>
-          </div>
-          <div
-            class="d-flex justify-end"
-            style="margin-left: 15px; width: 200px"
-          >
-            <v-select
-              :value="clasificacionID"
-              ref="clasificaciones"
-              filled
-              label="Clasificación (*)"
-              required
-              :items="itemsClasificacion"
-              item-text="Clasificacion"
-              item-value="ClasificacionID"
-              item-key="itemsClasificacion"
-              return-object
-              @change="clasificacionSeleccionada"
-            ></v-select>
-          </div>
-          <div
-            class="d-flex justify-end"
-            style="margin-left: 30px; width: 350px"
-          >
-            <v-select
-              :value="subclasificacionID"
-              ref="subclasificaciones"
-              filled
-              label="Subclasificación (*)"
-              required
-              :items="itemsSubClasificacion"
-              item-text="Concepto"
-              item-value="ConceptoID"
-              item-key="itemsSubClasificacion"
-              return-object
-              @change="subclasificacionSeleccionada"
-            ></v-select>
-            <v-btn
-              class="ma-1 ml-7"
-              color="indigo"
-              x-large
-              @click="getRegistriesOfDay"
-            >
-              Filtrar
-            </v-btn>
-          </div>
         </div>
       </template>
-      <v-card-text style="height: 92%">
-        <v-container class="p-0" style="height: 100%">
+      <v-card-text style="padding-bottom: 0px">
+        <v-container style="padding: 0px">
+          <v-row no-gutters style="height: 100%">
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted"
+                    label="Fecha Inicio"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="FechaInicio"
+                  @input="menu2 = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted2"
+                    label="Fecha Fin"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted2)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="FechaFin"
+                  @input="menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="3">
+              <v-select
+                class="mx-7"
+                :value="clasificacionID"
+                ref="clasificaciones"
+                filled
+                label="Clasificación (*)"
+                required
+                :items="itemsClasificacion"
+                item-text="Clasificacion"
+                item-value="ClasificacionID"
+                item-key="itemsClasificacion"
+                return-object
+                @change="clasificacionSeleccionada"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="3">
+              <v-select
+                v-model="subclasificacionID"
+                class="mx-7"
+                :value="subclasificacionID"
+                ref="subclasificaciones"
+                filled
+                label="Subclasificación (*)"
+                required
+                :items="itemsSubClasificacion"
+                item-text="Concepto"
+                item-value="ConceptoID"
+                item-key="itemsSubClasificacion"
+                return-object
+                @change="subclasificacionSeleccionada"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-btn
+                dark
+                class="mt-1"
+                color="indigo"
+                x-large
+                block
+                @click="getRegistriesOfDay"
+              >
+                Filtrar
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-text style="height: 80%">
+        <v-container style="height: 100%; padding: 0px">
           <v-row no-gutters style="height: 100%">
             <v-col cols="12" sm="10" class="pr-7" style="height: 100%">
               <v-simple-table class="grey lighten-3" style="height: 100%">
@@ -250,7 +253,7 @@
                 <v-text-field
                   dark
                   readonly
-                  :label="clasificacionID == 0 ? 'Total Ingresos' : 'Total'"
+                  :label="filtroClasificacionID == 0 ? 'Total Ingresos' : 'Total'"
                   :value="totalIngresos | formatoMoneda"
                   outlined
                   rounded
@@ -265,20 +268,18 @@
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <v-text-field
                   dark
                   readonly
                   label="Utilidad Bruta"
-                  :value="
-                    (totalIngresos - totalCompras - totalGastos) | formatoMoneda
-                  "
+                  :value="(totalIngresos - totalCompras) | formatoMoneda"
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <v-text-field
@@ -289,7 +290,7 @@
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <v-text-field
@@ -300,12 +301,12 @@
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <v-divider />
                 <br />
-                <h2 class="text-center white--text" v-if="clasificacionID == 0">
+                <h2 class="text-center white--text" v-if="filtroClasificacionID == 0">
                   Margenes de Utilidad
                 </h2>
                 <br />
@@ -317,7 +318,7 @@
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <v-text-field
@@ -328,7 +329,7 @@
                   outlined
                   rounded
                   dense
-                  v-if="clasificacionID == 0"
+                  v-if="filtroClasificacionID == 0"
                   class="right-input"
                 ></v-text-field>
                 <br />
@@ -376,6 +377,7 @@ export default {
     utilidadGastos: 0,
     utilidadNeta: 0,
     clasificacionID: 0,
+    filtroClasificacionID: 0,
     mensaje: "",
     items: [],
     dialog: false,
@@ -397,6 +399,8 @@ export default {
     this.getRegistriesOfDay();
     this.getclasifications();
     this.getsubclasifications();
+    this.clasificacionID = 0;
+    this.subClasificacionID = 0;
   },
   computed: {
     computedDateFormatted() {
@@ -435,11 +439,11 @@ export default {
         this.itemsSubClasificacion = response.data.response;
       this.SubClasificaciones = response.data.response;
       this.itemsSubClasificacion.push({
-        ConceptoID: "0",
+        ConceptoID: 0,
         Concepto: "Todas",
       });
       this.SubClasificaciones.push({
-        ConceptoID: "0",
+        ConceptoID: 0,
         Concepto: "Todas",
       });
     },
@@ -458,8 +462,7 @@ export default {
     onChangeFechaInicio(value) {
       console.log(value);
     },
-    subclasificacionSeleccionada(value)
-    {
+    subclasificacionSeleccionada(value) {
       this.subclasificacionID = value.ConceptoID;
     },
     clasificacionSeleccionada(value) {
@@ -478,7 +481,7 @@ export default {
         this.itemsClasificacion = rs_itemsclasificacion.data.response;
         this.itemsClasificacion.splice(3, 1);
         this.itemsClasificacion.push({
-          ClasificacionID: "0",
+          ClasificacionID: 0,
           Clasificacion: "Todas",
         });
       }
@@ -501,6 +504,7 @@ export default {
     async getRegistriesOfDay() {
       this.overlay = true;
 
+      this.filtroClasificacionID = this.clasificacionID;
       let empresaTransID = this.Utils.GetValue("EmpresaTransID");
 
       let params = {
@@ -584,6 +588,6 @@ export default {
   font-size: 50px;
 }
 .right-input input {
-    text-align: right;
+  text-align: right;
 }
 </style>

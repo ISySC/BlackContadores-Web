@@ -41,7 +41,7 @@ export default class AccountService {
     //Recuperar datos del perfil
     PostUpdateProfile(data) {
 
-        return axios.put(URL_BASE + profile + '/' + data.companyTransID, data)
+        return axios.put(URL_BASE + profile + data.companyTransID, data)
             .catch(error => {
                 return handlererroapi(error)
             });

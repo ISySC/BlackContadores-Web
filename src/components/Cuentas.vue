@@ -196,7 +196,7 @@ export default {
       const response = await this.CompanyServices.GetBankaccounts(
         data
       );
-      console.log(response);
+      
       if (response.status === 0 || response.status === 500) {
         this.messageCreateAccountResponse(response.message, false, true, "red");
         this.overlay = false;

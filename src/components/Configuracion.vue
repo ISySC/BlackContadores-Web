@@ -10,18 +10,18 @@
       <v-card-text>
         <v-container>
           <v-row no-gutters>
-            <v-col cols="12" sm="3" class="px-4">
+            <v-col cols="12" sm="4" class="px-4">
               <base-material-stats-card
                 style="cursor: pointer"
                 color="orange darken-4"
                 icon="mdi-48px mdi-cash-refund"
                 title="Catálogo"
-                value="Deudas"
+                value="Saldos iniciales"
                 sub-icon="mdi-cog"
-                sub-text="Ajuste de deudas iniciales, nuevas deudas, etc."
+                sub-text="Ajuste de saldos iniciales."
               />
             </v-col>
-            <v-col cols="12" sm="3" class="px-4">
+            <v-col cols="12" sm="4" class="px-4">
               <router-link
                 to="/cuentas"
                 style="text-decoration: none; color: inherit"
@@ -38,7 +38,7 @@
                 />
               </router-link>
             </v-col>
-            <v-col cols="12" sm="3" class="px-4">
+            <v-col cols="12" sm="4" class="px-4">
               <router-link
                 to="/subclasificaciones"
                 style="text-decoration: none; color: inherit"
@@ -49,13 +49,13 @@
                   title="Catálogo"
                   color="deep-purple"
                   icon="mdi-48px mdi-file-tree"
-                  value="Clasificació..."
+                  value="Clasificaciónes"
                   sub-icon="mdi-cog"
                   sub-text="Ajuste de clasificaciones para futuros movimientos."
                 />
               </router-link>
             </v-col>
-            <v-col cols="12" sm="3" class="px-4">
+            <v-col cols="12" sm="4" class="px-4 pt-14">
               <router-link
                 :to="membresiaID == 1 ? '' : '/usuarios'"
                 style="text-decoration: none; color: inherit"

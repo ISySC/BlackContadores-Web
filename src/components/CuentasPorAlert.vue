@@ -26,7 +26,11 @@
                 :value="cxcID"
                 ref="collection"
                 outlined
-                :label="this.esCxC ? 'Cuentas por cobrar' : 'Cuentas por pagar'"
+                :label="
+                  this.TipoCuenta == 3
+                    ? 'Cuentas por cobrar'
+                    : 'Cuentas por pagar'
+                "
                 required
                 :items="itemsCollection"
                 item-text="Descripcion"
@@ -35,6 +39,40 @@
                 return-object
                 @change="collectionSeleccionada"
               ></v-select>
+            </v-col>
+            <v-col cols="12" sm="12">
+              <v-select
+                outlined
+                :value="cuentaID"
+                ref="cuentas"
+                :items="itemsCuentas"
+                item-value="CuentaID"
+                item-text="Descripcion"
+                item-key="itemsCuentas"
+                return-object
+                label="Cuenta afectar (*)"
+                @change="cuentaSeleccionada"
+                style="padding-left: 1px"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" sm="12">
+              <v-select
+                :value="subclasificacionID"
+                ref="subclasificaciones"
+                outlined
+                label="Subclasificación (*)"
+                required
+                :items="itemsSubClasificacion"
+                item-text="Concepto"
+                item-value="ConceptoID"
+                item-key="itemsSubClasificacion"
+                return-object
+                @change="subclasificacionSeleccionada"
+              ></v-select>
+            </v-col>
+            <v-col cols="6" sm="12">
+              <v-divider />
+              <br>
             </v-col>
             <v-col cols="6" sm="6" md="6">
               <v-text-field
@@ -78,13 +116,7 @@
           <v-btn width="25%" color="error" @click.native="cancelar">
             Cancelar
           </v-btn>
-          <v-btn
-            width="30%"
-            color="blue"
-            dark
-            v-if="accion != 3"
-            @click.native="aceptar"
-          >
+          <v-btn width="30%" color="blue" dark @click.native="aceptar">
             Guardar
           </v-btn>
         </v-card-actions>
@@ -108,10 +140,10 @@ export default {
   props: {
     dialog: { type: Boolean, default: false },
     title: { type: String, default: "" },
-    abono: { type: Number, default: 0 },
     cxCID: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
-    esCxC: { type: Boolean, default: false },
+    tipoCuenta: { type: Number, default: 3 },
+
   },
   data: () => ({
     activo: true,
@@ -128,23 +160,33 @@ export default {
     value: true,
     overlay: false,
     vToolBarColor: "green",
-    EsCxC: false,
+    TipoCuenta: 0,
     itemsCollection: [],
     collections: [],
+    itemsCuentas: [],
+    cuentas: [],
+    subclasificaciones: [],
+    itemsSubClasificacion: [],
+    subclasificacionID: 0,
+    cuentaID: 0,
     rules: {
       required: (value) => !!value || "Este campo es requerido",
     },
   }),
   watch: {
     dialog() {
-      if (this.EsCxC != this.$props.esCxC) {
-        this.$refs["collection"].reset();
-        this.total = 0;
-        this.saldo = 0;
-        this.abono = 0;
+      if (this.$props.dialog) {
+        if (this.TipoCuenta != this.$props.tipoCuenta) {
+          this.$refs["collection"].reset();
+          this.total = 0;
+          this.saldo = 0;
+          this.abono = 0;
+        }
+        this.TipoCuenta = this.$props.tipoCuenta;
+        this.getCuentasPor();
+        this.getbankaccount();
+        this.getsubclasifications();
       }
-      this.EsCxC = this.$props.esCxC;
-      this.getCuentasPor();
     },
   },
   created() {
@@ -152,6 +194,38 @@ export default {
     this.Utils = new Utils();
   },
   methods: {
+    async getbankaccount() {
+      let data = {
+        empresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+
+      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(data);
+
+      if (rs_itemscuentas.status === 200) {
+        this.cuentas = rs_itemscuentas.data.response;
+        this.itemsCuentas = this.itemsCuentas = this.cuentas.filter(
+          (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
+        );
+      }
+    },
+    async getsubclasifications() {
+      let data = {
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+      const response = await this.CompanyServices.GetSubclasifications(data);
+
+      if (response.status === 200) {
+        this.subclasificaciones = response.data.response;
+        this.itemsSubClasificacion = this.subclasificaciones.filter(
+          (sub) => sub.ClasificacionID == 4
+        );
+      }
+    },
+    cuentaSeleccionada(value) {
+      this.cuentaID = value.CuentaID;
+    },
     validarNumero(e) {
       if (e.keyCode < 48 || e.keyCode > 57) {
         if (e.keyCode != 46) e.preventDefault();
@@ -176,7 +250,7 @@ export default {
     async getCuentasPor() {
       let params = {
         EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
-        EsCxC: this.EsCxC,
+        TipoCuentaID: this.TipoCuenta,
       };
 
       var response = await this.CompanyServices.GetCollections(params);
@@ -199,6 +273,7 @@ export default {
           this.$emit("update:abono", this.abono);
           this.$emit("update:cxCID", this.cxcID);
           this.$emit("update:total", this.totalMonto);
+          this.$emit("update:cuentaPago", this.cuentaID);
           this.$emit("update:dialog", false);
         } else {
           this.overlay = false;

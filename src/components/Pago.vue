@@ -505,6 +505,11 @@ export default {
       );
     },
     cancelar() {
+      this.cardNumber = "";
+      this.cardName = "";
+      this.cardYear = "";
+      this.cardMonth = "";
+      this.cardCvv = "";
       this.$emit("update:dialog", false);
     },
     flipCard(status) {

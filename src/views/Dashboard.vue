@@ -25,20 +25,19 @@
               link
               id="btnLnk"
               :disabled="!activa"
-              @click="stateSelected(item.id)"
             >
               <v-list-item-icon>
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title style="">{{ item.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
         </v-list>
         <v-footer app style="padding:0px;">
-          <v-btn block tile color="blue" dark href="/login" style="height: 60px;">
+          <v-btn block tile color="blue" dark href="/" style="height: 60px;">
             <v-icon left> mdi-logout </v-icon>
             Cerrar Sesión
           </v-btn>
@@ -98,12 +97,6 @@ export default {
         path: "balance-general",
       },
       {
-        title: Constants.str_deuda,
-        icon: "mdi-cash-minus",
-        id: 4,
-        path: "deudas",
-      },
-      {
         title: Constants.str_configuracion,
         icon: "mdi-folder-cog-outline",
         id: 5,
@@ -129,25 +122,6 @@ export default {
     cerrarSesion()
     {
 
-    },
-    stateSelected(itemID) {
-      switch (itemID) {
-        case 1: //registro diario
-          break;
-        case 2: //estado resultados
-          break;
-        case 3: //balance general
-          break;
-        case 4: //deudas
-          break;
-        case 5: //configuracion
-          break;
-        case 6: //perfil
-          break;
-
-        default:
-          break;
-      }
     },
   },
 };
@@ -192,7 +166,7 @@ export default {
 }
 
 #btnLnk {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  /*font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;*/
   font-size: 0.98rem !important;
 }
 </style>

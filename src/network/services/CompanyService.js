@@ -13,6 +13,16 @@ export default class CompanyService {
     constructor() {
         axios.defaults.headers.common['access-token'] = localStorage.getItem('authToken');
     }
+
+    //Cuentas
+    GetTypeAccount()
+    {
+        return axios.get(URL_BASE + 'company/typeofaccount')
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
     //Cxc and Cxp
     GetCollections(data) {
 
