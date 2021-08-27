@@ -322,6 +322,7 @@ export default {
     membershipsList: [],
     ItemMembershipSelected: [],
     password: "",
+    password_old: "",
     email: "",
     Nombre: "",
     Empresa: "",
@@ -393,6 +394,7 @@ export default {
         SubGiroID: this.SubGiroID,
         ActividadID: this.ActividadID,
         companyTransID: empresaTransID,
+        EsCambiarContrasena: this.password != this.password_old
       };
 
       var response = await this.AccountService.PostUpdateProfile(accountData);
@@ -442,6 +444,7 @@ export default {
         this.Actividades = response.data.response.actividades;
         this.email = response.data.response.perfil[0].CorreoUsuario;
         this.password = response.data.response.perfil[0].Contrasena;
+        this.password_old = response.data.response.perfil[0].Contrasena;
         this.GiroID = response.data.response.perfil[0].GiroID;
         this.giroSeleccionado({ GiroID: this.GiroID });
         this.SubGiroID = response.data.response.perfil[0].SubGiroID;

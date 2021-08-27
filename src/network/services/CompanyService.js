@@ -13,6 +13,32 @@ export default class CompanyService {
     constructor() {
         axios.defaults.headers.common['access-token'] = localStorage.getItem('authToken');
     }
+    //Balance General
+    GetGeneralBalance(empresaTransID)
+    {
+        return axios.get(URL_BASE + 'company/balancegeneral/' + empresaTransID)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
+    //Saldos Iniciales
+
+    PostUpdateOpeningBalances(data)
+    {
+        return axios.put(URL_BASE + 'company/openingbalances', data)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
+    GetOpeningBalance(empresaTransID)
+    {
+        return axios.get(URL_BASE + 'company/openingbalances/' + empresaTransID)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
 
     //Cuentas
     GetTypeAccount()

@@ -11,6 +11,11 @@
         <v-container>
           <v-row no-gutters>
             <v-col cols="12" sm="4" class="px-4">
+              <router-link
+                to="/saldos-iniciales"
+                style="text-decoration: none; color: inherit"
+                disabled
+              >
               <base-material-stats-card
                 style="cursor: pointer"
                 color="orange darken-4"
@@ -20,6 +25,7 @@
                 sub-icon="mdi-cog"
                 sub-text="Ajuste de saldos iniciales."
               />
+              </router-link>
             </v-col>
             <v-col cols="12" sm="4" class="px-4">
               <router-link

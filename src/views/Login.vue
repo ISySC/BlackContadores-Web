@@ -13,9 +13,96 @@
       <!-- -->
       <v-container fill-height fluid id="login">
         <v-row justify="center" align="center" no-gutters>
-          <v-col cols="12" sm="10" md="10">
+          <v-col cols="12" sm="10" :md="step == 0 ? 5 : 10">
             <v-card class="elevation-7">
               <v-window v-model="step">
+                <v-window-item :value="0">
+                  <v-row>
+                    <v-col cols="12" md="12" class="flex-grow-0 flex-shrink-0">
+                      <v-card-text style="height: 500px">
+                        <v-row class="text-center">
+                          <v-col cols="12 d-flex justify-center">
+                            <v-img
+                              :src="require('../assets/logo-black.png')"
+                              class="my-3"
+                              max-height="100"
+                              max-width="400"
+                            />
+                          </v-col>
+                        </v-row>
+                        <br />
+                        <v-row
+                          justify="center"
+                          align="center"
+                          class="pt-0"
+                          no-gutters
+                        >
+                          <v-col
+                            cols="12"
+                            md="8"
+                            class="d-flex justify-center pt-0"
+                          >
+                            <span class="text-h6 font-weight-bold">
+                              Recuperar Contraseña
+                            </span>
+                          </v-col>
+                          <v-col cols="12" md="8" class="d-flex justify-center">
+                            <span class="text-subtitle-1">
+                              Ingresa tu correo electrónico para buscar tu
+                              cuenta y enviaremos un correo con instrucciones
+                              para reestablecer tu contraseña.
+                            </span>
+                          </v-col>
+                        </v-row>
+                        <v-row class="text-center">
+                          <v-col cols="12" class="d-flex justify-center">
+                            <br />
+                            <v-form class="">
+                              <v-text-field
+                                ref="email"
+                                :label="str_txt_email"
+                                name="email"
+                                prepend-icon="email"
+                                type="text"
+                                color="light-blue accent-3"
+                                style="width: 400px"
+                                v-model="emailRecovery"
+                                :rules="[rules.email]"
+                                @input="(_) => (email = _)"
+                              />
+                            </v-form>
+                          </v-col>
+                        </v-row>
+                        <br />
+                        <v-row>
+                          <v-col cols="12">
+                            <div class="text-center">
+                              <v-btn
+                                :loading="loading"
+                                color="light-blue"
+                                dark
+                                @click="RecoveryPassword"
+                                >Enviar correo de recuperación</v-btn
+                              >
+                            </div>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12">
+                            <div class="text-center">
+                              <div class="text-center">
+                                <v-btn color="black" dark @click="step++">{{
+                                  str_btn_login
+                                }}</v-btn>
+                              </div>
+                            </div>
+                          </v-col>
+                        </v-row>
+                        <br />
+                      </v-card-text>
+                    </v-col>
+                  </v-row>
+                </v-window-item>
                 <v-window-item :value="1">
                   <v-row>
                     <v-col cols="12" md="8" class="flex-grow-0 flex-shrink-0">
@@ -60,7 +147,7 @@
                           <v-row>
                             <v-col>
                               <span style="text-align: rigth">
-                                <a target="_blank" href="#">
+                                <a target="_blank" @click="step = 0">
                                   ¿Olvidaste tu contraseña?
                                 </a>
                               </span>
@@ -73,6 +160,7 @@
                           <v-col cols="12">
                             <div class="text-center">
                               <v-btn
+                                :loading="loading"
                                 color="light-blue"
                                 dark
                                 @click="iniciarSesion(usuario, contrasena)"
@@ -204,7 +292,9 @@ export default {
     ContentFooter,
   },
   data: () => ({
+    loading: false,
     step: 1,
+    emailRecovery: "",
     usuario: "",
     contrasena: "",
     titulo: "Black Administrativo - [ Inicio de sesión ]",
@@ -218,6 +308,28 @@ export default {
     str_txt_password: Constants.str_txt_password,
     membershipsList: [],
     ItemMembershipSelected: [],
+    rules: {
+      required: (value) => !!value || "Este campo es requerido",
+
+      password: (value) => {
+        const pattern =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#/$%/^&/*])(?=.{8,})/;
+
+        return (
+          pattern.test(value) ||
+          "Se requiere una contraseña mayor o igual a 8 caracteres. Incluye mayúsculas, números y caracteres especiales ($!#%&@)"
+        );
+      },
+
+      email: (value) => {
+        const pattern = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+
+        return (
+          pattern.test(value) ||
+          "Correo no válido. Favor de verificar la estructura (ejemplo@tuempresa.com)"
+        );
+      },
+    },
   }),
 
   created() {
@@ -243,6 +355,32 @@ export default {
   },
 
   methods: {
+    validateEmail() {
+      const pattern = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/;
+
+      return pattern.test(this.emailRecovery);
+    },
+    async RecoveryPassword() {
+      if (this.validateEmail()) {
+        var response = await this.AccountService.PostRecoveryPassword({
+          correousuario: this.emailRecovery,
+        });
+
+        this.messageCreateAccountResponse(
+          response.data.response[0].message,
+          false,
+          true,
+          response.data.response.success ? "true" : "red"
+        );
+
+        if (response.data.response.success) this.step++;
+      } else {
+        this.errorMessage(
+          "No de ha ingresado un email valido",
+          "Black Administrativo - [ Recuperar contraseña ]"
+        );
+      }
+    },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
       this.mensaje = message;
       this.esCancelar = esCancelar;
@@ -259,20 +397,19 @@ export default {
           "Black Administrativo - [ Inicio de sesión ]"
         );
       else {
+        this.loading = true;
         const accountData = {
           CorreoUsuario: usuario,
           Contrasena: contrasena,
         };
 
         var response = await this.AccountService.PostLogin(accountData);
-
-        console.log(response.data.response);
-
+        this.loading = false;
         if (response.data.response.success !== "false") {
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
-            response.data.response.EmpresaTransID,
+            response.data.response[0].EmpresaTransID,
             "EmpresaTransID"
           );
           this.Utils.SetValue(
@@ -299,10 +436,6 @@ export default {
             response.data.response[0].NombreEmpresa,
             "company_name"
           );
-          this.Utils.SetValue(
-            response.data.response[0].EmpresaTransID,
-            "EmpresaTransID"
-          );
           this.Utils.SetValue(response.data.response[0].UsuarioID, "UsuarioID");
           this.Utils.SetValue(
             response.data.response[0].MembresiaID,
@@ -323,6 +456,7 @@ export default {
               true,
               "red"
             );
+            this.loading = false;
             this.$router.push("/perfil");
           }
         } else {
@@ -334,7 +468,9 @@ export default {
             true,
             "red"
           );
+          this.loading = false;
         }
+        this.loading = false;
       }
     },
     createAccountPage(MembresiaID) {

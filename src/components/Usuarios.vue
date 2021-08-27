@@ -1,5 +1,5 @@
 <template id="ca">
-  <v-main class="px-4" style="padding: 0px; padding-top: 60px; height: 100%">
+  <v-main class="px-4" style="padding: 0px; padding-top: 82px; height: 100%">
     <UsuarioAlert
       :dialog.sync="dialog"
       :title="titulo"
@@ -22,7 +22,7 @@
     />
     <!-- -->
 
-    <base-material-card color="blue pa-0" style="height: 97%">
+    <base-material-card color="blue pa-0">
       <template v-slot:heading>
         <p class="text-left text-h5">
           USUARIOS |
@@ -37,11 +37,11 @@
           'Usuarios Disponibles: ' + usuariosDisponibles
         }}</span>
       </template>
-      <v-card-text style="height: 97%">
-        <v-container class="p-0" style="height: 100%">
-          <v-row no-gutters style="height: 100%">
-            <v-col cols="12" sm="12" style="height: 100%">
-              <v-simple-table class="grey lighten-3" style="height: 100%">
+      <v-card-text style="padding: 0px;">
+        <v-container class="p-0" style="padding: 0px;">
+          <v-row no-gutters >
+            <v-col cols="12" sm="12" >
+              <v-simple-table fixed-header height="660px" class="grey lighten-3" >
                 <template v-slot:default>
                   <thead>
                     <tr id="headerTitle">

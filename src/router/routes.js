@@ -42,12 +42,12 @@ const routes = new Router({
         {
           path: '/balance-general',
           name: 'balance-general',
-          component: () => import('../components/RegistroDiario')
+          component: () => import('../components/BalanceGeneral')
         },
         {
-          path: '/deudas',
-          name: 'deudas',
-          component: () => import('../components/RegistroDiario')
+          path: '/saldos-iniciales',
+          name: 'saldos-iniciales',
+          component: () => import('../components/SaldosIniciales')
         },
         {
           path: '/configuracion',

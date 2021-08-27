@@ -41,9 +41,14 @@
         <v-row>
           <v-col cols="12" md="12">
             <v-card class="white rounded-lg pa-10" color="white" elevation="24">
-              <h2 class="text-left">
-                Black Administrativo - Información de la cuenta
+              <div style="display: inline;">
+              <h2 class="text-left pr-1" style="display: inline-block;">
+                Black Administrativo - Información de la cuenta para tu plan 
               </h2>
+              <h2 class="blue--text text-right" style="display: inline-block;">
+                {{ ItemMembership[0].TipoMembresia[0].Descripcion }}
+              </h2>
+              </div>
               <br />
               <v-form>
                 <v-text-field
@@ -185,12 +190,13 @@ export default {
   created() {
     this.Utils = new Utils();
     this.AccountService = new AccountService();
+    console.log(this.ItemMembership);
   },
 
   methods: {
     backToPlans() {
       this.membershipSelectedYear = false;
-      this.membershipSelectedMonth = false;
+      this.membershipSelectedMonth = true;
       this.$emit("backToPlans");
     },
     dashboardPage() {
@@ -224,8 +230,8 @@ export default {
       this.overlay = false;
     },
     async createAccount() {
-      this.dialogPago = true;
-      /*if (
+      //this.dialogPago = true;
+      if (
         this.legalNamePerson != "" &&
         this.email != "" &&
         this.password != ""
@@ -312,7 +318,7 @@ export default {
           false,
           true,
           "red"
-        );*/
+        );
     },
   },
 };

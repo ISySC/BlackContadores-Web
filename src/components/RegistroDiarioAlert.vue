@@ -279,6 +279,7 @@ export default {
   created() {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
+    this.getCatalog();
   },
 
   mounted() {

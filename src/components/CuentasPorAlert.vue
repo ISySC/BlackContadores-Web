@@ -28,8 +28,8 @@
                 outlined
                 :label="
                   this.TipoCuenta == 3
-                    ? 'Cuentas por cobrar'
-                    : 'Cuentas por pagar'
+                    ? 'Cuentas por cobrar (*)'
+                    : 'Cuentas por pagar (*)'
                 "
                 required
                 :items="itemsCollection"
@@ -72,7 +72,7 @@
             </v-col>
             <v-col cols="6" sm="12">
               <v-divider />
-              <br>
+              <br />
             </v-col>
             <v-col cols="6" sm="6" md="6">
               <v-text-field
@@ -143,7 +143,6 @@ export default {
     cxCID: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
     tipoCuenta: { type: Number, default: 3 },
-
   },
   data: () => ({
     activo: true,
@@ -192,6 +191,9 @@ export default {
   created() {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
+    this.getCuentasPor();
+    this.getbankaccount();
+    this.getsubclasifications();
   },
   methods: {
     async getbankaccount() {
@@ -222,6 +224,9 @@ export default {
           (sub) => sub.ClasificacionID == 4
         );
       }
+    },
+    subclasificacionSeleccionada(value) {
+      this.subclasificacionID = value.ConceptoID;
     },
     cuentaSeleccionada(value) {
       this.cuentaID = value.CuentaID;
@@ -268,7 +273,7 @@ export default {
       }
     },
     async aceptar() {
-      if (this.cxcID != 0) {
+      if (this.cxcID != 0 && this.abono > 0 && this.cuentaID != 0 && this.subclasificacionID != 0) {
         if (this.abono <= this.saldoMax && this.abono > 0) {
           this.$emit("update:abono", this.abono);
           this.$emit("update:cxCID", this.cxcID);

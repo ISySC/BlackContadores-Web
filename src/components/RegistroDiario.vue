@@ -13,7 +13,7 @@
 
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
-      titulo="Black Administrativo - [ Problemas con el servicio ]"
+      titulo="Black Administrativo - [ Registro Diario ]"
       :mensaje="mensaje"
       :esCancelar="esCancelar"
       :esAceptar="esAceptar"
@@ -38,19 +38,44 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
     <base-material-card color="blue pa-0" style="height: 100%">
       <template v-slot:heading>
-        <p class="text-left text-h5">
+        <div class="text-left text-h5" style="height: 50px">
           REGISTRO DIARIO |
           <span class="text-subtitle-1" id="textDescription"
             >Registra tus movimientos diarios, como ingresos, gastos y
             compras.</span
           >
-        </p>
+          <div class="float-right text-left text-h5">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <download-excel
+                  :data="items"
+                  :fields="json_fields"
+                  worksheet="Registros"
+                  name="Registro_Diario"
+                >
+                  <v-btn
+                    class="float-right"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="GenerarReporte"
+                    color="green"
+                    rounded
+                    :disabled="reportes == 0"
+                  >
+                    <v-icon>mdi-file-excel</v-icon>
+                    Reporte
+                  </v-btn>
+                </download-excel>
+              </template>
+              <span> Generar Reporte</span>
+            </v-tooltip>
+          </div>
+        </div>
       </template>
-      <v-card-text style="height: 92%">
-        <v-simple-table style="height: 100%" class="grey lighten-3">
+      <v-card-text style="padding: 0px;">
+        <v-simple-table fixed-header height="660px" class="grey lighten-3" >
           <template v-slot:default>
             <thead>
               <tr id="headerTitle">
@@ -160,7 +185,7 @@
                   {{ item.FechaRegistro }}
                 </td>
                 <td style="width: 150px">{{ item.Referencia }}</td>
-                <td style="width: 100px">{{ item.Clasificacion }}</td>
+                <td style="width: 300px">{{ item.Clasificacion }}</td>
                 <td style="width: 120px; text-align: right">
                   <v-chip
                     :color="getColorClasification(item.ClasificacionID)"
@@ -169,7 +194,7 @@
                   >
                 </td>
                 <td style="width: 200px">{{ item.Descripcion }}</td>
-                <td style="width: 40px">
+                <td style="width: 10px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -183,7 +208,7 @@
                     mdi-pencil
                   </v-icon>
                 </td>
-                <td style="width: 40px">
+                <td style="width: 10px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -197,7 +222,7 @@
                     mdi-file-search
                   </v-icon>
                 </td>
-                <td style="width: 40px">
+                <td style="width: 10px">
                   <v-icon @click="onDelete(item.FolioID, item.Folio)">
                     mdi-delete
                   </v-icon>
@@ -217,7 +242,7 @@
               bottom
               right
               fab
-              style="margin-bottom: 90px; margin-right: 40px"
+              style="margin-bottom: 100px; margin-right: 40px"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -232,11 +257,16 @@
 <script>
 import RegistroDiarioAlert from "../components/RegistroDiarioAlert";
 import CompanyServices from "../network/services/CompanyService";
+import ReportService from "../network/services/ReportService";
 import Utils from "../util/utils";
 import Vue from "vue";
 import Constants from "../util/constants";
 import Loading from "../components/Loading";
 import AlertDialog from "../components/AlertDialog";
+import JsonExcel from "vue-json-excel";
+import moment from "moment";
+
+Vue.component("downloadExcel", JsonExcel);
 
 export default {
   components: {
@@ -245,6 +275,15 @@ export default {
     AlertDialog,
   },
   data: () => ({
+    json_fields: {
+      "FOLIO" : "Folio",
+      "DESCRIPCIÓN" : "DescripcionMovimiento",
+      "FECHA" : "FechaRegistro",
+      "REFERENCIA" : "Referencia",
+      "CLASIFICACIÓN" : "Clasificacion",
+      "IMPORTE" : "Importe",
+      "CUENTA" : "Descripcion",
+    },
     eliminar: false,
     value: null,
     items: [],
@@ -260,14 +299,71 @@ export default {
     overlay: false,
     vToolBarColor: "",
     str_no_data: Constants.str_no_data,
+    reportes: 0,
   }),
 
   created() {
     this.CompanyServices = new CompanyServices();
+    this.ReportService = new ReportService();
+    this.moment = new moment();
     this.Utils = new Utils();
     this.getRegistriesOfDay();
+    this.validarGenerarReporte();
   },
   methods: {
+    async validarGenerarReporte() {
+      this.overlay = true;
+
+      const response = await this.ReportService.GetNumberReports(
+        this.Utils.GetValue("EmpresaTransID")
+      );
+      
+      if (response.status === 0 || response.status === 500)
+        this.messageCreateAccountResponse(response.message, false, true, "red");
+      else if (response.data.success) {
+        this.reportes = response.data.response[0].NoReportes;
+      }
+
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    async GenerarReporte() {
+      if (this.items.length > 0) {
+        this.overlay = true;
+
+        const response = await this.ReportService.UpdateNumberReports(
+          this.Utils.GetValue("EmpresaTransID")
+        );
+
+        if (response.status === 0 || response.status === 500)
+          this.messageCreateAccountResponse(
+            response.message,
+            false,
+            true,
+            "red"
+          );
+        else {
+          if (response.data.success) {
+            this.reportes --;
+            this.messageCreateAccountResponse(
+              "Reporte generado de manera exitosa",
+              false,
+              true,
+              "green"
+            );
+          }
+        }
+      } else {
+        this.messageCreateAccountResponse(
+          "No existen registros para generar un reporte.",
+          false,
+          true,
+          "red"
+        );
+      }
+      this.overlay = false;
+      this.eliminar = false;
+    },
     async DeleteRegistry() {
       this.overlay = true;
 
@@ -309,14 +405,20 @@ export default {
       this.folio = folio;
       this.dialog = true;
     },
+    currentDate() {
+      const current = new Date();
+      const date = `${current.getDate()}/${
+        current.getMonth() + 1 < 10
+          ? "0" + (current.getMonth() + 1)
+          : current.getMonth() + 1
+      }/${current.getFullYear()}`;
+      return date;
+    },
     async getRegistriesOfDay() {
       this.overlay = true;
-
       let params = {
         EmpresaTransID: this.Utils.GetValue("EmpresaTransID"), //new Utils().GetValue("empresaTransID"),
-        FechaRegistro: Vue.filter("formatoFecha")(
-          new Date().toISOString().substr(0, 10)
-        ),
+        FechaRegistro: this.currentDate(),
       };
 
       const rs_registriesitems =

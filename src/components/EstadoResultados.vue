@@ -15,14 +15,41 @@
 
     <base-material-card color="blue" style="height: 97%">
       <template v-slot:heading>
-        <div class="text-left text-h5" style="height: 49px">
+        <div class="text-left text-h5" style="height: 50px">
           ESTADO DE RESULTADOS |
           <span class="text-subtitle-1" id="textDescription"
             >Consulta los resultados de tus estados.</span
           >
+          <div class="float-right text-left text-h5">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <download-excel
+                  :data="registros"
+                  :fields="json_fields"
+                  worksheet="Registros"
+                  name="Estado_Resultados"
+                  :before-generate="formarReporte"
+                >
+                  <v-btn
+                    class="float-right"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="GenerarReporte"
+                    color="green"
+                    rounded
+                    :disabled="reportes == 0 || items.length == 0"
+                  >
+                    <v-icon>mdi-file-excel</v-icon>
+                    Reporte
+                  </v-btn>
+                </download-excel>
+              </template>
+              <span> Generar Reporte</span>
+            </v-tooltip>
+          </div>
         </div>
       </template>
-      <v-card-text style="padding-bottom: 0px">
+      <v-card-text style="padding: 0px">
         <v-container style="padding: 0px">
           <v-row no-gutters style="height: 100%">
             <v-col cols="12" sm="2">
@@ -129,11 +156,17 @@
           </v-row>
         </v-container>
       </v-card-text>
-      <v-card-text style="height: 80%">
-        <v-container style="height: 100%; padding: 0px">
-          <v-row no-gutters style="height: 100%">
-            <v-col cols="12" sm="10" class="pr-7" style="height: 100%">
-              <v-simple-table class="grey lighten-3" style="height: 100%">
+      <v-card-text
+        style="padding-top: 0px; padding-left: 0px; padding-right: 0px"
+      >
+        <v-container style="padding: 0px">
+          <v-row no-gutters>
+            <v-col cols="12" sm="10" class="pr-7">
+              <v-simple-table
+                fixed-header
+                height="610px"
+                class="grey lighten-3"
+              >
                 <template v-slot:default>
                   <thead>
                     <tr id="headerTitle">
@@ -243,17 +276,15 @@
               </v-simple-table>
             </v-col>
             <v-col cols="12" sm="2" style="height: 100%">
-              <v-card
-                :elevation="6"
-                class="px-4 pt-5 blue-grey darken-4"
-                style="height: 100%"
-              >
+              <v-card :elevation="6" class="px-4 pt-5 pb-0 blue-grey darken-4">
                 <h2 class="text-center white--text">Totales</h2>
                 <br />
                 <v-text-field
                   dark
                   readonly
-                  :label="filtroClasificacionID == 0 ? 'Total Ingresos' : 'Total'"
+                  :label="
+                    filtroClasificacionID == 0 ? 'Total Ingresos' : 'Total'
+                  "
                   :value="totalIngresos | formatoMoneda"
                   outlined
                   rounded
@@ -306,7 +337,10 @@
                 ></v-text-field>
                 <v-divider />
                 <br />
-                <h2 class="text-center white--text" v-if="filtroClasificacionID == 0">
+                <h2
+                  class="text-center white--text"
+                  v-if="filtroClasificacionID == 0"
+                >
                   Margenes de Utilidad
                 </h2>
                 <br />
@@ -349,6 +383,9 @@ import Loading from "../components/Loading";
 import AlertDialog from "../components/AlertDialog";
 import Vue from "vue";
 import Utils from "../util/utils";
+import JsonExcel from "vue-json-excel";
+import ReportService from "../network/services/ReportService";
+Vue.component("downloadExcel", JsonExcel);
 
 export default {
   components: {
@@ -359,12 +396,12 @@ export default {
     FechaInicio: new Date().toISOString().substr(0, 10),
     FechaFin: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(
-      new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      new Date(new Date().getTime() - 1*24*60*60*1000)
         .toISOString()
         .substr(0, 10)
     ),
     dateFormatted2: vm.formatDate(
-      new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      new Date(new Date().getTime() + 1*24*60*60*1000)
         .toISOString()
         .substr(0, 10)
     ),
@@ -380,6 +417,7 @@ export default {
     filtroClasificacionID: 0,
     mensaje: "",
     items: [],
+    registros: [],
     dialog: false,
     dialogAlert: false,
     esCancelar: false,
@@ -391,14 +429,27 @@ export default {
     itemsSubClasificacion: [],
     str_no_data: Constants.str_no_data,
     SubClasificaciones: [],
+    descontarReporte: true,
+    reportes: 0,
+    json_fields: {
+      FOLIO: "Folio",
+      DESCRIPCIÓN: "DescripcionMovimiento",
+      FECHA: "FechaRegistro",
+      REFERENCIA: "Referencia",
+      CLASIFICACIÓN: "Clasificacion",
+      IMPORTE: "Importe",
+      CUENTA: "Descripcion",
+    },
   }),
 
   created() {
+    this.ReportService = new ReportService();
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
     this.getRegistriesOfDay();
     this.getclasifications();
     this.getsubclasifications();
+    this.validarGenerarReporte();
     this.clasificacionID = 0;
     this.subClasificacionID = 0;
   },
@@ -428,6 +479,118 @@ export default {
     },
   },
   methods: {
+    formarReporte() {
+      this.registros = JSON.parse(JSON.stringify(this.items));
+      if (this.clasificacionID == 0) {
+        this.registros.push(
+          {
+            Folio: "",
+            DescripcionMovimiento: "",
+          },
+          {
+            Folio: "Total Ingresos",
+            DescripcionMovimiento: this.totalIngresos,
+          },
+          {
+            Folio: "Total Compras",
+            DescripcionMovimiento: this.totalCompras,
+          },
+          {
+            Folio: "Utilidad Bruta",
+            DescripcionMovimiento: this.totalIngresos - this.totalCompras,
+          },
+          {
+            Folio: "Total Gastos",
+            DescripcionMovimiento: this.totalGastos,
+          },
+          {
+            Folio: "Utilidad Neta",
+            DescripcionMovimiento: this.utilidadNeta,
+          },
+          {
+            Folio: "Utilidad Costos",
+            DescripcionMovimiento: this.utilidadCostos | this.formatoPorcentaje,
+          },
+          {
+            Folio: "Utilidad Gastos",
+            DescripcionMovimiento: this.utilidadGastos | this.formatoPorcentaje,
+          }
+        );
+      } else {
+        this.registros.push(
+          {
+            Folio: "",
+            DescripcionMovimiento: "",
+          },
+          {
+            Folio: "Total",
+            DescripcionMovimiento: this.totalIngresos,
+          }
+        );
+      }
+    },
+    async validarGenerarReporte() {
+      this.overlay = true;
+
+      const response = await this.ReportService.GetNumberReports(
+        this.Utils.GetValue("EmpresaTransID")
+      );
+
+      if (response.status === 0 || response.status === 500)
+        this.messageCreateAccountResponse(response.message, false, true, "red");
+      else if (response.data.success) {
+        this.reportes = response.data.response[0].NoReportes;
+      }
+
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    async GenerarReporte() {
+      if (this.items.length > 0) {
+        this.overlay = true;
+        if (this.descontarReporte) {
+          const response = await this.ReportService.UpdateNumberReports(
+            this.Utils.GetValue("EmpresaTransID")
+          );
+
+          if (response.status === 0 || response.status === 500)
+            this.messageCreateAccountResponse(
+              response.message,
+              false,
+              true,
+              "red"
+            );
+          else {
+            if (response.data.success) {
+              this.reportes--;
+              this.descontarReporte = false;
+              this.messageCreateAccountResponse(
+                "Reporte generado de manera exitosa",
+                false,
+                true,
+                "green"
+              );
+            }
+          }
+        } else {
+          this.messageCreateAccountResponse(
+            "Reporte generado de manera exitosa",
+            false,
+            true,
+            "green"
+          );
+        }
+      } else {
+        this.messageCreateAccountResponse(
+          "No existen registros para generar un reporte.",
+          false,
+          true,
+          "red"
+        );
+      }
+      this.overlay = false;
+      this.eliminar = false;
+    },
     async getsubclasifications() {
       let data = {
         EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
@@ -501,6 +664,15 @@ export default {
       this.folio = folio;
       this.dialog = true;
     },
+    Dateformat(date) {
+      date = new Date(date);
+      date = `${date.getDate()}/${
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1
+      }/${date.getFullYear()}`;
+      return date;
+    },
     async getRegistriesOfDay() {
       this.overlay = true;
 
@@ -513,9 +685,7 @@ export default {
           ? this.subclasificacionID
           : 0,
         empresaTransID: empresaTransID,
-        FechaInicio: Vue.filter("formatoFecha")(
-          new Date(this.FechaInicio).toISOString().substr(0, 10)
-        ),
+        FechaInicio: this.Dateformat(this.FechaInicio),
         FechaFin: Vue.filter("formatoFecha")(
           new Date(this.FechaFin).toISOString().substr(0, 10)
         ),
@@ -532,6 +702,7 @@ export default {
           "red"
         );
       else if (rs_registriesitems.data.success) {
+        this.registros = rs_registriesitems.data.response;
         this.items = rs_registriesitems.data.response;
         if (rs_registriesitems.data.totalAccount.TotalIngreso) {
           this.totalIngresos =

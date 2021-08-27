@@ -11,6 +11,14 @@ export default class AccountService {
         axios.defaults.headers.common['access-token'] = localStorage.getItem('authToken');
     }
 
+    //Recuperar contraseña
+    PostRecoveryPassword (data) {
+        return axios.post(URL_BASE + "user/recoverypassword", data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
     //crear el usuario inicial para la empresa
     PostCreateAccount(data) {
         return axios.post(URL_BASE + createaccount, data)
