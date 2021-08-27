@@ -38,7 +38,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <base-material-card color="blue pa-0" style="height: 100%">
+    <base-material-card color="blue pa-0">
       <template v-slot:heading>
         <div class="text-left text-h5" style="height: 50px">
           REGISTRO DIARIO |
@@ -74,8 +74,8 @@
           </div>
         </div>
       </template>
-      <v-card-text style="padding: 0px;">
-        <v-simple-table fixed-header height="660px" class="grey lighten-3" >
+      <v-card-text style="padding: 0px">
+        <v-simple-table fixed-header height="660px" class="grey lighten-3">
           <template v-slot:default>
             <thead>
               <tr id="headerTitle">
@@ -234,20 +234,20 @@
                 {{ str_no_data }}
               </td>
             </tr>
-            <v-btn
-              @click="mostrarRegistroAlert(0, 'Agregar nuevo movimiento', 0, 0)"
-              color="blue"
-              dark
-              absolute
-              bottom
-              right
-              fab
-              style="margin-bottom: 100px; margin-right: 40px"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
           </template>
         </v-simple-table>
+        <v-btn
+          @click="mostrarRegistroAlert(0, 'Agregar nuevo movimiento', 0, 0)"
+          color="blue"
+          dark
+          absolute
+          bottom
+          right
+          class="mb-10 mr-4 rounded-circle"
+          height="60"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
         <h2 class="pt-3 pl-4">Total movimientos : {{ items.length }}</h2>
       </v-card-text>
     </base-material-card>
@@ -276,13 +276,13 @@ export default {
   },
   data: () => ({
     json_fields: {
-      "FOLIO" : "Folio",
-      "DESCRIPCIÓN" : "DescripcionMovimiento",
-      "FECHA" : "FechaRegistro",
-      "REFERENCIA" : "Referencia",
-      "CLASIFICACIÓN" : "Clasificacion",
-      "IMPORTE" : "Importe",
-      "CUENTA" : "Descripcion",
+      FOLIO: "Folio",
+      DESCRIPCIÓN: "DescripcionMovimiento",
+      FECHA: "FechaRegistro",
+      REFERENCIA: "Referencia",
+      CLASIFICACIÓN: "Clasificacion",
+      IMPORTE: "Importe",
+      CUENTA: "Descripcion",
     },
     eliminar: false,
     value: null,
@@ -317,7 +317,7 @@ export default {
       const response = await this.ReportService.GetNumberReports(
         this.Utils.GetValue("EmpresaTransID")
       );
-      
+
       if (response.status === 0 || response.status === 500)
         this.messageCreateAccountResponse(response.message, false, true, "red");
       else if (response.data.success) {
@@ -344,7 +344,7 @@ export default {
           );
         else {
           if (response.data.success) {
-            this.reportes --;
+            this.reportes--;
             this.messageCreateAccountResponse(
               "Reporte generado de manera exitosa",
               false,

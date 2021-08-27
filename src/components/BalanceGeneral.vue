@@ -18,11 +18,13 @@
           <span class="text-h6" id="textDescription"
             >AL
             {{
-              new Date().toLocaleDateString("es-ES", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }).toUpperCase()
+              new Date()
+                .toLocaleDateString("es-ES", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+                .toUpperCase()
             }}</span
           >
           <div class="float-right text-left text-h5">
@@ -54,10 +56,13 @@
           </div>
         </div>
       </template>
-      <v-card-text style="padding: 0px;">
-        <v-container style="padding: 0px;">
+      <v-card-text style="padding: 0px">
+        <v-container
+          class="pt-0 px-0 mx-0 pb-7"
+          style="max-width: 100% !important"
+        >
           <v-row>
-            <v-col cols="12" sm="6" md="4" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6">
               <v-card>
                 <v-card-title
                   class="subheading text-center black white--text"
@@ -78,13 +83,11 @@
                         dense
                         filled
                         class="pa-0"
-                        prepend-inner-icon="mdi-currency-usd"
                         align="right"
                         required
-                        type="number"
+                        type="text"
                         :min="0"
                         v-model="efectivo"
-                        @keypress="validarNumero"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -102,13 +105,10 @@
                         dense
                         filled
                         class="pa-0"
-                        prepend-inner-icon="mdi-currency-usd"
                         align="right"
                         required
-                        type="number"
-                        :min="0"
+                        type="text"
                         v-model="bancos"
-                        @keypress="validarNumero"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -123,9 +123,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(bancos) + parseFloat(efectivo)
-                        )
+                        totalCirculante
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -141,13 +139,10 @@
                         dense
                         filled
                         class="pa-0"
-                        prepend-inner-icon="mdi-currency-usd"
                         align="right"
                         required
-                        type="number"
-                        :min="0"
+                        type="text"
                         v-model="deudaxc"
-                        @keypress="validarNumero"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -162,13 +157,10 @@
                         dense
                         filled
                         class="pa-0"
-                        prepend-inner-icon="mdi-currency-usd"
                         align="right"
                         required
-                        type="number"
-                        :min="0"
+                        type="text"
                         v-model="activofijo"
-                        @keypress="validarNumero"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -183,9 +175,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(activofijo) + parseFloat(deudaxc)
-                        )
+                        totalNoCirculante
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -199,19 +189,14 @@
                       style="display: block"
                     >
                       <span class="text-h5 indigo--text font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(activofijo) +
-                            parseFloat(deudaxc) +
-                            parseFloat(bancos) +
-                            parseFloat(efectivo)
-                        )
+                        totalActivo
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="4" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6">
               <v-card>
                 <v-card-title
                   class="subheading text-center black white--text"
@@ -232,13 +217,10 @@
                         dense
                         filled
                         class="pa-0"
-                        prepend-inner-icon="mdi-currency-usd"
                         align="right"
                         required
-                        type="number"
-                        :min="0"
+                        type="text"
                         v-model="deudaxp"
-                        @keypress="validarNumero"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -253,7 +235,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(parseFloat(deudaxp))
+                        deudaxp
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -279,12 +261,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(activofijo) +
-                            parseFloat(deudaxc) +
-                            parseFloat(bancos) +
-                            parseFloat(efectivo)
-                        )
+                        capitalInicial
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -298,7 +275,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(parseFloat(utilidadPerdida))
+                        utilidadPerdida
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -312,35 +289,19 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(activofijo) +
-                            parseFloat(deudaxc) +
-                            parseFloat(bancos) +
-                            parseFloat(efectivo) +
-                            parseFloat(utilidadPerdida)
-                        )
+                        capitalFinal
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
                   <v-divider />
                   <v-list-item class="pt-5 pb-1">
                     <v-list-item-content
-                      class="text-h6 indigo--text font-weight-bold"
+                      class="text-h5 indigo--text font-weight-bold"
                       >TOTAL DE PASIVO MAS CAPITAL:</v-list-item-content
                     >
-                    <v-list-item-content
-                      class="align-end text-right"
-                      style="display: block"
-                    >
+                    <v-list-item-content class="align-end text-right">
                       <span class="text-h5 indigo--text font-weight-bold">{{
-                        formatter.format(
-                          parseFloat(activofijo) +
-                            parseFloat(deudaxc) +
-                            parseFloat(bancos) +
-                            parseFloat(efectivo) +
-                            parseFloat(utilidadPerdida) +
-                            parseFloat(deudaxp)
-                        )
+                        totalPasivoMasCapital
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -375,12 +336,18 @@ export default {
     esAceptar: false,
     vToolBarColor: "",
     dialogAlert: false,
-    efectivo: 0,
-    bancos: 0,
-    deudaxc: 0,
-    activofijo: 0,
-    deudaxp: 0,
-    utilidadPerdida: 0,
+    efectivo: "",
+    bancos: "",
+    deudaxc: "",
+    activofijo: "",
+    deudaxp: "",
+    utilidadPerdida: "",
+    capitalFinal: "",
+    capitalInicial: "",
+    totalActivo: "",
+    totalCirculante: "",
+    totalNoCirculante: "",
+    totalPasivoMasCapital: "",
     overlay: true,
     formatter: new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -408,74 +375,46 @@ export default {
       this.registros.push(
         {
           conceptoactivo: "Efectivo",
-          importeactivo: this.formatter.format(parseFloat(this.efectivo)),
+          importeactivo: this.efectivo,
           conceptopasivo: "Deudas por pagar",
-          importepasivo: this.formatter.format(parseFloat(this.deudaxp)),
+          importepasivo: this.deudaxp,
         },
         {
           conceptoactivo: "Bancos",
-          importeactivo: this.formatter.format(parseFloat(this.bancos)),
+          importeactivo: this.bancos,
           conceptopasivo: "Total de pasivo",
-          importepasivo: this.formatter.format(parseFloat(this.deudaxp)),
+          importepasivo: this.deudaxp,
         },
         {
           conceptoactivo: "Total de activo circulante",
-          importeactivo: this.formatter.format(
-            parseFloat(this.efectivo) + parseFloat(this.bancos)
-          ),
+          importeactivo: this.totalCirculante
+          ,
           conceptopasivo: "CAPITAL",
         },
         {
           conceptoactivo: "Deuda por cobrar",
-          importeactivo: this.formatter.format(parseFloat(this.deudaxc)),
+          importeactivo: this.deudaxc,
           conceptopasivo: "Capital inicial",
-          importepasivo: this.formatter.format(
-            parseFloat(this.activofijo) +
-              parseFloat(this.deudaxc) +
-              parseFloat(this.efectivo) +
-              parseFloat(this.bancos)
-          ),
+          importepasivo: this.capitalInicial,
         },
         {
           conceptoactivo: "Activo fijo",
-          importeactivo: this.formatter.format(parseFloat(this.activofijo)),
+          importeactivo: this.activofijo,
           conceptopasivo: "Utilidad / Perdida",
-          importepasivo: this.formatter.format(
-            parseFloat(this.utilidadPerdida)
-          ),
+          importepasivo: this.utilidadPerdida,
         },
         {
           conceptoactivo: "Total de activo no circulante",
-          importeactivo: this.formatter.format(
-            parseFloat(this.activofijo) + parseFloat(this.deudaxc)
-          ),
+          importeactivo: this.totalNoCirculante,
           conceptopasivo: "Capital final",
-          importepasivo: this.formatter.format(
-            parseFloat(this.activofijo) +
-              parseFloat(this.deudaxc) +
-              parseFloat(this.efectivo) +
-              parseFloat(this.bancos) +
-              parseFloat(this.utilidadPerdida)
-          ),
+          importepasivo: this.capitalFinal,
         },
         {},
         {
           conceptoactivo: "Total de activo",
-          importeactivo: this.formatter.format(
-            parseFloat(this.activofijo) +
-              parseFloat(this.deudaxc) +
-              parseFloat(this.efectivo) +
-              parseFloat(this.bancos)
-          ),
+          importeactivo: this.totalActivo,
           conceptopasivo: "Total de pasivo mas capital",
-          importepasivo: this.formatter.format(
-            parseFloat(this.activofijo) +
-              parseFloat(this.deudaxc) +
-              parseFloat(this.efectivo) +
-              parseFloat(this.bancos) +
-              parseFloat(this.deudaxp) +
-              parseFloat(this.deudaxp)
-          ),
+          importepasivo: this.totalPasivoMasCapital,
         }
       );
     },
@@ -537,12 +476,43 @@ export default {
         this.messageCreateAccountResponse(response.message, false, true, "red");
         this.overlay = false;
       } else {
-        this.efectivo = response.data.response[0].Efectivo;
-        this.bancos = response.data.response[0].Bancos;
-        this.deudaxc = response.data.response[0].DeudasCobrar;
-        this.deudaxp = response.data.response[0].DeudasPagar;
-        this.activofijo = response.data.response[0].ActivoFijo;
-        this.utilidadPerdida = response.data.response[0].UtilidadPerdida;
+        console.log(response.data.response[0]);
+        this.efectivo = this.formatter.format(
+          parseFloat(response.data.response[0].Efectivo)
+        );
+        this.bancos = this.formatter.format(
+          parseFloat(response.data.response[0].Bancos)
+        );
+        this.deudaxc = this.formatter.format(
+          parseFloat(response.data.response[0].DeudasCobrar)
+        );
+        this.deudaxp = this.formatter.format(
+          parseFloat(response.data.response[0].DeudasPagar)
+        );
+        this.activofijo = this.formatter.format(
+          parseFloat(response.data.response[0].ActivoFijo)
+        );
+        this.utilidadPerdida = this.formatter.format(
+          parseFloat(response.data.response[0].UtilidadPerdida)
+        );
+        this.capitalFinal = this.formatter.format(
+          parseFloat(response.data.response[0].CapitalFinal)
+        );
+        this.capitalInicial = this.formatter.format(
+          parseFloat(response.data.response[0].CapitalInicial)
+        );
+        this.totalActivo = this.formatter.format(
+          parseFloat(response.data.response[0].TotalActivo)
+        );
+        this.totalCirculante = this.formatter.format(
+          parseFloat(response.data.response[0].TotalCirculante)
+        );
+        this.totalNoCirculante = this.formatter.format(
+          parseFloat(response.data.response[0].TotalNoCirculante)
+        );
+        this.totalPasivoMasCapital = this.formatter.format(
+          parseFloat(response.data.response[0].TotalPasivoMasCapital)
+        );
         this.overlay = false;
       }
 

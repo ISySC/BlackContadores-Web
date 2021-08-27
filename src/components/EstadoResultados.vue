@@ -13,7 +13,7 @@
     />
     <!-- -->
 
-    <base-material-card color="blue" style="height: 97%">
+    <base-material-card color="blue">
       <template v-slot:heading>
         <div class="text-left text-h5" style="height: 50px">
           ESTADO DE RESULTADOS |
@@ -50,8 +50,8 @@
         </div>
       </template>
       <v-card-text style="padding: 0px">
-        <v-container style="padding: 0px">
-          <v-row no-gutters style="height: 100%">
+        <v-container class="pb-0 px-0 mx-0" style="max-width:100% !important;">
+          <v-row dense>
             <v-col cols="12" sm="2">
               <v-menu
                 v-model="menu2"
@@ -159,7 +159,7 @@
       <v-card-text
         style="padding-top: 0px; padding-left: 0px; padding-right: 0px"
       >
-        <v-container style="padding: 0px">
+        <v-container class="pt-0 px-0 mx-0" style="max-width:100% !important;">
           <v-row no-gutters>
             <v-col cols="12" sm="10" class="pr-7">
               <v-simple-table

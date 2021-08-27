@@ -22,7 +22,7 @@
     />
     <!-- -->
 
-    <base-material-card color="blue pa-0" style="height: 97%">
+    <base-material-card color="blue pa-0">
       <template v-slot:heading>
         <p class="text-left text-h5">
           CUENTAS |
@@ -32,114 +32,106 @@
           >
         </p>
       </template>
-      <v-card-text style="padding: 0px;">
-        <v-container style="padding: 0px;" >
-          <v-row no-gutters >
-            <v-col cols="12" sm="12" >
-              <v-simple-table fixed-header height="660px" class="grey lighten-3">
-                <template v-slot:default>
-                  <thead>
-                    <tr id="headerTitle">
-                      <th
-                        class="
-                          text-center text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      >
-                        CUENTA
-                      </th>
-                      <th
-                        class="
-                          text-center text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      >
-                        ESTATUS
-                      </th>
-                      <th
-                        class="
-                          text-left text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      ></th>
-                      <th
-                        class="
-                          text-left text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      ></th>
-                    </tr>
-                  </thead>
-                  <tbody v-if="items.length > 0">
-                    <tr v-for="item in items" :key="item.CuentaID">
-                      <td style="text-align: center">
-                        {{ item.Descripcion }}
-                      </td>
-                      <td style="text-align: center">
-                        {{ item.EsActivo ? "Activo" : "Inactivo" }}
-                      </td>
-                      <td style="width: 40px">
-                        <v-icon
-                          @click="
-                            mostrarRegistroAlert(
-                              2,
-                              'Editar cuenta',
-                              item.CuentaID,
-                              item.Descripcion
-                            )
-                          "
-                        >
-                          mdi-pencil
-                        </v-icon>
-                      </td>
-                      <td style="width: 40px">
-                        <v-icon
-                          @click="
-                            mostrarRegistroAlert(
-                              3,
-                              'Consultar cuenta',
-                              item.CuentaID,
-                              item.Descripcion
-                            )
-                          "
-                        >
-                          mdi-file-search
-                        </v-icon>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tr style="height: 200px" v-else>
-                    <td colspan="9" style="text-align: center; font-size: 20px">
-                      {{ "No tienes cuentas registradas" }}
-                    </td>
-                  </tr>
-                  <v-btn
+      <v-card-text style="padding: 0px">
+        <v-simple-table fixed-header height="660px" class="grey lighten-3">
+          <template v-slot:default>
+            <thead>
+              <tr id="headerTitle">
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  CUENTA
+                </th>
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  ESTATUS
+                </th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
+              </tr>
+            </thead>
+            <tbody v-if="items.length > 0">
+              <tr v-for="item in items" :key="item.CuentaID">
+                <td style="text-align: center">
+                  {{ item.Descripcion }}
+                </td>
+                <td style="text-align: center">
+                  {{ item.EsActivo ? "Activo" : "Inactivo" }}
+                </td>
+                <td style="width: 40px">
+                  <v-icon
                     @click="
-                      mostrarRegistroAlert(0, 'Agregar nueva cuenta', 0, '')
+                      mostrarRegistroAlert(
+                        2,
+                        'Editar cuenta',
+                        item.CuentaID,
+                        item.Descripcion
+                      )
                     "
-                    color="blue"
-                    dark
-                    absolute
-                    bottom
-                    right
-                    fab
-                    style="margin-bottom: 70px; margin-right: 40px"
                   >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-        </v-container>
+                    mdi-pencil
+                  </v-icon>
+                </td>
+                <td style="width: 40px">
+                  <v-icon
+                    @click="
+                      mostrarRegistroAlert(
+                        3,
+                        'Consultar cuenta',
+                        item.CuentaID,
+                        item.Descripcion
+                      )
+                    "
+                  >
+                    mdi-file-search
+                  </v-icon>
+                </td>
+              </tr>
+            </tbody>
+            <tr style="height: 200px" v-else>
+              <td colspan="9" style="text-align: center; font-size: 20px">
+                {{ "No tienes cuentas registradas" }}
+              </td>
+            </tr>
+          </template>
+        </v-simple-table>
+        <v-btn
+          @click="mostrarRegistroAlert(0, 'Agregar nueva cuenta', 0, '')"
+          color="blue"
+          dark
+          absolute
+          bottom
+          right
+          class="mb-2 mr-4 rounded-circle"
+          height="60"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </v-card-text>
     </base-material-card>
   </v-main>
@@ -193,10 +185,8 @@ export default {
         mostrarInactivos: 1,
       };
 
-      const response = await this.CompanyServices.GetBankaccounts(
-        data
-      );
-      
+      const response = await this.CompanyServices.GetBankaccounts(data);
+
       if (response.status === 0 || response.status === 500) {
         this.messageCreateAccountResponse(response.message, false, true, "red");
         this.overlay = false;

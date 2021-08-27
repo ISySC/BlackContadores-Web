@@ -48,7 +48,10 @@
         </p>
       </template>
       <v-card-text style="padding: 0px;">
-        <v-container style="padding: 0px;">
+        <v-container
+          class="pt-0 px-0 mx-0 pb-7"
+          style="max-width: 100% !important"
+        >
           <v-row>
             <v-col cols="12" sm="6" md="4" lg="6">
               <v-card>
@@ -178,7 +181,7 @@
                   </v-list-item>
                   <v-list-item>
                     <v-list-item-content class="text-h6 indigo--text font-weight-bold"
-                      >Total de activo:</v-list-item-content
+                      >TOTAL DE ACTIVO:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -307,7 +310,7 @@
                   <v-divider />
                   <v-list-item class="pt-7 pb-1">
                     <v-list-item-content class="text-h6 indigo--text font-weight-bold"
-                      >Total de pasivo mas capital:</v-list-item-content
+                      >TOTAL DE PASIVO MAS CAPITAL:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"

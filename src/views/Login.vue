@@ -13,13 +13,13 @@
       <!-- -->
       <v-container fill-height fluid id="login">
         <v-row justify="center" align="center" no-gutters>
-          <v-col cols="12" sm="10" :md="step == 0 ? 5 : 10">
+          <v-col cols="12" sm="10" :md="step == 0 ? 7 : 10">
             <v-card class="elevation-7">
               <v-window v-model="step">
                 <v-window-item :value="0">
                   <v-row>
                     <v-col cols="12" md="12" class="flex-grow-0 flex-shrink-0">
-                      <v-card-text style="height: 500px">
+                      <v-card-text style="height: 520px">
                         <v-row class="text-center">
                           <v-col cols="12 d-flex justify-center">
                             <v-img
@@ -376,7 +376,7 @@ export default {
         if (response.data.response.success) this.step++;
       } else {
         this.errorMessage(
-          "No de ha ingresado un email valido",
+          "Favor de ingresar un correo valido.",
           "Black Administrativo - [ Recuperar contraseña ]"
         );
       }

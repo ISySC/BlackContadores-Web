@@ -7,10 +7,13 @@
           <span class="text-subtitle-1" id="textDescription">Ajustes</span>
         </p>
       </template>
-      <v-card-text>
-        <v-container>
-          <v-row no-gutters>
-            <v-col cols="12" sm="4" class="px-4">
+      <v-card-text class="px-0 pt-0">
+        <v-container
+          class="pt-0 px-0 mx-0 pb-7"
+          style="max-width: 100% !important"
+        >
+          <v-row no-gutters class="px-0">
+            <v-col cols="12" xl="4" lg="6" md="6" sm="12"  class="px-4 pt-10">
               <router-link
                 to="/saldos-iniciales"
                 style="text-decoration: none; color: inherit"
@@ -27,7 +30,7 @@
               />
               </router-link>
             </v-col>
-            <v-col cols="12" sm="4" class="px-4">
+            <v-col cols="12" xl="4" lg="6" md="6" sm="12"  class="px-4 pt-10">
               <router-link
                 to="/cuentas"
                 style="text-decoration: none; color: inherit"
@@ -44,7 +47,7 @@
                 />
               </router-link>
             </v-col>
-            <v-col cols="12" sm="4" class="px-4">
+            <v-col cols="12" xl="4" lg="6" md="6" sm="12"  class="px-4 pt-10">
               <router-link
                 to="/subclasificaciones"
                 style="text-decoration: none; color: inherit"
@@ -61,7 +64,7 @@
                 />
               </router-link>
             </v-col>
-            <v-col cols="12" sm="4" class="px-4 pt-14">
+            <v-col cols="12" xl="4" lg="6" md="6" sm="12"  class="px-4 pt-10">
               <router-link
                 :to="membresiaID == 1 ? '' : '/usuarios'"
                 style="text-decoration: none; color: inherit"

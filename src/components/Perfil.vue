@@ -67,13 +67,13 @@
           </v-btn>
         </p>
       </template>
-      <v-card-text class="pa-0">
-        <v-container class="pt-2">
+      <v-card-text style="padding: 0px">
+        <v-container class="pb-0 px-0 mx-0" style="max-width:100% !important;">
           <v-row no-gutters>
-            <v-col cols="12" sm="9" class="pr-7">
+            <v-col cols="12" sm="9" class="pr-3">
               <v-container class="pa-0">
                 <v-row no-gutters class="pa-0">
-                  <v-col cols="12" sm="12" class="pr-7 pb-4">
+                  <v-col cols="12" sm="12" class="pr-3 pb-4">
                     <v-card
                       elevation="8"
                       class="d-flex flex-column rounded-lg black white--text"
@@ -145,7 +145,7 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" sm="12" class="pr-7">
+                  <v-col cols="12" sm="12" class="pr-3">
                     <v-card
                       elevation="8"
                       class="d-flex flex-column rounded-lg black"
@@ -200,7 +200,7 @@
                 elevation="8"
                 class="d-flex flex-column rounded-lg black"
               >
-                <v-card-title class="white--text pt-3 pl-7 title">
+                <v-card-title class="white--text pt-3 pl-3 title">
                   Datos de Cuenta
                 </v-card-title>
                 <hr />
