@@ -41,13 +41,13 @@
         <v-row>
           <v-col cols="12" md="12">
             <v-card class="white rounded-lg pa-10" color="white" elevation="24">
-              <div style="display: inline;">
-              <h2 class="text-left pr-1" style="display: inline-block;">
-                Black Administrativo - Información de la cuenta para tu plan 
-              </h2>
-              <h2 class="blue--text text-right" style="display: inline-block;">
-                {{ ItemMembership[0].TipoMembresia[0].Descripcion }}
-              </h2>
+              <div style="display: inline">
+                <h2 class="text-left pr-1" style="display: inline-block">
+                  Black Administrativo - Información de la cuenta para tu plan
+                </h2>
+                <h2 class="blue--text text-right" style="display: inline-block">
+                  {{ ItemMembership[0].TipoMembresia[0].Descripcion }}
+                </h2>
               </div>
               <br />
               <v-form>
@@ -190,9 +190,9 @@ export default {
   created() {
     this.Utils = new Utils();
     this.AccountService = new AccountService();
-    console.log(this.ItemMembership);
+    this.membershipID = this.ItemMembership[0].MembresiaID;
+    if (this.membershipID == 1) this.membershipSelectedMonth = true;
   },
-
   methods: {
     backToPlans() {
       this.membershipSelectedYear = false;
@@ -209,6 +209,7 @@ export default {
     },
     paymentPage() {},
     memberships(selected, membershipID) {
+      console.log("entro");
       this.membershipID = membershipID;
       this.selectedFrecuency = selected;
 
@@ -230,7 +231,7 @@ export default {
       this.overlay = false;
     },
     async createAccount() {
-      //this.dialogPago = true;
+      console.log(this.ItemMembership);
       if (
         this.legalNamePerson != "" &&
         this.email != "" &&
@@ -240,71 +241,77 @@ export default {
           this.Utils.RegExpPassword(this.password) &&
           this.Utils.RegExpEmail(this.email)
         ) {
-          if (this.membershipSelectedMonth || this.membershipSelectedYear) {
+          //if (this.membershipSelectedMonth || this.membershipSelectedYear) {
             //this.overlay = true;
+            this.membershipID = this.ItemMembership[0].MembresiaID;
+            if (this.membershipID !== 1) this.dialogPago = true;
+            else {
+              this.membershipID = this.ItemMembership[0].MembresiaID;
+              if (this.membershipID == 1) this.membershipSelectedMonth = true;
 
-            const accountData = {
-              legalNamePerson: this.legalNamePerson,
-              companyName: this.companyName,
-              email: this.email,
-              password: this.password,
-              membershipID: this.membershipID,
-              frecuency: this.selectedFrecuency,
-            };
+              const accountData = {
+                legalNamePerson: this.legalNamePerson,
+                companyName: this.companyName,
+                email: this.email,
+                password: this.password,
+                membershipID: this.membershipID,
+                frecuency: this.selectedFrecuency,
+              };
 
-            var response = await this.AccountService.PostCreateAccount(
-              accountData
-            );
-            console.log(response.data);
-            if (response.data.token != "") {
-              this.Utils.SetValue(response.data.token, "authToken");
-              this.Utils.SetValue(
-                response.data.response[0].empresaTransID,
-                "empresaTransID"
+              var response = await this.AccountService.PostCreateAccount(
+                accountData
               );
-              this.Utils.SetValue(this.email, "correoUsuario");
-              this.Utils.SetValue(true, "EmpresaActiva");
-              this.Utils.SetValue(
-                response.data.response[0].AltaDeUsuarios,
-                "AltaDeUsuarios"
-              );
-              this.Utils.SetValue(
-                response.data.response[0].NoUsuarios,
-                "NoUsuarios"
-              );
-              this.Utils.SetValue(this.legalNamePerson, "legal_name");
-              this.Utils.SetValue(this.companyName, "company_name");
-              this.Utils.SetValue(
-                response.data.response[0].UsuarioID,
-                "UsuarioID"
-              );
-              this.Utils.SetValue(
-                response.data.response[0].MembresiaID,
-                "MembresiaID"
-              );
-              this.messageCreateAccountResponse(
-                response.data.response[0].message,
-                false,
-                true,
-                "green"
-              );
-              this.dashboardPage();
-            } else {
-              this.Utils.SetValue("", "authToken");
-              this.messageCreateAccountResponse(
-                response.data.response.message,
-                false,
-                true,
-                "red"
-              );
+              console.log(response.data);
+              if (response.data.token != "") {
+                this.Utils.SetValue(response.data.token, "authToken");
+                this.Utils.SetValue(
+                  response.data.response[0].empresaTransID,
+                  "empresaTransID"
+                );
+                this.Utils.SetValue(this.email, "correoUsuario");
+                this.Utils.SetValue(true, "EmpresaActiva");
+                this.Utils.SetValue(
+                  response.data.response[0].AltaDeUsuarios,
+                  "AltaDeUsuarios"
+                );
+                this.Utils.SetValue(
+                  response.data.response[0].NoUsuarios,
+                  "NoUsuarios"
+                );
+                this.Utils.SetValue(this.legalNamePerson, "legal_name");
+                this.Utils.SetValue(this.companyName, "company_name");
+                this.Utils.SetValue(
+                  response.data.response[0].UsuarioID,
+                  "UsuarioID"
+                );
+                this.Utils.SetValue(
+                  response.data.response[0].MembresiaID,
+                  "MembresiaID"
+                );
+                this.messageCreateAccountResponse(
+                  response.data.response[0].message,
+                  false,
+                  true,
+                  "green"
+                );
+                this.dashboardPage();
+              } else {
+                this.Utils.SetValue("", "authToken");
+                this.messageCreateAccountResponse(
+                  response.data.response.message,
+                  false,
+                  true,
+                  "red"
+                );
+              }
             }
-          } else
+          /*} else
             this.messageCreateAccountResponse(
               Constants.str_membership_no_selected,
               false,
               true,
               "red"
-            );
+            );*/
         } else
           this.messageCreateAccountResponse(
             Constants.str_error_validate_email_password,
