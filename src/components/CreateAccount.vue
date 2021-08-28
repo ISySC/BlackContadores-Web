@@ -266,7 +266,7 @@ export default {
                 this.Utils.SetValue(response.data.token, "authToken");
                 this.Utils.SetValue(
                   response.data.response[0].empresaTransID,
-                  "empresaTransID"
+                  "EmpresaTransID"
                 );
                 this.Utils.SetValue(this.email, "correoUsuario");
                 this.Utils.SetValue(true, "EmpresaActiva");
