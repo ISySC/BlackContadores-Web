@@ -47,7 +47,7 @@
           </v-btn>
         </p>
       </template>
-      <v-card-text style="padding: 0px;">
+      <v-card-text style="padding: 0px">
         <v-container
           class="pt-0 px-0 mx-0 pb-7"
           style="max-width: 100% !important"
@@ -64,7 +64,9 @@
                 <v-divider />
                 <v-list dense class="px-4">
                   <v-list-item dense>
-                    <v-list-item-content dense class="text-subtitle-1">Efectivo:</v-list-item-content>
+                    <v-list-item-content dense class="text-subtitle-1"
+                      >Efectivo:</v-list-item-content
+                    >
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         :readonly="!editar"
@@ -83,7 +85,9 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
-                    <v-list-item-content dense class="text-subtitle-1">Bancos:</v-list-item-content>
+                    <v-list-item-content dense class="text-subtitle-1"
+                      >Bancos:</v-list-item-content
+                    >
                     <v-list-item-content
                       class="align-end text-right pa-0"
                       style="width: 100px"
@@ -106,7 +110,8 @@
                   </v-list-item>
                   <v-divider />
                   <v-list-item class="pt-4 pb-4">
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Total de activo circulante:</v-list-item-content
                     >
                     <v-list-item-content
@@ -165,7 +170,8 @@
                   </v-list-item>
                   <v-divider />
                   <v-list-item class="pt-2">
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Total de activo no circulante:</v-list-item-content
                     >
                     <v-list-item-content
@@ -180,7 +186,8 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
-                    <v-list-item-content class="text-h6 indigo--text font-weight-bold"
+                    <v-list-item-content
+                      class="text-h6 indigo--text font-weight-bold"
                       >TOTAL DE ACTIVO:</v-list-item-content
                     >
                     <v-list-item-content
@@ -233,7 +240,8 @@
                   </v-list-item>
                   <v-divider />
                   <v-list-item class="pt-4 pb-4">
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Total de pasivo:</v-list-item-content
                     >
                     <v-list-item-content
@@ -258,7 +266,8 @@
                 <v-divider />
                 <v-list dense class="px-4">
                   <v-list-item>
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Capital inicial:</v-list-item-content
                     >
                     <v-list-item-content
@@ -276,7 +285,8 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item>
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Utilidad / Perdida:</v-list-item-content
                     >
                     <v-list-item-content
@@ -289,7 +299,8 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item class="pb-4">
-                    <v-list-item-content class="text-subtitle-1 font-weight-bold"
+                    <v-list-item-content
+                      class="text-subtitle-1 font-weight-bold"
                       >Capital final:</v-list-item-content
                     >
                     <v-list-item-content
@@ -309,7 +320,8 @@
                   </v-list-item>
                   <v-divider />
                   <v-list-item class="pt-7 pb-1">
-                    <v-list-item-content class="text-h6 indigo--text font-weight-bold"
+                    <v-list-item-content
+                      class="text-h6 indigo--text font-weight-bold"
                       >TOTAL DE PASIVO MAS CAPITAL:</v-list-item-content
                     >
                     <v-list-item-content
@@ -387,7 +399,14 @@ export default {
 
       const data = {
         CorreoUsuario: new Utils().GetValue("correoUsuario"),
-        CapitalInicial: 0,
+        CapitalInicial:
+          this.activofijo + this.deudaxc + this.bancos + this.efectivo,
+        CapitalFinal:
+          this.activofijo +
+          this.deudaxc +
+          this.bancos +
+          this.efectivo -
+          this.deudaxp,
         DeudasPagar: this.deudaxp,
         ActivoFijo: this.activofijo,
         DeudasCobrar: this.deudaxc,
@@ -402,7 +421,12 @@ export default {
         this.messageCreateAccountResponse(response.message, false, true, "red");
         this.overlay = false;
       } else {
-        this.messageCreateAccountResponse(response.data.message, false, true, "green");
+        this.messageCreateAccountResponse(
+          response.data.message,
+          false,
+          true,
+          "green"
+        );
         this.editar = this.overlay = false;
       }
 

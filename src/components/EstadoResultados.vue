@@ -396,12 +396,12 @@ export default {
     FechaInicio: new Date().toISOString().substr(0, 10),
     FechaFin: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(
-      new Date(new Date().getTime() - 1*24*60*60*1000)
+      new Date(new Date().getTime() - 0*24*60*60*1000)
         .toISOString()
         .substr(0, 10)
     ),
     dateFormatted2: vm.formatDate(
-      new Date(new Date().getTime() + 1*24*60*60*1000)
+      new Date(new Date().getTime() + 0*24*60*60*1000)
         .toISOString()
         .substr(0, 10)
     ),
@@ -685,7 +685,7 @@ export default {
           ? this.subclasificacionID
           : 0,
         empresaTransID: empresaTransID,
-        FechaInicio: this.Dateformat(this.FechaInicio),
+        FechaInicio: this.formatDate(this.FechaInicio),
         FechaFin: Vue.filter("formatoFecha")(
           new Date(this.FechaFin).toISOString().substr(0, 10)
         ),

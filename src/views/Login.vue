@@ -78,7 +78,7 @@
                           <v-col cols="12">
                             <div class="text-center">
                               <v-btn
-                                :loading="loading"
+                                :loading="loading_reset"
                                 color="light-blue"
                                 dark
                                 @click="RecoveryPassword"
@@ -292,6 +292,7 @@ export default {
     ContentFooter,
   },
   data: () => ({
+    loading_reset: false,
     loading: false,
     step: 1,
     emailRecovery: "",
@@ -361,6 +362,7 @@ export default {
       return pattern.test(this.emailRecovery);
     },
     async RecoveryPassword() {
+      this.loading_reset = true;
       if (this.validateEmail()) {
         var response = await this.AccountService.PostRecoveryPassword({
           correousuario: this.emailRecovery,
@@ -372,9 +374,10 @@ export default {
           true,
           response.data.response.success ? "true" : "red"
         );
-
+        this.loading_reset = false;
         if (response.data.response.success) this.step++;
       } else {
+        this.loading_reset = false;
         this.errorMessage(
           "Favor de ingresar un correo valido.",
           "Black Administrativo - [ Recuperar contraseña ]"
@@ -405,7 +408,7 @@ export default {
 
         var response = await this.AccountService.PostLogin(accountData);
         this.loading = false;
-        if (response.data.response.success !== "false") {
+        if (response.data.response.response.success != "false") {
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
@@ -463,7 +466,7 @@ export default {
           this.Utils.SetValue("", "authToken");
           this.Utils.SetValue(response.data.token, "authToken");
           this.messageCreateAccountResponse(
-            response.data.response.message,
+            response.data.response.response.message,
             false,
             true,
             "red"
