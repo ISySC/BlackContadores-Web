@@ -7,7 +7,7 @@
         :mensaje="mensaje"
         :esCancelar="esCancelar"
         :esAceptar="esAceptar"
-        vToolBarColor="red"
+        :vToolBarColor="vToolBarColor"
         :dialog.sync="dialog"
       />
       <!-- -->
@@ -292,6 +292,7 @@ export default {
     ContentFooter,
   },
   data: () => ({
+    vToolBarColor: 'green',
     loading_reset: false,
     loading: false,
     step: 1,
@@ -372,10 +373,14 @@ export default {
           response.data.response[0].message,
           false,
           true,
-          response.data.response.success ? "true" : "red"
+          response.data.response[0].success == "true" ? "green" : "red"
         );
         this.loading_reset = false;
-        if (response.data.response.success) this.step++;
+        if (response.data.response[0].success == "true") 
+        {
+          this.emailRecovery = '';
+          this.step++;
+        }
       } else {
         this.loading_reset = false;
         this.errorMessage(
@@ -408,7 +413,7 @@ export default {
 
         var response = await this.AccountService.PostLogin(accountData);
         this.loading = false;
-        if (response.data.response.response.success != "false") {
+        if (response.data.response.success != "false") {
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
@@ -416,7 +421,7 @@ export default {
             "EmpresaTransID"
           );
           this.Utils.SetValue(
-            response.data.response.CustomerConektaID,
+            response.data.response[0].CustomerConektaID,
             "CustomerConektaID"
           );
           this.Utils.SetValue(
@@ -454,7 +459,7 @@ export default {
             this.$router.push("/registro-diario");
           else {
             this.messageCreateAccountResponse(
-              response.data.response[0].message,
+              response.data.response.message,
               false,
               true,
               "red"
@@ -466,7 +471,7 @@ export default {
           this.Utils.SetValue("", "authToken");
           this.Utils.SetValue(response.data.token, "authToken");
           this.messageCreateAccountResponse(
-            response.data.response.response.message,
+            response.data.response.message,
             false,
             true,
             "red"

@@ -81,6 +81,7 @@
                         :min="0"
                         v-model="efectivo"
                         @keypress="validarNumero"
+                        @change="onChange('efectivo')"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -105,6 +106,7 @@
                         :min="0"
                         v-model="bancos"
                         @keypress="validarNumero"
+                        @change="onChange('bancos')"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -144,6 +146,7 @@
                         :min="0"
                         v-model="deudaxc"
                         @keypress="validarNumero"
+                        @change="onChange('deudaxc')"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -165,6 +168,7 @@
                         :min="0"
                         v-model="activofijo"
                         @keypress="validarNumero"
+                        @change="onChange('activofijo')"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -235,6 +239,7 @@
                         :min="0"
                         v-model="deudaxp"
                         @keypress="validarNumero"
+                        @change="onChange('deudaxp')"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -385,6 +390,25 @@ export default {
     this.getOpeningBalances();
   },
   methods: {
+    onChange(tipo) {
+      switch (tipo) {
+        case "efectivo":
+          if (this.efectivo == "") this.efectivo = 0;
+          break;
+        case "bancos":
+          if (this.bancos == "") this.bancos = 0;
+          break;
+        case "activofijo":
+          if (this.activofijo == "") this.activofijo = 0;
+          break;
+        case "deudaxc":
+          if (this.deudaxc == "") this.deudaxc = 0;
+          break;
+        case "deudaxp":
+          if (this.deudaxp == "") this.deudaxp = 0;
+          break;
+      }
+    },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
       this.mensaje = message;
       this.esCancelar = esCancelar;
@@ -400,13 +424,16 @@ export default {
       const data = {
         CorreoUsuario: new Utils().GetValue("correoUsuario"),
         CapitalInicial:
-          this.activofijo + this.deudaxc + this.bancos + this.efectivo,
+          parseFloat(this.activofijo) +
+          parseFloat(this.deudaxc) +
+          parseFloat(this.bancos) +
+          parseFloat(this.efectivo),
         CapitalFinal:
-          this.activofijo +
-          this.deudaxc +
-          this.bancos +
-          this.efectivo -
-          this.deudaxp,
+          parseFloat(this.activofijo) +
+          parseFloat(this.deudaxc) +
+          parseFloat(this.bancos) +
+          parseFloat(this.efectivo) -
+          parseFloat(this.deudaxp),
         DeudasPagar: this.deudaxp,
         ActivoFijo: this.activofijo,
         DeudasCobrar: this.deudaxc,
