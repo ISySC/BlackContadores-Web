@@ -33,133 +33,126 @@
             empresa.</span
           >
         </p>
-        
       </template>
-      <v-card-text style="padding: 0px;">
-        <v-container style="padding: 0px;" >
-          <v-row no-gutters >
-            <v-col cols="12" sm="12" >
-              <v-simple-table fixed-header height="660px" class="grey lighten-3" >
-                <template v-slot:default>
-                  <thead>
-                    <tr id="headerTitle">
-                      <th
-                        class="
-                          text-center text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      >
-                        CONCEPTO
-                      </th>
-                      <th
-                        class="
-                          text-center text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      >
-                        CLASIFICACIÓN
-                      </th>
-                      <th
-                        class="
-                          text-center text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      >
-                        ESTATUS
-                      </th>
-                      <th
-                        class="
-                          text-left text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      ></th>
-                      <th
-                        class="
-                          text-left text-truncate
-                          font-weight-regular
-                          black
-                          white--text
-                        "
-                      ></th>
-                    </tr>
-                  </thead>
-                  <tbody v-if="items.length > 0">
-                    <tr v-for="item in items" :key="item.ConceptoID">
-                      <td style="text-align: center">
-                        {{ item.Concepto }}
-                      </td>
-                      <td style="text-align: center">
-                        {{ item.Clasificacion }}
-                      </td>
-                      <td style="text-align: center">
-                        {{ item.EsActivo ? "Activo" : "Inactivo" }}
-                      </td>
-                      <td style="width: 40px">
-                        <v-icon
-                          @click="
-                            mostrarRegistroAlert(
-                              2,
-                              'Editar subclasificacion',
-                              item.ConceptoID,
-                              item.Concepto,
-                              item.ClasificacionID,
-                              item.EsActivo
-                            )
-                          "
-                        >
-                          mdi-pencil
-                        </v-icon>
-                      </td>
-                      <td style="width: 40px">
-                        <v-icon
-                          @click="
-                            mostrarRegistroAlert(
-                              3,
-                              'Consultar subclasificacion',
-                              item.ConceptoID,
-                              item.Concepto,
-                              item.ClasificacionID,
-                              item.EsActivo
-                            )
-                          "
-                        >
-                          mdi-file-search
-                        </v-icon>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tr style="height: 200px" v-else>
-                    <td colspan="9" style="text-align: center; font-size: 20px">
-                      {{ "No tienes subclasificaciones registradas" }}
-                    </td>
-                  </tr>
-                  <v-btn
+      <v-card-text style="padding: 0px">
+        <v-simple-table fixed-header height="660px" class="grey lighten-3">
+          <template v-slot:default>
+            <thead>
+              <tr id="headerTitle">
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  CONCEPTO
+                </th>
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  CLASIFICACIÓN
+                </th>
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  ESTATUS
+                </th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
+              </tr>
+            </thead>
+            <tbody v-if="items.length > 0">
+              <tr v-for="item in items" :key="item.ConceptoID">
+                <td style="text-align: center">
+                  {{ item.Concepto }}
+                </td>
+                <td style="text-align: center">
+                  {{ item.Clasificacion }}
+                </td>
+                <td style="text-align: center">
+                  {{ item.EsActivo ? "Activo" : "Inactivo" }}
+                </td>
+                <td style="width: 40px">
+                  <v-icon
                     @click="
-                      mostrarRegistroAlert(0, 'Agregar nueva subclasificacion', 0, '', 0)
+                      mostrarRegistroAlert(
+                        2,
+                        'Editar subclasificacion',
+                        item.ConceptoID,
+                        item.Concepto,
+                        item.ClasificacionID,
+                        item.EsActivo
+                      )
                     "
-                    color="blue"
-                    dark
-                    absolute
-                    bottom
-                    right
-                    fab
-                    style="margin-bottom: 70px; margin-right: 40px"
                   >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-              </v-simple-table>
-            </v-col>
-          </v-row>
-        </v-container>
+                    mdi-pencil
+                  </v-icon>
+                </td>
+                <td style="width: 40px">
+                  <v-icon
+                    @click="
+                      mostrarRegistroAlert(
+                        3,
+                        'Consultar subclasificacion',
+                        item.ConceptoID,
+                        item.Concepto,
+                        item.ClasificacionID,
+                        item.EsActivo
+                      )
+                    "
+                  >
+                    mdi-file-search
+                  </v-icon>
+                </td>
+              </tr>
+            </tbody>
+            <tr style="height: 200px" v-else>
+              <td colspan="9" style="text-align: center; font-size: 20px">
+                {{ "No tienes subclasificaciones registradas" }}
+              </td>
+            </tr>
+          </template>
+        </v-simple-table>
+        <v-btn
+          @click="
+            mostrarRegistroAlert(0, 'Agregar nueva subclasificacion', 0, '', 0)
+          "
+          color="blue"
+          dark
+          absolute
+          bottom
+          right
+          class="mb-2 mr-4 rounded-circle"
+          height="60"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </v-card-text>
     </base-material-card>
   </v-main>
@@ -200,7 +193,14 @@ export default {
     this.getSubclasificaciones();
   },
   methods: {
-    mostrarRegistroAlert(accion, titulo, subclasificacionID, subclasificacion, clasificacionID, activo) {
+    mostrarRegistroAlert(
+      accion,
+      titulo,
+      subclasificacionID,
+      subclasificacion,
+      clasificacionID,
+      activo
+    ) {
       this.titulo = titulo;
       this.accion = accion;
       this.subclasificacionID = subclasificacionID;
@@ -210,16 +210,14 @@ export default {
       this.dialog = true;
     },
     async getSubclasificaciones() {
-      this.overlay = true
+      this.overlay = true;
 
       let data = {
-          EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
-          mostrarInactivos: 1
-        };
-      const response = await this.CompanyServices.GetSubclasifications(
-        data
-      );
-      
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 1,
+      };
+      const response = await this.CompanyServices.GetSubclasifications(data);
+
       if (response.status === 0 || response.status === 500) {
         this.messageCreateAccountResponse(response.message, false, true, "red");
         this.overlay = false;

@@ -5,12 +5,15 @@
       :mensaje="mensaje"
       :esCancelar="esCancelar"
       :esAceptar="esAceptar"
-      vToolBarColor="red"
+      :vToolBarColor="vToolBarColor"
       :dialog.sync="dialog"
     />
 
     <Pago
+      @create="payment"
       :dialog.sync="dialogPago"
+      :tokenParams.sync="tokenParams"
+      :membershipSelectedMonth.sync="membershipSelectedMonth"
       :membresia="nombre_Nueva_Membresia"
       :membresiaID="nueva_MembresiaID"
       :precio="precio_nueva_membresia"
@@ -292,6 +295,7 @@ import Constants from "../util/constants";
 import Loading from "../components/Loading";
 import Membresias from "../components/Membresias";
 import Pago from "../components/Pago";
+import PaymentService from "../network/services/PaymentService";
 
 export default {
   components: {
@@ -301,6 +305,7 @@ export default {
     Pago,
   },
   data: () => ({
+    tokenParams: [],
     dialogPago: false,
     activa: true,
     plan: "",
@@ -372,14 +377,58 @@ export default {
     this.AccountService = new AccountService();
     this.Utils = new Utils();
     this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
+    this.PaymentService = new PaymentService();
     this.getProfile();
   },
 
-  async mounted() {
-    this.getProfile();
+  mounted() {
+    const script = document.createElement("script");
+    script.src = "https://cdn.conekta.io/js/latest/conekta.js";
+    script.async = true;
+    document.body.appendChild(script);
   },
 
   methods: {
+    payment() {
+      window.Conekta.setPublicKey("key_CpeARyuQqyrzxxsYKUw6Lrg");
+      window.Conekta.Token.create(
+        this.tokenParams,
+        async (token) => {
+          const data = {
+            MembresiaID: this.ItemMembershipSelected[0].MembresiaID,
+            Membresia: this.ItemMembershipSelected[0].Descripcion,
+            Precio: this.membershipSelectedMonth ? this.ItemMembershipSelected[0].PrecioMes : this.ItemMembershipSelected[0].PrecioAnual,
+            Email: new Utils().GetValue("correoUsuario"),
+            Usuario: new Utils().GetValue("legal_name"),
+            Token: token.id,
+          };
+
+          var response = await this.PaymentService.PostPayment(data);
+
+          if (response.data.success != "false") {
+            this.messageCreateAccountResponse(
+              response.data.message,
+              false,
+              true,
+              "green"
+            );
+            localStorage.clear();
+            this.$router.push("/");
+          } else {
+            this.messageCreateAccountResponse(
+              response.data.message,
+              false,
+              true,
+              "red"
+            );
+          }
+        },
+        (error) => {
+          this.messageCreateAccountResponse(error.message_to_purchaser, "red");
+          console.log(error);
+        }
+      );
+    },
     async updateProfile() {
       this.loading = true;
       
@@ -470,7 +519,7 @@ export default {
           "red"
         );
       }
-
+      
       this.overlay = false;
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {

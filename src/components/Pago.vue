@@ -354,7 +354,6 @@
 import Vue from "vue";
 import { VueMaskDirective } from "v-mask";
 import AlertDialog from "./AlertDialog";
-import Utils from "../util/utils";
 import PaymentService from "../network/services/PaymentService";
 Vue.directive("mask", VueMaskDirective);
 
@@ -460,8 +459,7 @@ export default {
       this.color = color;
       this.Alertdialog = true;
     },
-    async pagar() {
-      window.Conekta.setPublicKey("key_JbF6SRqYutX8TFQrpjRxFFw");
+    pagar() {
       const tokenParams = {
         card: {
           number: this.cardNumber,
@@ -471,38 +469,10 @@ export default {
           cvc: this.cardCvv,
         },
       };
-      window.Conekta.Token.create(
-        tokenParams,
-        async (token) => {
-          const data = {
-            MembresiaID: this.membresiaID,
-            Membresia: this.membresia,
-            Precio: this.precio,
-            Email: new Utils().GetValue("correoUsuario"),
-            Usuario: new Utils().GetValue("legal_name"),
-            Token: token.id,
-            CostumerID: this.costumerID,
-          };
-
-          var response = await this.PaymentService.PostPayment(data);
-
-          if (response.data.token != "") {
-            this.messageCreateAccountResponse(
-              response.data.response[0].message,
-              "green"
-            );
-          } else {
-            this.messageCreateAccountResponse(
-              response.data.response.message,
-              "red"
-            );
-          }
-        },
-        (error) => {
-          this.messageCreateAccountResponse(error.message_to_purchaser, "red");
-          console.log(error);
-        }
-      );
+      this.$emit("update:membershipSelectedYear", this.membershipSelectedYear);
+      this.$emit("update:membershipSelectedMonth", this.membershipSelectedMonth);
+      this.$emit("update:tokenParams", tokenParams);
+      this.$emit("create");
     },
     cancelar() {
       this.cardNumber = "";

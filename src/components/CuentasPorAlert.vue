@@ -174,6 +174,7 @@ export default {
   }),
   watch: {
     dialog() {
+      this.TipoCuenta = this.$props.tipoCuenta;
       if (this.$props.dialog) {
         if (this.TipoCuenta != this.$props.tipoCuenta) {
           this.$refs["collection"].reset();
@@ -195,6 +196,7 @@ export default {
     this.getbankaccount();
     this.getsubclasifications();
   },
+
   methods: {
     async getbankaccount() {
       let data = {
@@ -278,7 +280,8 @@ export default {
           this.$emit("update:abono", this.abono);
           this.$emit("update:cxCID", this.cxcID);
           this.$emit("update:total", this.totalMonto);
-          this.$emit("update:cuentaPago", this.cuentaID);
+          this.$emit("update:cuentaPagoID", this.cuentaID);
+          this.$emit("update:subclasificacionID", this.subclasificacionID);
           this.$emit("update:dialog", false);
         } else {
           this.overlay = false;

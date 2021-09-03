@@ -350,10 +350,16 @@ export default {
     if (rs_mermershiplist.status === 200)
       this.membershipsList = JSON.parse(rs_mermershiplist.data[0].Membresias);
     else
+    {
+      this.vToolBarColor = "red";
       this.errorMessage(
         rs_mermershiplist.message,
-        "Black Administrativo - [ Problemas con el servicio ]"
+        "Black Administrativo - [ Problemas con el servicio ]",
+        false,
+        true,
+        "red"
       );
+    }
   },
 
   methods: {

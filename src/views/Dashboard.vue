@@ -2,7 +2,7 @@
   <!-- App.vue -->
   <div id="app">
     <v-app id="inspire">
-      <v-navigation-drawer app>
+      <v-navigation-drawer v-model="drawer" sm="absolute" left app>
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title id="navigationTitle">
@@ -31,20 +31,24 @@
               </v-list-item-icon>
 
               <v-list-item-content>
-                <v-list-item-title class="text-subtitle-1 font-weight-regular">{{ item.title }}</v-list-item-title>
+                <v-list-item-title
+                  class="text-subtitle-1 font-weight-regular"
+                  >{{ item.title }}</v-list-item-title
+                >
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
         </v-list>
-        <v-footer app style="padding:0px;">
-          <v-btn block tile color="blue" dark href="/" style="height: 60px;">
+        <v-footer app style="padding: 0px">
+          <v-btn block tile color="blue" dark href="/" style="height: 60px">
             <v-icon left> mdi-logout </v-icon>
             Cerrar Sesión
           </v-btn>
         </v-footer>
       </v-navigation-drawer>
 
-      <v-app-bar id="appBarStyle" app>
+      <v-app-bar dark id="appBarStyle" app>
+        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <span id="spanTitle"
           >BUEN DIA {{ str_legal_name }}
           <span id="spanSubtitle">{{ str_company_name }}</span></span
@@ -71,6 +75,7 @@ export default {
   },
 
   data: () => ({
+    drawer: true,
     str_title_name_app: Constants.str_title_name_app,
     str_slogan: Constants.str_slogan,
     str_legal_name: "",
@@ -115,14 +120,11 @@ export default {
   created() {
     this.str_legal_name = new Utils().GetValue("legal_name");
     this.str_company_name = new Utils().GetValue("company_name");
-    this.activa = (/true/i).test(new Utils().GetValue("EmpresaActiva"));
+    this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
   },
 
   methods: {
-    cerrarSesion()
-    {
-
-    },
+    cerrarSesion() {},
   },
 };
 </script>

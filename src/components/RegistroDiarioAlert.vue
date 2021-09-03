@@ -16,6 +16,7 @@
       :cxCID.sync="CxCID"
       :cuentaPagoID.sync="CuentaPagoID"
       :total.sync="Total"
+      :subclasificacionID.sync="subclasificacionID"
       :title="'Selecciona cuenta por ' + (TipoCuenta == 3 ? 'cobrar' : 'pagar')"
       :tipoCuenta="TipoCuenta"
     />
@@ -401,6 +402,7 @@ export default {
         this.observaciones = "";
         this.importe = "";
         this.$refs["clasificaciones"].reset();
+        this.$refs["subclasificaciones"].reset();
         this.$refs["cuentas"].reset();
         this.$emit("update:dialog", false);
         this.$emit("getregistries");
