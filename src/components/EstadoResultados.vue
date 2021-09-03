@@ -50,7 +50,7 @@
         </div>
       </template>
       <v-card-text style="padding: 0px">
-        <v-container class="pb-0 px-0 mx-0" style="max-width:100% !important;">
+        <v-container class="pb-0 px-0 mx-0" style="max-width: 100% !important">
           <v-row dense>
             <v-col cols="12" sm="2">
               <v-menu
@@ -159,7 +159,7 @@
       <v-card-text
         style="padding-top: 0px; padding-left: 0px; padding-right: 0px"
       >
-        <v-container class="pt-0 px-0 mx-0" style="max-width:100% !important;">
+        <v-container class="pt-0 px-0 mx-0" style="max-width: 100% !important">
           <v-row no-gutters>
             <v-col cols="12" sm="10" class="pr-7">
               <v-simple-table
@@ -393,18 +393,26 @@ export default {
     AlertDialog,
   },
   data: (vm) => ({
-    FechaInicio: new Date().toISOString().substr(0, 10),
-    FechaFin: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(
-      new Date(new Date().getTime() - 0*24*60*60*1000)
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10)
     ),
     dateFormatted2: vm.formatDate(
-      new Date(new Date().getTime() + 0*24*60*60*1000)
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10)
     ),
+    FechaInicio: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
+    FechaFin: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
     menu2: false,
     menu: false,
     totalIngresos: 0,

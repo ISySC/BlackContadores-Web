@@ -215,7 +215,6 @@
 import DatePicker from "../components/DatePicker";
 import CompanyServices from "../network/services/CompanyService";
 import Utils from "../util/utils";
-import Vue from "vue";
 import Constants from "../util/constants";
 import AlertDialog from "../components/AlertDialog";
 import Loading from "../components/Loading";
@@ -353,12 +352,20 @@ export default {
     fechaSeleccionada(fecha) {
       this.fechaRegistro = fecha;
     },
+    currentDate() {
+      const current = new Date();
+      const date = `${
+        current.getDate() < 10 ? "0" + current.getDate() : current.getDate()
+      }/${
+        current.getMonth() + 1 < 10
+          ? "0" + (current.getMonth() + 1)
+          : current.getMonth() + 1
+      }/${current.getFullYear()}`;
+      return date;
+    },
     async guardarRegistro() {
       let rs_registro = null;
-      if (this.fechaRegistro == "")
-        this.fechaRegistro = Vue.filter("formatoFecha")(
-          new Date().toISOString().substr(0, 10)
-        );
+      if (this.fechaRegistro == "") this.fechaRegistro = this.currentDate();
       this.overlay = true;
 
       let empresaTransID = this.Utils.GetValue("EmpresaTransID");
@@ -366,7 +373,7 @@ export default {
       let data = {
         empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
         descripcion: this.descripcionMovimiento,
-        fechaRegistro: this.fechaRegistro,
+        fechaRegistro: this.currentDate(),
         referencia: this.referencia,
         clasificacionID: this.clasificacionID,
         cuentaID: this.cuentaID,
@@ -476,7 +483,7 @@ export default {
         (cuenta) => cuenta.CuentaID === value.CuentaID
       )[0]["TipoCuentaID"];
     },
-    mostrarRegistroSubAlert(){
+    mostrarRegistroSubAlert() {
       this.dialogsub = true;
     },
     mostrarRegistroCuentaAlert() {
