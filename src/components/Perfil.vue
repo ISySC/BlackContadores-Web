@@ -71,7 +71,7 @@
         </p>
       </template>
       <v-card-text style="padding: 0px">
-        <v-container class="pb-0 px-0 mx-0" style="max-width:100% !important;">
+        <v-container class="pb-0 px-0 mx-0" style="max-width: 100% !important">
           <v-row no-gutters>
             <v-col cols="12" sm="9" class="pr-3">
               <v-container class="pa-0">
@@ -166,7 +166,10 @@
                               :key="items.MembresiaID"
                               v-for="items in membershipsList"
                             >
-                              <v-card-text class="pa-1" v-if="items.MembresiaID !== 1">
+                              <v-card-text
+                                class="pa-1"
+                                v-if="items.MembresiaID !== 1"
+                              >
                                 <Membresias
                                   :Actual="
                                     MembresiaID == items.MembresiaID
@@ -221,6 +224,18 @@
                     :value="Nombre"
                     @input="(_) => (Nombre = _)"
                   ></v-text-field>
+                  <v-text-field
+                    :disabled="!editar"
+                    v-model="telefono"
+                    label="Numero de telefono (*)"
+                    name="telefono"
+                    id="telefono"
+                    prepend-icon="phone"
+                    type="number"
+                    color="light-blue accent-3"
+                    @keypress="validarNumero"
+                    :rules="[rules.telefono]"
+                  />
                   <v-text-field
                     :disabled="true"
                     label="Usuario"
@@ -305,6 +320,7 @@ export default {
     Pago,
   },
   data: () => ({
+    telefono: "",
     tokenParams: [],
     dialogPago: false,
     activa: true,
@@ -338,6 +354,7 @@ export default {
     esAceptar: false,
     mensaje: "",
     titulo: "",
+    membershipSelectedMonth: false,
     overlay: false,
     vToolBarColor: "",
     str_txt_legal_name: Constants.str_txt_legal_name,
@@ -370,6 +387,14 @@ export default {
           "Correo no válido. Favor de verificar la estructura (ejemplo@tuempresa.com)"
         );
       },
+      telefono: (value) => {
+        const pattern = /^[0-9]{10}$/;
+
+        return (
+          pattern.test(value) ||
+          "Telefono no válido. El telefono debe ser a 10 digitos."
+        );
+      },
     },
   }),
 
@@ -397,10 +422,14 @@ export default {
           const data = {
             MembresiaID: this.ItemMembershipSelected[0].MembresiaID,
             Membresia: this.ItemMembershipSelected[0].Descripcion,
-            Precio: this.membershipSelectedMonth ? this.ItemMembershipSelected[0].PrecioMes : this.ItemMembershipSelected[0].PrecioAnual,
+            Precio: this.membershipSelectedMonth
+              ? this.ItemMembershipSelected[0].PrecioMes
+              : this.ItemMembershipSelected[0].PrecioAnual,
+            Frecuencia: this.membershipSelectedMonth ? "Me" : "An",
             Email: new Utils().GetValue("correoUsuario"),
             Usuario: new Utils().GetValue("legal_name"),
             Token: token.id,
+            EmpresaTransID: new Utils().GetValue("EmpresaTransID"),
           };
 
           var response = await this.PaymentService.PostPayment(data);
@@ -429,9 +458,14 @@ export default {
         }
       );
     },
+    validarNumero(e) {
+      if (e.keyCode < 48 || e.keyCode > 57) {
+        if (e.keyCode != 46) e.preventDefault();
+      }
+    },
     async updateProfile() {
       this.loading = true;
-      
+
       let empresaTransID = new Utils().GetValue("EmpresaTransID");
 
       const accountData = {
@@ -443,7 +477,8 @@ export default {
         SubGiroID: this.SubGiroID,
         ActividadID: this.ActividadID,
         companyTransID: empresaTransID,
-        EsCambiarContrasena: this.password != this.password_old
+        Telefono: this.telefono,
+        EsCambiarContrasena: this.password != this.password_old,
       };
 
       var response = await this.AccountService.PostUpdateProfile(accountData);
@@ -478,7 +513,7 @@ export default {
 
       let params = {
         EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
-        UsuarioID: this.Utils.GetValue("UsuarioID"), //new Utils().GetValue("empresaTransID"),
+        UsuarioID: this.Utils.GetValue("UsuarioID"),
       };
 
       var response = await this.AccountService.GetProfile(params);
@@ -492,6 +527,7 @@ export default {
         this.SubGiros = response.data.response.subgiros;
         this.Actividades = response.data.response.actividades;
         this.email = response.data.response.perfil[0].CorreoUsuario;
+        this.telefono = response.data.response.perfil[0].Telefono;
         this.password = response.data.response.perfil[0].Contrasena;
         this.password_old = response.data.response.perfil[0].Contrasena;
         this.GiroID = response.data.response.perfil[0].GiroID;
@@ -519,7 +555,7 @@ export default {
           "red"
         );
       }
-      
+
       this.overlay = false;
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
@@ -537,7 +573,8 @@ export default {
         .toArray();
 
       this.precio_nueva_membresia = this.ItemMembershipSelected[0].PrecioMes;
-      this.precio_anual_nueva_membresia = this.ItemMembershipSelected[0].PrecioAnual;
+      this.precio_anual_nueva_membresia =
+        this.ItemMembershipSelected[0].PrecioAnual;
       this.nueva_MembresiaID = this.ItemMembershipSelected[0].MembresiaID;
       this.nombre_Nueva_Membresia =
         this.ItemMembershipSelected[0].TipoMembresia[0].Descripcion;

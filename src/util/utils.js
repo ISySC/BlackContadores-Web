@@ -20,11 +20,20 @@ export default class Utils {
             return false
     }
 
-    GetValue(key){
+    RegExpTelefono(value) {
+        const pattern = /^[0-9]{10}$/;
+
+        if (pattern.test(value))
+            return true
+        else
+            return false
+    }
+
+    GetValue(key) {
         return localStorage.getItem(key)
     }
 
-    SetValue(value, key){
+    SetValue(value, key) {
         localStorage.setItem(key, value)
     }
 

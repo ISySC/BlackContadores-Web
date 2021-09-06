@@ -292,7 +292,7 @@ export default {
     ContentFooter,
   },
   data: () => ({
-    vToolBarColor: 'green',
+    vToolBarColor: "green",
     loading_reset: false,
     loading: false,
     step: 1,
@@ -349,8 +349,7 @@ export default {
 
     if (rs_mermershiplist.status === 200)
       this.membershipsList = JSON.parse(rs_mermershiplist.data[0].Membresias);
-    else
-    {
+    else {
       this.vToolBarColor = "red";
       this.errorMessage(
         rs_mermershiplist.message,
@@ -382,9 +381,8 @@ export default {
           response.data.response[0].success == "true" ? "green" : "red"
         );
         this.loading_reset = false;
-        if (response.data.response[0].success == "true") 
-        {
-          this.emailRecovery = '';
+        if (response.data.response[0].success == "true") {
+          this.emailRecovery = "";
           this.step++;
         }
       } else {
@@ -457,7 +455,7 @@ export default {
           );
           if (this.membershipID == 1) {
             this.mensaje = response.data.response.message;
-            //this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
+            this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
             this.dashboardPage();
           }
 

@@ -26,7 +26,7 @@ export default {
     //create account string view
     str_txt_company_name: 'Nombre de la empresa / negocio',
     str_txt_legal_name: 'Nombre del representante legal (*)',
-    str_error_create_account: 'Para continuar, favor de ingresar los datos solicitados (nombre, correo, contraseña)',
+    str_error_create_account: 'Para continuar, favor de ingresar los datos solicitados (nombre, correo, contraseña, telefono)',
     str_error_validate_email_password: 'Favor de ingresar correo y/o contraseña con el formato especificado',
     str_membership_no_selected: 'Favor de seleccionar una plan para continuar.',
 

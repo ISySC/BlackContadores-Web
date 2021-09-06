@@ -3,6 +3,7 @@
     <SubclasificacionAlert
       :dialog.sync="dialogsub"
       title="Agregar nueva subclasificación"
+      :itemsClasificacion="itemsClasificacion"
       @getSubclasificaciones="getsubclasifications"
     />
     <CuentaAlert
@@ -19,6 +20,8 @@
       :subclasificacionID.sync="subclasificacionID"
       :title="'Selecciona cuenta por ' + (TipoCuenta == 3 ? 'cobrar' : 'pagar')"
       :tipoCuenta="TipoCuenta"
+      :itemsSubClasificacion="itemsSubClasificacion"
+      :itemsCuentas="itemsCuentas"
     />
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
@@ -282,9 +285,7 @@ export default {
     this.getCatalog();
   },
 
-  mounted() {
-    this.getCatalog();
-  },
+  mounted() {},
   methods: {
     getCatalog() {
       this.overlay = true;

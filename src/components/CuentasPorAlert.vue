@@ -45,7 +45,7 @@
                 outlined
                 :value="cuentaID"
                 ref="cuentas"
-                :items="itemsCuentas"
+                :items="ItemsCuentas"
                 item-value="CuentaID"
                 item-text="Descripcion"
                 item-key="itemsCuentas"
@@ -62,7 +62,7 @@
                 outlined
                 label="Subclasificación (*)"
                 required
-                :items="itemsSubClasificacion"
+                :items="ItemsSubClasificacion"
                 item-text="Concepto"
                 item-value="ConceptoID"
                 item-key="itemsSubClasificacion"
@@ -143,6 +143,8 @@ export default {
     cxCID: { type: Number, default: 0 },
     total: { type: Number, default: 0 },
     tipoCuenta: { type: Number, default: 3 },
+    itemsSubClasificacion: { type: Array },
+    itemsCuentas: { type: Array },
   },
   data: () => ({
     activo: true,
@@ -162,10 +164,10 @@ export default {
     TipoCuenta: 0,
     itemsCollection: [],
     collections: [],
-    itemsCuentas: [],
+    ItemsCuentas: [],
     cuentas: [],
     subclasificaciones: [],
-    itemsSubClasificacion: [],
+    ItemsSubClasificacion: [],
     subclasificacionID: 0,
     cuentaID: 0,
     rules: {
@@ -177,6 +179,12 @@ export default {
       this.TipoCuenta = this.$props.tipoCuenta;
       if (this.$props.dialog) {
         if (this.TipoCuenta != this.$props.tipoCuenta) {
+          this.ItemsCuentas = this.$props.itemsCuentas.filter(
+            (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
+          );
+          this.ItemsSubClasificacion = this.$props.itemsSubClasificacion.filter(
+            (sub) => sub.ClasificacionID == 4
+          );
           this.$refs["collection"].reset();
           this.total = 0;
           this.saldo = 0;
@@ -184,8 +192,6 @@ export default {
         }
         this.TipoCuenta = this.$props.tipoCuenta;
         this.getCuentasPor();
-        this.getbankaccount();
-        this.getsubclasifications();
       }
     },
   },
@@ -193,40 +199,9 @@ export default {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
     this.getCuentasPor();
-    this.getbankaccount();
-    this.getsubclasifications();
   },
 
   methods: {
-    async getbankaccount() {
-      let data = {
-        empresaTransID: this.Utils.GetValue("EmpresaTransID"),
-        mostrarInactivos: 0,
-      };
-
-      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(data);
-
-      if (rs_itemscuentas.status === 200) {
-        this.cuentas = rs_itemscuentas.data.response;
-        this.itemsCuentas = this.itemsCuentas = this.cuentas.filter(
-          (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
-        );
-      }
-    },
-    async getsubclasifications() {
-      let data = {
-        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
-        mostrarInactivos: 0,
-      };
-      const response = await this.CompanyServices.GetSubclasifications(data);
-
-      if (response.status === 200) {
-        this.subclasificaciones = response.data.response;
-        this.itemsSubClasificacion = this.subclasificaciones.filter(
-          (sub) => sub.ClasificacionID == 4
-        );
-      }
-    },
     subclasificacionSeleccionada(value) {
       this.subclasificacionID = value.ConceptoID;
     },
@@ -275,7 +250,12 @@ export default {
       }
     },
     async aceptar() {
-      if (this.cxcID != 0 && this.abono > 0 && this.cuentaID != 0 && this.subclasificacionID != 0) {
+      if (
+        this.cxcID != 0 &&
+        this.abono > 0 &&
+        this.cuentaID != 0 &&
+        this.subclasificacionID != 0
+      ) {
         if (this.abono <= this.saldoMax && this.abono > 0) {
           this.$emit("update:abono", this.abono);
           this.$emit("update:cxCID", this.cxcID);
