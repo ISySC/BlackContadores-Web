@@ -48,7 +48,7 @@
                 :items="ItemsCuentas"
                 item-value="CuentaID"
                 item-text="Descripcion"
-                item-key="itemsCuentas"
+                item-key="ItemsCuentas"
                 return-object
                 label="Cuenta afectar (*)"
                 @change="cuentaSeleccionada"
@@ -65,7 +65,7 @@
                 :items="ItemsSubClasificacion"
                 item-text="Concepto"
                 item-value="ConceptoID"
-                item-key="itemsSubClasificacion"
+                item-key="ItemsSubClasificacion"
                 return-object
                 @change="subclasificacionSeleccionada"
               ></v-select>
@@ -179,17 +179,18 @@ export default {
       this.TipoCuenta = this.$props.tipoCuenta;
       if (this.$props.dialog) {
         if (this.TipoCuenta != this.$props.tipoCuenta) {
-          this.ItemsCuentas = this.$props.itemsCuentas.filter(
-            (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
-          );
-          this.ItemsSubClasificacion = this.$props.itemsSubClasificacion.filter(
-            (sub) => sub.ClasificacionID == 4
-          );
           this.$refs["collection"].reset();
           this.total = 0;
           this.saldo = 0;
           this.abono = 0;
         }
+        console.log(this.$props.itemsCuentas);
+        this.ItemsCuentas = this.$props.itemsCuentas.filter(
+          (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
+        );
+        this.ItemsSubClasificacion = this.$props.itemsSubClasificacion.filter(
+          (sub) => sub.ClasificacionID == 4
+        );
         this.TipoCuenta = this.$props.tipoCuenta;
         this.getCuentasPor();
       }

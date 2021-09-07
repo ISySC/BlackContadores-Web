@@ -21,7 +21,7 @@
       :title="'Selecciona cuenta por ' + (TipoCuenta == 3 ? 'cobrar' : 'pagar')"
       :tipoCuenta="TipoCuenta"
       :itemsSubClasificacion="itemsSubClasificacion"
-      :itemsCuentas="itemsCuentas"
+      :itemsCuentas="cuentas"
     />
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
@@ -385,6 +385,7 @@ export default {
         subclasificacionID: this.subclasificacionID,
         typeofaccuntpay: this.CuentaPagoID,
         CreadoPor: new Utils().GetValue("correoUsuario"),
+        EsCxC: this.TipoCuenta == 3 ? true : false
       };
 
       rs_registro = null;
