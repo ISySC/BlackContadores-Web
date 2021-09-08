@@ -399,8 +399,10 @@ export default {
                 this.referencia = "";
                 this.observaciones = "";
                 this.importe = "";
+                this.clasificacionID = 0;
+                this.subclasificacionID = 0;
+                this.cuentaID = 0;
                 this.$refs["clasificaciones"].reset();
-                this.$refs["subclasificaciones"].reset();
                 this.$refs["cuentas"].reset();
                 this.$emit("update:dialog", false);
                 this.$emit("getregistries");
@@ -419,8 +421,10 @@ export default {
               this.referencia = "";
               this.observaciones = "";
               this.importe = "";
+              this.clasificacionID = 0;
+              this.subclasificacionID = 0;
+              this.cuentaID = 0;
               this.$refs["clasificaciones"].reset();
-              this.$refs["subclasificaciones"].reset();
               this.$refs["cuentas"].reset();
               this.$emit("update:dialog", false);
               this.$emit("getregistries");
@@ -456,6 +460,9 @@ export default {
           this.referencia = "";
           this.observaciones = "";
           this.importe = "";
+          this.clasificacionID = 0;
+          this.subclasificacionID = 0;
+          this.cuentaID = 0;
           this.$refs["clasificaciones"].reset();
           this.$refs["cuentas"].reset();
           this.$emit("update:dialog", false);
@@ -482,13 +489,14 @@ export default {
       }
     },
     cancelar() {
+      this.clasificacionID = 0;
       this.$refs["clasificaciones"].reset();
+      this.$refs["subclasificaciones"].reset();
       this.$refs["cuentas"].reset();
       this.importe = "";
       this.descripcionMovimiento = "";
       this.referencia = "";
       this.observaciones = "";
-      this.clasificacionID = 0;
       this.cuentaID = 0;
       this.sizecol = 6;
       this.$emit("update:dialog", false);

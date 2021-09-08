@@ -193,9 +193,6 @@ export default {
         );
         this.TipoCuenta = this.$props.tipoCuenta;
         this.getCuentasPor();
-        this.$refs["subclasificaciones"].reset();
-        this.$refs["cuentas"].reset();
-        this.$refs["collection"].reset();
       }
     },
   },
@@ -267,6 +264,15 @@ export default {
           this.$emit("update:cuentaPagoID", this.cuentaID);
           this.$emit("update:subclasificacionID", this.subclasificacionID);
           this.$emit("update:dialog", false);
+          this.$refs["subclasificaciones"].reset();
+          this.$refs["cuentas"].reset();
+          this.$refs["collection"].reset();
+          this.abono = 0;
+          this.cuentaID = 0;
+          this.subclasificacionID = 0;
+          this.Total = 0;
+          this.totalMonto = 0;
+          this.saldo = 0;
         } else {
           this.overlay = false;
           this.mensaje = "El abono no puede ser 0 ni mayor al saldo restante.";

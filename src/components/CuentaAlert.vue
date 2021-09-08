@@ -13,7 +13,7 @@
 
     <Loading :overlay="overlay" />
 
-    <v-dialog v-model="dialog" persistent max-width="500px">
+    <v-dialog v-model="dialog" persistent max-width="550px">
       <v-card>
         <v-card-title id="titleStyle">
           <span class="headline"
@@ -26,6 +26,7 @@
           <v-row no-gutters>
             <v-col cols="12" sm="12">
               <v-select
+                v-if="tipoID != 3 && tipoID != 4"
                 :value="tipoID"
                 ref="tipo"
                 outlined
