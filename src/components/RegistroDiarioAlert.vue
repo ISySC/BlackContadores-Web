@@ -383,9 +383,9 @@ export default {
         importe: this.importe,
         folioID: this.folioID,
         subclasificacionID: this.subclasificacionID,
-        typeofaccuntpay: this.CuentaPagoID,
+        tipoPagoCuenta: this.CuentaPagoID,
         CreadoPor: new Utils().GetValue("correoUsuario"),
-        EsCxC: this.TipoCuenta == 3 ? true : false
+        EsCxC: this.TipoCuenta == 3 ? true : false,
       };
 
       rs_registro = null;
@@ -428,6 +428,7 @@ export default {
         Abono: this.importe,
         CreadoPor: new Utils().GetValue("correoUsuario"),
         Total: this.Total,
+        TipoPagoCuentaID: this.CuentaPagoID,
       };
 
       rs_registro = await this.CompanyServices.PostCollection(data);
