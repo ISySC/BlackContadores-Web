@@ -321,7 +321,6 @@ export default {
           this.Utils.RegExpEmail(this.email) &&
           this.Utils.RegExpTelefono(this.telefono)
         ) {
-          console.log(this.membershipSelectedMonth);
 
           const accountData = {
             legalNamePerson: this.legalNamePerson,
@@ -335,7 +334,6 @@ export default {
 
           await this.AccountService.PostCreateAccount(accountData).then(
             (response) => {
-              console.log(response);
               if (response.data.token != "") {
                 this.Utils.SetValue(response.data.token, "authToken");
                 this.Utils.SetValue(

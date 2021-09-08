@@ -366,7 +366,6 @@ export default {
       return date;
     },
     async guardarRegistro() {
-      let rs_registro = null;
       if (this.fechaRegistro == "") this.fechaRegistro = this.currentDate();
       this.overlay = true;
 
@@ -388,31 +387,49 @@ export default {
         EsCxC: this.TipoCuenta == 3 ? true : false,
       };
 
-      rs_registro = null;
       if (this.accion == 0)
-        rs_registro = await this.CompanyServices.PostRegistryTransaction(data);
-      else
-        rs_registro = await this.CompanyServices.PostUpdateRegistryTransaction(
-          data
+        await this.CompanyServices.PostRegistryTransaction(data).then(
+          (rs_registro) => {
+            if (rs_registro.data.response[0].success) {
+              if (this.clasificacionID == 4) this.guardarAbono();
+              else {
+                this.overlay = false;
+                this.descripcionMovimiento = "";
+                this.fechaRegistro = "";
+                this.referencia = "";
+                this.observaciones = "";
+                this.importe = "";
+                this.$refs["clasificaciones"].reset();
+                this.$refs["subclasificaciones"].reset();
+                this.$refs["cuentas"].reset();
+                this.$emit("update:dialog", false);
+                this.$emit("getregistries");
+                this.overlay = false;
+              }
+            }
+          }
         );
-
-      if (rs_registro.data.response[0].success) {
-        this.overlay = false;
-        this.descripcionMovimiento = "";
-        this.fechaRegistro = "";
-        this.referencia = "";
-        this.observaciones = "";
-        this.importe = "";
-        this.$refs["clasificaciones"].reset();
-        this.$refs["subclasificaciones"].reset();
-        this.$refs["cuentas"].reset();
-        this.$emit("update:dialog", false);
-        this.$emit("getregistries");
-        this.overlay = false;
-      }
+      else
+        await this.CompanyServices.PostUpdateRegistryTransaction(data).then(
+          (rs_registro) => {
+            if (rs_registro.data.response[0].success) {
+              this.overlay = false;
+              this.descripcionMovimiento = "";
+              this.fechaRegistro = "";
+              this.referencia = "";
+              this.observaciones = "";
+              this.importe = "";
+              this.$refs["clasificaciones"].reset();
+              this.$refs["subclasificaciones"].reset();
+              this.$refs["cuentas"].reset();
+              this.$emit("update:dialog", false);
+              this.$emit("getregistries");
+              this.overlay = false;
+            }
+          }
+        );
     },
     async guardarAbono() {
-      let rs_registro = null;
       if (this.CxCID == 0) {
         this.mensaje =
           "Para guardar un pago es necesario seleccionar una cuenta y registrar un abono mayor a 0 y menor al saldo restante.";
@@ -431,8 +448,21 @@ export default {
         TipoPagoCuentaID: this.CuentaPagoID,
       };
 
-      rs_registro = await this.CompanyServices.PostCollection(data);
-      if (rs_registro.data.response[0].success) this.guardarRegistro();
+      await this.CompanyServices.PostCollection(data).then((response) => {
+        if (response.data.success) {
+          this.overlay = false;
+          this.descripcionMovimiento = "";
+          this.fechaRegistro = "";
+          this.referencia = "";
+          this.observaciones = "";
+          this.importe = "";
+          this.$refs["clasificaciones"].reset();
+          this.$refs["cuentas"].reset();
+          this.$emit("update:dialog", false);
+          this.$emit("getregistries");
+          this.overlay = false;
+        }
+      });
     },
     async aceptar() {
       if (
@@ -441,10 +471,7 @@ export default {
         this.cuentaID != "" &&
         this.importe != ""
       ) {
-        if (this.clasificacionID == 4) {
-          this.guardarAbono();
-          this.guardarRegistro();
-        } else this.guardarRegistro();
+        this.guardarRegistro();
       } else {
         this.mensaje = Constants.str_error_registry;
         this.esCancelar = false;

@@ -80,7 +80,7 @@
                 label="Total"
                 outlined
                 readonly
-                v-model="total"
+                v-model="Total"
                 reverse
               ></v-text-field>
             </v-col>
@@ -155,6 +155,7 @@ export default {
     cxcID: 0,
     totalMonto: "",
     saldo: "",
+    Total: 0,
     abono: 0,
     saldoMax: 0,
     mensaje: "",
@@ -179,12 +180,11 @@ export default {
       this.TipoCuenta = this.$props.tipoCuenta;
       if (this.$props.dialog) {
         if (this.TipoCuenta != this.$props.tipoCuenta) {
-          this.$refs["collection"].reset();
-          this.total = 0;
+          this.Total = 0;
+          this.Total = 0;
           this.saldo = 0;
           this.abono = 0;
         }
-        console.log(this.$props.itemsCuentas);
         this.ItemsCuentas = this.$props.itemsCuentas.filter(
           (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
         );
@@ -193,6 +193,9 @@ export default {
         );
         this.TipoCuenta = this.$props.tipoCuenta;
         this.getCuentasPor();
+        this.$refs["subclasificaciones"].reset();
+        this.$refs["cuentas"].reset();
+        this.$refs["collection"].reset();
       }
     },
   },
@@ -224,7 +227,7 @@ export default {
       this.totalMonto = this.collections.filter(
         (cxc) => cxc.CxCID === value.CxCID
       )[0]["Total"];
-      this.total = formatter.format(this.totalMonto);
+      this.Total = formatter.format(this.totalMonto);
       this.saldoMax = this.collections.filter(
         (cxc) => cxc.CxCID === value.CxCID
       )[0]["Saldo"];
