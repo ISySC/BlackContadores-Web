@@ -308,6 +308,11 @@ export default {
       if (response.data.success !== false) {
         this.referencia = response.data.response[0].Referencia;
         this.clasificacionID = response.data.response[0].ClasificacionID;
+        this.itemsSubClasificacion = this.SubClasificaciones.filter(
+          (Subclasificacion) =>
+            Subclasificacion.ClasificacionID == this.clasificacionID
+        );
+        this.subclasificacionID = response.data.response[0].SubClasificacionID;
         this.cuentaID = response.data.response[0].CuentaID;
         this.descripcionMovimiento = response.data.response[0].Descripcion;
         this.fechaRegistro = response.data.response[0].FechaRegistro;
