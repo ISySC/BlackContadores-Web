@@ -9,6 +9,23 @@
       @getCuentas="getCuentas"
     />
 
+    <v-dialog v-model="eliminar" persistent max-width="500">
+      <v-card>
+        <v-card-title class="text-h5">
+          ¿Eliminar la cuenta "{{ nombreCuenta }}" ?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="eliminar = false">
+            Cancelar
+          </v-btn>
+          <v-btn color="green darken-1" text @click="DeleteAccount">
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <Loading :overlay="overlay" />
 
     <!-- mostrar pantalla alerta para mensajes -->
@@ -73,6 +90,14 @@
                     white--text
                   "
                 ></th>
+                <th
+                  class="
+                    text-left text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                ></th>
               </tr>
             </thead>
             <tbody v-if="items.length > 0">
@@ -83,7 +108,7 @@
                 <td style="text-align: center">
                   {{ item.EsActivo ? "Activo" : "Inactivo" }}
                 </td>
-                <td style="width: 40px">
+                <td style="width: 10px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -97,7 +122,7 @@
                     mdi-pencil
                   </v-icon>
                 </td>
-                <td style="width: 40px">
+                <td style="width: 10px">
                   <v-icon
                     @click="
                       mostrarRegistroAlert(
@@ -109,6 +134,11 @@
                     "
                   >
                     mdi-file-search
+                  </v-icon>
+                </td>
+                <td style="width: 10px">
+                  <v-icon @click="onDelete(item.CuentaID, item.Descripcion)">
+                    mdi-delete
                   </v-icon>
                 </td>
               </tr>
@@ -163,6 +193,8 @@ export default {
     cuenta: "",
     titulo: "",
     accion: 0,
+    eliminar: false,
+    nombreCuenta: "",
   }),
   created() {
     this.CompanyServices = new CompanyServices();
@@ -170,6 +202,35 @@ export default {
     this.getCuentas();
   },
   methods: {
+    async DeleteAccount() {
+      this.overlay = true;
+
+      let params = {
+        CuentaID: this.cuentaID,
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+      };
+
+      const rs_registriesitems = await this.CompanyServices.PostDeleteCuenta(
+        params
+      );
+
+      if (rs_registriesitems.data.success != "true")
+        this.messageCreateAccountResponse(
+          rs_registriesitems.data.message,
+          false,
+          true,
+          "red"
+        );
+
+      this.getCuentas();
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    onDelete(cuentaID, nombreCuenta) {
+      this.cuentaID = cuentaID;
+      this.nombreCuenta = nombreCuenta;
+      this.eliminar = true;
+    },
     mostrarRegistroAlert(accion, titulo, cuentaID, cuenta) {
       this.titulo = titulo;
       this.accion = accion;

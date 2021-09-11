@@ -250,32 +250,36 @@ export default {
             Precio: this.membershipSelectedMonth
               ? this.ItemMembership[0].PrecioMes
               : this.ItemMembership[0].PrecioAnual,
-            Frecuencia: this.membershipSelectedMonth ? 'Me' : 'An',
+            Frecuencia: this.membershipSelectedMonth ? "Me" : "An",
             Email: new Utils().GetValue("correoUsuario"),
             Usuario: new Utils().GetValue("legal_name"),
             Token: token.id,
             EmpresaTransID: new Utils().GetValue("EmpresaTransID"),
           };
 
-          console.log(data);
-
-          var response = await this.PaymentService.PostPayment(data);
-
-          if (response.data.token != "") {
-            this.messageCreateAccountResponse(
-              response.data.message,
-              false,
-              true,
-              "red"
-            );
-          } else {
-            this.messageCreateAccountResponse(
-              response.data.message,
-              false,
-              true,
-              "green"
-            );
-          }
+          await this.PaymentService.PostPayment(data).then((response) => {
+            console.log(response);
+            if (response.data.success != "true") {
+              this.messageCreateAccountResponse(
+                response.data.message,
+                false,
+                true,
+                "red"
+              );
+            } else {
+              this.Utils.SetValue(
+                this.ItemMembership[0].MembresiaID,
+                "MembresiaID"
+              );
+              this.messageCreateAccountResponse(
+                response.data.message,
+                false,
+                true,
+                "green"
+              );
+            }
+            this.dashboardPage();
+          });
         },
         (error) => {
           this.messageCreateAccountResponse(error.message_to_purchaser, "red");
@@ -321,7 +325,6 @@ export default {
           this.Utils.RegExpEmail(this.email) &&
           this.Utils.RegExpTelefono(this.telefono)
         ) {
-
           const accountData = {
             legalNamePerson: this.legalNamePerson,
             companyName: this.companyName,
@@ -329,7 +332,7 @@ export default {
             password: this.password,
             membershipID: 1,
             frecuency: "Mensual",
-            Telefono: this.telefono
+            Telefono: this.telefono,
           };
 
           await this.AccountService.PostCreateAccount(accountData).then(
@@ -357,10 +360,6 @@ export default {
                   "UsuarioID"
                 );
                 this.Utils.SetValue(
-                  response.data.response[0].MembresiaID,
-                  "MembresiaID"
-                );
-                this.Utils.SetValue(
                   response.data.response[0].CustomerConektaID,
                   "CustomerConektaID"
                 );
@@ -373,8 +372,13 @@ export default {
 
                 if (this.membershipID !== 1) {
                   this.payment();
+                } else {
+                  this.Utils.SetValue(
+                    response.data.response[0].MembresiaID,
+                    "MembresiaID"
+                  );
+                  this.dashboardPage();
                 }
-                this.dashboardPage();
               } else {
                 this.dialogPago = false;
                 this.messageCreateAccountResponse(

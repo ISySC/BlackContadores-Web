@@ -2,6 +2,16 @@
   <!-- App.vue -->
   <div id="app">
     <v-app id="inspire">
+      <!-- mostrar pantalla alerta para mensajes -->
+      <AlertDialog
+        titulo="Black Administrativo - [ Configuración de Perfil ]"
+        :mensaje="mensaje"
+        :esCancelar="false"
+        :esAceptar="true"
+        vToolBarColor="indigo"
+        :dialog.sync="dialogAlert"
+      />
+      <!-- -->
       <v-navigation-drawer v-model="drawer" sm="absolute" left app>
         <v-list-item>
           <v-list-item-content>
@@ -50,9 +60,24 @@
       <v-app-bar dark id="appBarStyle" app>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <span id="spanTitle"
-          >BUEN DIA {{ str_legal_name }}
+          >BUEN DÍA {{ str_legal_name }}
           <span id="spanSubtitle">{{ str_company_name }}</span></span
         >
+        <div
+          v-on:click="details($event)"
+          style="cursor: pointer"
+          v-if="value < 100"
+        >
+          <v-subheader
+            >Tu perfil se encuentra configurado al {{ value }}%</v-subheader
+          >
+          <v-progress-linear
+            color="cyan"
+            buffer-value="1"
+            :value="value"
+            stream
+          ></v-progress-linear>
+        </div>
       </v-app-bar>
       <v-main>
         <router-view />
@@ -68,10 +93,13 @@
 import ContentFooter from "../components/ContentFooter";
 import Constants from "../util/constants";
 import Utils from "../util/utils";
+import AlertDialog from "../components/AlertDialog";
+import CompanyServices from "../network/services/CompanyService";
 
 export default {
   components: {
     ContentFooter,
+    AlertDialog,
   },
 
   data: () => ({
@@ -81,7 +109,10 @@ export default {
     str_legal_name: "",
     str_company_name: "",
     activa: true,
-
+    value: 0,
+    dialogAlert: false,
+    mensaje:
+      "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)",
     menu: [
       {
         title: Constants.str_registro_diario,
@@ -121,9 +152,23 @@ export default {
     this.str_legal_name = new Utils().GetValue("legal_name");
     this.str_company_name = new Utils().GetValue("company_name");
     this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
+    this.CompanyServices = new CompanyServices();
   },
-
+  mounted() {
+    this.percentagecompletion();
+  },
   methods: {
+    async percentagecompletion() {
+      await this.CompanyServices.GetPercentageCompletion(
+        new Utils().GetValue("EmpresaTransID")
+      ).then((response) => {
+        this.mensaje = response.data.message + "\n\n" + this.mensaje;
+        this.value = response.data.perce;
+      });
+    },
+    details() {
+      this.dialogAlert = true;
+    },
     cerrarSesion() {},
   },
 };
@@ -137,10 +182,11 @@ export default {
 
 #spanTitle {
   color: white;
-  font-size: 22px;
+  font-size: 20px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   padding: 10px;
+  max-width: 250px;
 }
 
 #spanSubtitle {

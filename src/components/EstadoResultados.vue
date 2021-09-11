@@ -20,9 +20,9 @@
           <span class="text-subtitle-1" id="textDescription"
             >Consulta los resultados de tus estados.</span
           >
-          <div class="float-right text-left text-h5">
+          <div class="float-right text-left text-h5" v-if="reportes > 0">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template >
                 <download-excel
                   :data="registros"
                   :fields="json_fields"
@@ -32,20 +32,28 @@
                 >
                   <v-btn
                     class="float-right"
-                    v-bind="attrs"
-                    v-on="on"
                     @click="GenerarReporte"
                     color="green"
                     rounded
-                    :disabled="reportes == 0 || items.length == 0"
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Reporte
+                    Exportar información a excel
                   </v-btn>
                 </download-excel>
               </template>
               <span> Generar Reporte</span>
             </v-tooltip>
+          </div>
+          <div class="float-right text-left text-h5" v-if="reportes <= 0">
+            <v-btn
+              class="float-right"
+              @click="GenerarReporte"
+              color="green"
+              rounded
+            >
+              <v-icon>mdi-file-excel</v-icon>
+              Exportar información a excel
+            </v-btn>
           </div>
         </div>
       </template>
@@ -555,39 +563,47 @@ export default {
     },
     async GenerarReporte() {
       if (this.items.length > 0) {
-        this.overlay = true;
-        if (this.descontarReporte) {
-          const response = await this.ReportService.UpdateNumberReports(
-            this.Utils.GetValue("EmpresaTransID")
-          );
-
-          if (response.status === 0 || response.status === 500)
-            this.messageCreateAccountResponse(
-              response.message,
-              false,
-              true,
-              "red"
+        if (this.reportes > 0) {
+          this.overlay = true;
+          if (this.descontarReporte) {
+            const response = await this.ReportService.UpdateNumberReports(
+              this.Utils.GetValue("EmpresaTransID")
             );
-          else {
-            if (response.data.success) {
-              this.reportes--;
-              this.descontarReporte = false;
+
+            if (response.status === 0 || response.status === 500)
               this.messageCreateAccountResponse(
-                "Reporte generado de manera exitosa",
+                response.message,
                 false,
                 true,
-                "green"
+                "red"
               );
+            else {
+              if (response.data.success) {
+                this.reportes--;
+                this.descontarReporte = false;
+                this.messageCreateAccountResponse(
+                  "Reporte generado de manera exitosa",
+                  false,
+                  true,
+                  "green"
+                );
+              }
             }
+          } else {
+            this.messageCreateAccountResponse(
+              "Reporte generado de manera exitosa",
+              false,
+              true,
+              "green"
+            );
           }
-        } else {
+        } else
           this.messageCreateAccountResponse(
-            "Reporte generado de manera exitosa",
+            "No cuentas con reportes disponibles para la descarga. Favor de mejorar tu membresía.",
             false,
             true,
-            "green"
+            "red"
           );
-        }
       } else {
         this.messageCreateAccountResponse(
           "No existen registros para generar un reporte.",

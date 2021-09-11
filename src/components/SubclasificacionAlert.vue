@@ -19,7 +19,7 @@
           <span class="headline"
             >{{ title }}
             <span v-if="subclasificacion != ''">
-              | Subclasificación: {{ subclasificacion }}</span
+              | Subclasificación: <br>{{ subclasificacion }}</span
             ></span
           >
         </v-card-title>

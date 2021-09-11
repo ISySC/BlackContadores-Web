@@ -18,7 +18,7 @@
         <v-card-title id="titleStyle">
           <span class="headline"
             >{{ title }}
-            <span v-if="cuenta != ''"> | Cuenta: {{ cuenta }}</span></span
+            <span v-if="cuenta != ''"> | Cuenta:  <br>{{ cuenta }}</span></span
           >
         </v-card-title>
 

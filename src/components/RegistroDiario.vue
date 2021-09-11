@@ -46,9 +46,9 @@
             >Registra tus movimientos diarios, como ingresos, gastos y
             compras.</span
           >
-          <div class="float-right text-left text-h5">
+          <div class="float-right text-left text-h5" v-if="reportes > 0">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template>
                 <download-excel
                   :data="items"
                   :fields="json_fields"
@@ -57,24 +57,106 @@
                 >
                   <v-btn
                     class="float-right"
-                    v-bind="attrs"
-                    v-on="on"
                     @click="GenerarReporte"
                     color="green"
                     rounded
-                    :disabled="reportes == 0"
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Reporte
+                    Exportar información a excel
                   </v-btn>
                 </download-excel>
               </template>
               <span> Generar Reporte</span>
             </v-tooltip>
           </div>
+          <div class="float-right text-left text-h5" v-if="reportes <= 0">
+            <v-btn
+              class="float-right"
+              v-bind="attrs"
+              v-on="on"
+              @click="GenerarReporte"
+              color="green"
+              rounded
+            >
+              <v-icon>mdi-file-excel</v-icon>
+              Exportar información a excel
+            </v-btn>
+          </div>
         </div>
       </template>
       <v-card-text style="padding: 0px">
+        <v-container class="pb-0 px-0 mx-0" style="max-width: 100% !important">
+          <v-row dense justify="center">
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted"
+                    label="Fecha Inicio"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="FechaInicio"
+                  @input="menu2 = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted2"
+                    label="Fecha Fin"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted2)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="FechaFin"
+                  @input="menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-btn
+                dark
+                class="mt-1"
+                color="indigo"
+                x-large
+                block
+                @click="getRegistriesOfDay"
+              >
+                Filtrar
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
         <v-simple-table fixed-header height="660px" class="grey lighten-3">
           <template v-slot:default>
             <thead>
@@ -274,7 +356,27 @@ export default {
     Loading,
     AlertDialog,
   },
-  data: () => ({
+  data: (vm) => ({
+    dateFormatted: vm.formatDate(
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
+    ),
+    dateFormatted2: vm.formatDate(
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
+    ),
+    FechaInicio: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
+    FechaFin: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
     json_fields: {
       FOLIO: "Folio",
       DESCRIPCIÓN: "DescripcionMovimiento",
@@ -284,6 +386,8 @@ export default {
       IMPORTE: "Importe",
       CUENTA: "Descripcion",
     },
+    menu2: false,
+    menu: false,
     eliminar: false,
     value: null,
     items: [],
@@ -301,7 +405,26 @@ export default {
     str_no_data: Constants.str_no_data,
     reportes: 0,
   }),
-
+  watch: {
+    FechaInicio() {
+      var datefin = new Date(this.FechaFin);
+      var date = new Date(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
+      this.dateFormatted2 = this.formatDate(this.FechaFin);
+    },
+    FechaFin() {
+      var datefin = new Date(this.FechaFin);
+      var date = new Date(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
+      this.dateFormatted2 = this.formatDate(this.FechaFin);
+    },
+  },
   created() {
     this.CompanyServices = new CompanyServices();
     this.ReportService = new ReportService();
@@ -329,33 +452,41 @@ export default {
     },
     async GenerarReporte() {
       if (this.items.length > 0) {
-        this.overlay = true;
+        if (this.reportes > 0) {
+          this.overlay = true;
 
-        const response = await this.ReportService.UpdateNumberReports(
-          this.Utils.GetValue("EmpresaTransID")
-        );
+          const response = await this.ReportService.UpdateNumberReports(
+            this.Utils.GetValue("EmpresaTransID")
+          );
 
-        if (response.status === 0 || response.status === 500)
+          if (response.status === 0 || response.status === 500)
+            this.messageCreateAccountResponse(
+              response.message,
+              false,
+              true,
+              "red"
+            );
+          else {
+            if (response.data.success) {
+              this.reportes--;
+              this.messageCreateAccountResponse(
+                "Reporte generado de manera exitosa",
+                false,
+                true,
+                "green"
+              );
+            }
+          }
+        } else
           this.messageCreateAccountResponse(
-            response.message,
+            "No cuentas con reportes disponibles para la descarga. Favor de mejorar tu membresía.",
             false,
             true,
             "red"
           );
-        else {
-          if (response.data.success) {
-            this.reportes--;
-            this.messageCreateAccountResponse(
-              "Reporte generado de manera exitosa",
-              false,
-              true,
-              "green"
-            );
-          }
-        }
       } else {
         this.messageCreateAccountResponse(
-          "No existen registros para generar un reporte.",
+          "No cuentas con reportes disponibles para la descarga. Favor de mejorar tu membresía.",
           false,
           true,
           "red"
@@ -416,11 +547,35 @@ export default {
       }/${current.getFullYear()}`;
       return date;
     },
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+    Dateformat(date) {
+      date = new Date(date);
+      date = `${date.getDate()}/${
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1
+      }/${date.getFullYear()}`;
+      return date;
+    },
     async getRegistriesOfDay() {
       this.overlay = true;
       let params = {
         EmpresaTransID: this.Utils.GetValue("EmpresaTransID"), //new Utils().GetValue("empresaTransID"),
-        FechaRegistro: this.currentDate(),
+        FechaInicio: this.formatDate(this.FechaInicio),
+        FechaFin: Vue.filter("formatoFecha")(
+          new Date(this.FechaFin).toISOString().substr(0, 10)
+        ),
       };
 
       const rs_registriesitems =

@@ -18,7 +18,7 @@
         <v-card-title id="titleStyle">
           <span class="headline"
             >{{ title }}
-            <span v-if="usuario != ''"> | Usuario: {{ usuario }}</span></span
+            <span v-if="usuario != ''"> | Usuario: <br>{{ usuario }}</span></span
           >
         </v-card-title>
 

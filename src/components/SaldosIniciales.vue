@@ -53,7 +53,7 @@
           style="max-width: 100% !important"
         >
           <v-row>
-            <v-col cols="12" sm="6" md="4" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6">
               <v-card>
                 <v-card-title
                   class="subheading text-center black white--text"
@@ -70,7 +70,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         :readonly="!editar"
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -95,7 +95,7 @@
                     >
                       <v-text-field
                         :readonly="!editar"
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -135,7 +135,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         :readonly="!editar"
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -157,7 +157,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         :readonly="!editar"
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -211,7 +211,7 @@
                 </v-list>
               </v-card>
             </v-col>
-            <v-col cols="12" sm="6" md="4" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6">
               <v-card>
                 <v-card-title
                   class="subheading text-center black white--text"
@@ -228,7 +228,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         :readonly="!editar"
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"

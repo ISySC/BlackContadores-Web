@@ -27,7 +27,7 @@
                 .toUpperCase()
             }}</span
           >
-          <div class="float-right text-left text-h5">
+          <div class="float-right text-left text-h5" v-if="reportes > 0">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <download-excel
@@ -44,15 +44,27 @@
                     @click="GenerarReporte"
                     color="green"
                     rounded
-                    :disabled="reportes == 0"
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Reporte
+                    Exportar información a excel
                   </v-btn>
                 </download-excel>
               </template>
               <span> Generar Reporte</span>
             </v-tooltip>
+          </div>
+          <div class="float-right text-left text-h5" v-if="reportes <= 0">
+            <v-btn
+              class="float-right"
+              v-bind="attrs"
+              v-on="on"
+              @click="GenerarReporte"
+              color="green"
+              rounded
+            >
+              <v-icon>mdi-file-excel</v-icon>
+              Exportar información a excel
+            </v-btn>
           </div>
         </div>
       </template>
@@ -79,7 +91,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         readonly
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -101,7 +113,7 @@
                     >
                       <v-text-field
                         readonly
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -135,7 +147,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         readonly
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -153,7 +165,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         readonly
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -213,7 +225,7 @@
                     <v-list-item-content class="align-end text-right">
                       <v-text-field
                         readonly
-                        style="max-width: 50%"
+                        style="max-width: 100%"
                         dense
                         filled
                         class="pa-0"
@@ -387,8 +399,7 @@ export default {
         },
         {
           conceptoactivo: "Total de activo circulante",
-          importeactivo: this.totalCirculante
-          ,
+          importeactivo: this.totalCirculante,
           conceptopasivo: "CAPITAL",
         },
         {
@@ -435,27 +446,40 @@ export default {
       this.eliminar = false;
     },
     async GenerarReporte() {
-      this.overlay = true;
+      if (this.reportes > 0) {
+        this.overlay = true;
 
-      const response = await this.ReportService.UpdateNumberReports(
-        this.Utils.GetValue("EmpresaTransID")
-      );
+        const response = await this.ReportService.UpdateNumberReports(
+          this.Utils.GetValue("EmpresaTransID")
+        );
 
-      if (response.status === 0 || response.status === 500)
-        this.messageCreateAccountResponse(response.message, false, true, "red");
-      else {
-        if (response.data.success) {
-          this.reportes--;
+        if (response.status === 0 || response.status === 500)
           this.messageCreateAccountResponse(
-            "Reporte generado de manera exitosa",
+            response.message,
             false,
             true,
-            "green"
+            "red"
           );
+        else {
+          if (response.data.success) {
+            this.reportes--;
+            this.messageCreateAccountResponse(
+              "Reporte generado de manera exitosa",
+              false,
+              true,
+              "green"
+            );
+          }
         }
-      }
-      this.overlay = false;
-      this.eliminar = false;
+        this.overlay = false;
+        this.eliminar = false;
+      } else
+        this.messageCreateAccountResponse(
+          "No cuentas con reportes disponibles para la descarga. Favor de mejorar tu membresía.",
+          false,
+          true,
+          "red"
+        );
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
       this.mensaje = message;

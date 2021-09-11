@@ -3,7 +3,7 @@
     <v-card>
       <v-toolbar :color="vToolBarColor" dark>{{ titulo }}</v-toolbar>
 
-      <h4 class="ma-5">
+      <h4 class="ma-5" style="white-space: pre-line">
         {{ mensaje }}
       </h4>
 

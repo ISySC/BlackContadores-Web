@@ -73,6 +73,7 @@
                 ref="clasificaciones"
                 outlined
                 label="Clasificación (*)"
+                no-data-text="Sin clasificaciones disponibles"
                 required
                 :items="itemsClasificacion"
                 item-text="Clasificacion"
@@ -88,6 +89,7 @@
                 ref="subclasificaciones"
                 outlined
                 label="Subclasificación (*)"
+                no-data-text="Sin subclasificaciones disponibles"
                 required
                 :items="itemsSubClasificacion"
                 item-text="Concepto"
@@ -122,12 +124,14 @@
             </v-col>
             <v-col cols="12" sm="10">
               <v-select
+                required
                 outlined
                 :value="cuentaID"
                 ref="cuentas"
                 :items="itemsCuentas"
                 item-value="CuentaID"
                 item-text="Descripcion"
+                no-data-text="Sin cuentas disponibles"
                 item-key="itemsCuentas"
                 return-object
                 label="Cuenta afectar (*)"
@@ -339,8 +343,13 @@ export default {
       };
       const response = await this.CompanyServices.GetSubclasifications(data);
 
-      if (response.status === 200)
+      if (response.status === 200) {
         this.SubClasificaciones = response.data.response;
+        this.itemsSubClasificacion = this.SubClasificaciones.filter(
+          (Subclasificacion) =>
+            Subclasificacion.ClasificacionID == this.clasificacionID
+        );
+      }
       //this.itemsSubClasificacion = response.data.response;
     },
     async getclasifications() {
@@ -476,6 +485,7 @@ export default {
         this.descripcionMovimiento != "" &&
         this.clasificacionID != "" &&
         this.cuentaID != "" &&
+        this.subclasificacionID != "" &&
         this.importe != ""
       ) {
         this.guardarRegistro();

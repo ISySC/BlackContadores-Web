@@ -33,6 +33,9 @@
                 "
                 required
                 :items="itemsCollection"
+                :no-data-text="this.TipoCuenta == 3
+                    ? 'Sin cuentas por cobrar disponibles'
+                    : 'Sin cuentas por pagar disponibles'"
                 item-text="Descripcion"
                 item-value="CxCID"
                 item-key="itemsCollection"
@@ -49,6 +52,7 @@
                 item-value="CuentaID"
                 item-text="Descripcion"
                 item-key="ItemsCuentas"
+                no-data-text="Sin cuentas disponibles"
                 return-object
                 label="Cuenta afectar (*)"
                 @change="cuentaSeleccionada"
@@ -60,7 +64,8 @@
                 :value="subclasificacionID"
                 ref="subclasificaciones"
                 outlined
-                label="Subclasificación (*)"
+                no-data-text="Sin subclasificaciones de pago disponibles"
+                label="Subclasificación de pago (*)"
                 required
                 :items="ItemsSubClasificacion"
                 item-text="Concepto"

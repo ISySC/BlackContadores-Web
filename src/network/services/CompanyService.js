@@ -13,6 +13,16 @@ export default class CompanyService {
     constructor() {
         axios.defaults.headers.common['access-token'] = localStorage.getItem('authToken');
     }
+    //Porcentaje de perfil
+
+    GetPercentageCompletion(empresaTransID)
+    {
+        return axios.get(URL_BASE + 'company/percentagecompletion/' + empresaTransID)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
     //Balance General
     GetGeneralBalance(empresaTransID)
     {
@@ -40,7 +50,7 @@ export default class CompanyService {
         });
     }
 
-    //Cuentas
+    //Tipos de Cuentas
     GetTypeAccount()
     {
         return axios.get(URL_BASE + 'company/typeofaccount')
@@ -90,7 +100,15 @@ export default class CompanyService {
                 return handlererroapi(error)
             });
     }
-    //
+
+    PostDeleteSubclasifications(data) {
+        return axios.delete(URL_BASE + subclasification + data.EmpresaTransID + "/" + data.SubClasificacionID)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    //Cuentas
     GetBankaccounts(data) {
 
         return axios.post(URL_BASE + bankaccounts, data)
@@ -108,13 +126,20 @@ export default class CompanyService {
     }
 
     PostUpdateCuenta(data) {
-        console.log(data);
         return axios.put(URL_BASE + updateaccount + data.cuentaID, data)
             .catch(error => {
                 return handlererroapi(error)
             });
     }
 
+    PostDeleteCuenta(data) {
+        return axios.delete(URL_BASE + bankaccount + data.EmpresaTransID + "/" + data.CuentaID)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    //Registros
     PostUpdateRegistryTransaction(data) {
         return axios.put(URL_BASE + updateregistry, data)
             .catch(error => {
