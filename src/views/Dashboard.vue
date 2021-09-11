@@ -149,12 +149,14 @@ export default {
     this.str_company_name = new Utils().GetValue("company_name");
     this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
     this.CompanyServices = new CompanyServices();
+    this.$root.$refs.Dashboard = this;
   },
   mounted() {
     this.percentagecompletion();
   },
   methods: {
     async percentagecompletion() {
+      console.log("entro");
       await this.CompanyServices.GetPercentageCompletion(
         new Utils().GetValue("EmpresaTransID")
       ).then((response) => {

@@ -454,6 +454,7 @@ export default {
           true,
           "green"
         );
+        this.$root.$refs.Dashboard.percentagecompletion();
         this.editar = this.overlay = false;
       }
 

@@ -104,6 +104,7 @@ export default {
 
   created() {
     this.membresiaID = new Utils().GetValue("MembresiaID");
+    this.$root.$refs.Dashboard.percentagecompletion();
     //this.membresiaID = 2;
   },
   methods: {},

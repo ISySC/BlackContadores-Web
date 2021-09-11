@@ -482,7 +482,7 @@ export default {
       };
 
       var response = await this.AccountService.PostUpdateProfile(accountData);
-
+      
       if (response.data.token != "") {
         this.loading = false;
         this.messageCreateAccountResponse(
@@ -491,6 +491,7 @@ export default {
           true,
           "green"
         );
+        this.$root.$refs.Dashboard.percentagecompletion();
         this.editar = false;
       } else {
         this.loading = false;

@@ -381,6 +381,7 @@ export default {
     this.Utils = new Utils();
     this.getGeneralBalances();
     this.validarGenerarReporte();
+    this.$root.$refs.Dashboard.percentagecompletion();
   },
   methods: {
     formarReporte() {

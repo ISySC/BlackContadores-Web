@@ -172,6 +172,7 @@ export default {
           );
 
         if (rs_registro.data.success == "true") {
+          this.$root.$refs.Dashboard.percentagecompletion();
           this.overlay = false;
 
           this.overlay = false;
