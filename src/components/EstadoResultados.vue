@@ -717,7 +717,6 @@ export default {
 
       const rs_registriesitems =
         await this.CompanyServices.GetRegistriesTransactionResults(params);
-
       if (rs_registriesitems.status === 0 || rs_registriesitems.status === 500)
         this.messageCreateAccountResponse(
           rs_registriesitems.message,
@@ -728,7 +727,7 @@ export default {
       else if (rs_registriesitems.data.success) {
         this.registros = rs_registriesitems.data.response;
         this.items = rs_registriesitems.data.response;
-        if (rs_registriesitems.data.totalAccount.TotalIngreso) {
+        if (Object.keys(rs_registriesitems.data.totalAccount).length > 1) {
           this.totalIngresos =
             rs_registriesitems.data.totalAccount.TotalIngreso;
           this.totalGastos = rs_registriesitems.data.totalAccount.TotalGasto;

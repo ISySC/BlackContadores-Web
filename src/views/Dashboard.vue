@@ -63,15 +63,10 @@
           >BUEN DÍA {{ str_legal_name }}
           <span id="spanSubtitle">{{ str_company_name }}</span></span
         >
-        <div
-          v-on:click="details($event)"
-          style="cursor: pointer"
-          v-if="value < 100"
-        >
-          <v-subheader
-            >Tu perfil se encuentra configurado al {{ value }}%</v-subheader
-          >
+        <div v-on:click="details($event)" style="cursor: pointer">
+          <v-subheader>{{ mensajePorcentaje }}</v-subheader>
           <v-progress-linear
+            height="10"
             color="cyan"
             buffer-value="1"
             :value="value"
@@ -103,6 +98,7 @@ export default {
   },
 
   data: () => ({
+    mensajePorcentaje: "",
     drawer: true,
     str_title_name_app: Constants.str_title_name_app,
     str_slogan: Constants.str_slogan,
@@ -164,6 +160,12 @@ export default {
       ).then((response) => {
         this.mensaje = response.data.message + "\n\n" + this.mensaje;
         this.value = response.data.perce;
+        if (this.value < 100)
+          this.mensajePorcentaje =
+            "Tu perfil se encuentra configurado al " +
+            this.value +
+            "%  (click para ver tips)";
+        else this.mensajePorcentaje = "Tu perfil esta completado al 100%";
       });
     },
     details() {
@@ -186,7 +188,6 @@ export default {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   padding: 10px;
-  max-width: 250px;
 }
 
 #spanSubtitle {
