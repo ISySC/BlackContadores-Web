@@ -406,7 +406,7 @@ export default {
         await this.CompanyServices.PostRegistryTransaction(data).then(
           (rs_registro) => {
             if (rs_registro.data.response[0].success) {
-              if (this.clasificacionID == 4) this.guardarAbono();
+              if (this.clasificacionID == 4) this.guardarAbono(rs_registro.data.response[0].FolioID);
               else {
                 this.overlay = false;
                 this.descripcionMovimiento = "";
@@ -448,7 +448,7 @@ export default {
           }
         );
     },
-    async guardarAbono() {
+    async guardarAbono(folioID) {
       if (this.CxCID == 0) {
         this.mensaje =
           "Para guardar un pago es necesario seleccionar una cuenta y registrar un abono mayor a 0 y menor al saldo restante.";
@@ -465,6 +465,7 @@ export default {
         CreadoPor: new Utils().GetValue("correoUsuario"),
         Total: this.Total,
         TipoPagoCuentaID: this.CuentaPagoID,
+	RegistroID: folioID
       };
 
       await this.CompanyServices.PostCollection(data).then((response) => {
