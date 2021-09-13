@@ -48,7 +48,7 @@
           >
           <div class="float-right text-left text-h5" v-if="reportes > 0">
             <v-tooltip bottom>
-              <template>
+              <template v-slot:activator="{ on, attrs }">
                 <download-excel
                   :data="items"
                   :fields="json_fields"
@@ -56,6 +56,8 @@
                   name="Registro_Diario"
                 >
                   <v-btn
+                    v-bind="attrs"
+                    v-on="on"
                     class="float-right"
                     @click="GenerarReporte"
                     color="green"
@@ -86,7 +88,7 @@
       </template>
       <v-card-text style="padding: 0px">
         <v-container class="pb-0 px-0 mx-0" style="max-width: 100% !important">
-          <v-row dense justify="center">
+          <v-row dense>
             <v-col cols="12" sm="2">
               <v-menu
                 v-model="menu2"

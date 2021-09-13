@@ -85,6 +85,7 @@
             </v-col>
             <v-col cols="12" sm="10" v-if="clasificacionID !== 4">
               <v-select
+                :v-model="subclasificacionID"
                 :value="subclasificacionID"
                 ref="subclasificaciones"
                 outlined
@@ -312,12 +313,12 @@ export default {
           (Subclasificacion) =>
             Subclasificacion.ClasificacionID == this.clasificacionID
         );
-        this.subclasificacionID = response.data.response[0].SubClasificacionID;
         this.cuentaID = response.data.response[0].CuentaID;
         this.descripcionMovimiento = response.data.response[0].Descripcion;
         this.fechaRegistro = response.data.response[0].FechaRegistro;
         this.importe = response.data.response[0].Importe;
         this.observaciones = response.data.response[0].Observaciones;
+        this.subclasificacionID = response.data.response[0].SubClasificacionID;
       } else {
         this.messageCreateAccountResponse(
           response.data.message,

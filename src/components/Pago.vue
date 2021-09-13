@@ -342,7 +342,7 @@
             dark
             x-large
             @click.native="pagar"
-            >Continuar</v-btn
+            >Pagar</v-btn
           >
         </div>
       </div>

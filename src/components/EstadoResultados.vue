@@ -22,7 +22,7 @@
           >
           <div class="float-right text-left text-h5" v-if="reportes > 0">
             <v-tooltip bottom>
-              <template >
+              <template v-slot:activator="{ on, attrs }">
                 <download-excel
                   :data="registros"
                   :fields="json_fields"
@@ -31,6 +31,8 @@
                   :before-generate="formarReporte"
                 >
                   <v-btn
+                    v-bind="attrs"
+                    v-on="on"
                     class="float-right"
                     @click="GenerarReporte"
                     color="green"
@@ -58,7 +60,7 @@
         </div>
       </template>
       <v-card-text style="padding: 0px">
-        <v-container class="pb-0 px-0 mx-0" style="max-width: 100% !important">
+        <v-container class="pb-0 px-0 mx-0">
           <v-row dense>
             <v-col cols="12" sm="2">
               <v-menu
@@ -285,7 +287,7 @@
             </v-col>
             <v-col cols="12" sm="2" style="height: 100%">
               <v-card :elevation="6" class="px-4 pt-5 pb-0 blue-grey darken-4">
-                <h2 class="text-center white--text">Totales</h2>
+                <h3 class="text-center white--text">Totales</h3>
                 <br />
                 <v-text-field
                   dark
@@ -345,12 +347,12 @@
                 ></v-text-field>
                 <v-divider />
                 <br />
-                <h2
+                <h3
                   class="text-center white--text"
                   v-if="filtroClasificacionID == 0"
                 >
                   Margenes de Utilidad
-                </h2>
+                </h3>
                 <br />
                 <v-text-field
                   dark

@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     async percentagecompletion() {
-      console.log("entro");
+      this.mensaje = "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)";
       await this.CompanyServices.GetPercentageCompletion(
         new Utils().GetValue("EmpresaTransID")
       ).then((response) => {
