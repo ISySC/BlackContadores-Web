@@ -10,6 +10,7 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
+        readonly
         outlined
         v-model="dateFormatted"
         label="Fecha movimiento"
@@ -27,7 +28,11 @@
 <script>
 export default {
   data: (vm) => ({
-    date: new Date(),
+    date: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
     dateFormatted: vm.formatDate(
       new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
         .toISOString()

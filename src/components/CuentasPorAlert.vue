@@ -10,7 +10,17 @@
       :dialog.sync="dialogAlert"
     />
     <!-- -->
-
+    <SubclasificacionAlert
+      :dialog.sync="dialogsub"
+      title="Agregar nueva subclasificación"
+      :itemsClasificacion="itemsClasificacion"
+      @getSubclasificaciones="getsubclasifications"
+    />
+    <CuentaAlert
+      :dialog.sync="dialogaccount"
+      title="Agregar nueva cuenta"
+      @getCuentas="getbankaccount"
+    />
     <Loading :overlay="overlay" />
 
     <v-dialog v-model="dialog" persistent max-width="500px">
@@ -33,9 +43,11 @@
                 "
                 required
                 :items="itemsCollection"
-                :no-data-text="this.TipoCuenta == 3
+                :no-data-text="
+                  this.TipoCuenta == 3
                     ? 'Sin cuentas por cobrar disponibles'
-                    : 'Sin cuentas por pagar disponibles'"
+                    : 'Sin cuentas por pagar disponibles'
+                "
                 item-text="Descripcion"
                 item-value="CxCID"
                 item-key="itemsCollection"
@@ -43,7 +55,7 @@
                 @change="collectionSeleccionada"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="12">
+            <v-col cols="12" sm="10">
               <v-select
                 outlined
                 :value="cuentaID"
@@ -59,7 +71,25 @@
                 style="padding-left: 1px"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="12">
+            <v-col cols="12" sm="2" class="py-2 pl-2">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    block
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue"
+                    large
+                    dark
+                    @click.native="mostrarRegistroCuentaAlert"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <span>Agregar cuenta al catálogo</span>
+              </v-tooltip>
+            </v-col>
+            <v-col cols="12" sm="10">
               <v-select
                 :value="subclasificacionID"
                 ref="subclasificaciones"
@@ -74,6 +104,28 @@
                 return-object
                 @change="subclasificacionSeleccionada"
               ></v-select>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="2"
+              class="py-2 pl-2"
+            >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    block
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue"
+                    large
+                    dark
+                    @click.native="mostrarRegistroSubAlert"
+                  >
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </template>
+                <span>Agregar subclasificacion al catálogo</span>
+              </v-tooltip>
             </v-col>
             <v-col cols="6" sm="12">
               <v-divider />
@@ -136,11 +188,15 @@ import Constants from "../util/constants";
 import AlertDialog from "../components/AlertDialog";
 import Loading from "../components/Loading";
 import Utils from "../util/utils";
+import CuentaAlert from "../components/CuentaAlert";
+import SubclasificacionAlert from "../components/SubclasificacionAlert";
 
 export default {
   components: {
     AlertDialog,
     Loading,
+    CuentaAlert,
+    SubclasificacionAlert,
   },
   props: {
     dialog: { type: Boolean, default: false },
@@ -152,6 +208,8 @@ export default {
     itemsCuentas: { type: Array },
   },
   data: () => ({
+    dialogsub: false,
+    dialogaccount: false,
     activo: true,
     nombre: "",
     esAceptar: false,
@@ -172,6 +230,7 @@ export default {
     collections: [],
     ItemsCuentas: [],
     cuentas: [],
+    itemsClasificacion: [],
     subclasificaciones: [],
     ItemsSubClasificacion: [],
     subclasificacionID: 0,
@@ -208,6 +267,41 @@ export default {
   },
 
   methods: {
+    mostrarRegistroSubAlert() {
+      this.dialogsub = true;
+    },
+    mostrarRegistroCuentaAlert() {
+      this.dialogaccount = true;
+    },
+    async getbankaccount() {
+      let data = {
+        empresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+
+      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(data);
+
+      if (rs_itemscuentas.status === 200) {
+        this.cuentas = rs_itemscuentas.data.response;
+        this.ItemsCuentas = this.cuentas.filter(
+          (cuenta) => cuenta.TipoCuentaID == 1 || cuenta.TipoCuentaID == 2
+        );
+      }
+    },
+    async getsubclasifications() {
+      let data = {
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+      const response = await this.CompanyServices.GetSubclasifications(data);
+      if (response.status === 200) {
+        this.SubClasificaciones = response.data.response;
+        this.ItemsSubClasificacion = this.SubClasificaciones.filter(
+          (Subclasificacion) =>
+            Subclasificacion.ClasificacionID == 4
+        );
+      }
+    },
     subclasificacionSeleccionada(value) {
       this.subclasificacionID = value.ConceptoID;
     },
@@ -298,6 +392,12 @@ export default {
       }
     },
     cancelar() {
+      this.Total = 0;
+      this.totalMonto = 0;
+      this.saldo = 0;
+      this.$refs["subclasificaciones"].reset();
+      this.$refs["cuentas"].reset();
+      this.$refs["collection"].reset();
       this.nombre = "";
       this.$emit("update:dialog", false);
     },

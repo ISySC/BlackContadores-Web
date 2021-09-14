@@ -258,7 +258,6 @@ export default {
           };
 
           await this.PaymentService.PostPayment(data).then((response) => {
-            console.log(response);
             if (response.data.success != "true") {
               this.messageCreateAccountResponse(
                 response.data.message,
@@ -278,7 +277,9 @@ export default {
                 "green"
               );
             }
-            this.dashboardPage();
+            setTimeout(() => {
+              this.dashboardPage();
+            }, 3000);
           });
         },
         (error) => {

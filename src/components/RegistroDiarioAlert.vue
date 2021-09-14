@@ -22,6 +22,8 @@
       :tipoCuenta="TipoCuenta"
       :itemsSubClasificacion="itemsSubClasificacion"
       :itemsCuentas="cuentas"
+      @getSubclasificaciones="getsubclasifications"
+      @getCuentas="getbankaccount"
     />
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
@@ -52,15 +54,41 @@
                 label="Descripción del movimiento (*)"
                 required
                 outlined
+                :readonly="accion == 3"
                 v-model="descripcionMovimiento"
                 style="padding-left: 1px"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="4">
-              <DatePicker @fechaSeleccionada="fechaSeleccionada" />
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    :disabled="accion == 3"
+                    outlined
+                    v-model="dateFormatted"
+                    label="Fecha Registro"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="Fecha"
+                  @input="menu2 = false"
+                ></v-date-picker>
+              </v-menu>
             </v-col>
             <v-col cols="12" sm="8">
               <v-text-field
+                :readonly="accion == 3"
                 v-model="referencia"
                 outlined
                 style="padding-left: 1px"
@@ -69,6 +97,7 @@
             </v-col>
             <v-col cols="12" sm="12">
               <v-select
+                :readonly="accion == 3"
                 :value="clasificacionID"
                 ref="clasificaciones"
                 outlined
@@ -83,8 +112,9 @@
                 @change="clasificacionSeleccionada"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="10" v-if="clasificacionID !== 4">
+            <v-col cols="10" sm="10" v-show="clasificacionID !== 4">
               <v-select
+                :readonly="accion == 3"
                 :v-model="subclasificacionID"
                 :value="subclasificacionID"
                 ref="subclasificaciones"
@@ -101,19 +131,19 @@
               ></v-select>
             </v-col>
             <v-col
-              v-if="clasificacionID !== 4"
-              cols="12"
+              v-show="clasificacionID !== 4"
+              cols="2"
               sm="2"
-              class="py-2 pl-2"
+              class="py-2 pl-2 pt-3 pr-2"
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
+                    :disabled="accion == 3"
                     block
                     v-bind="attrs"
                     v-on="on"
                     color="blue"
-                    large
                     dark
                     @click.native="mostrarRegistroSubAlert"
                   >
@@ -123,8 +153,9 @@
                 <span>Agregar subclasificacion al catálogo</span>
               </v-tooltip>
             </v-col>
-            <v-col cols="12" sm="10">
+            <v-col cols="10" sm="10" xs="10">
               <v-select
+                :readonly="accion == 3"
                 required
                 outlined
                 :value="cuentaID"
@@ -140,15 +171,15 @@
                 style="padding-left: 1px"
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="2" class="py-2 pl-2">
+            <v-col cols="2" sm="2" class="p-2 pl-2 pr-2 pt-3">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
+                    :disabled="accion == 3"
                     block
                     v-bind="attrs"
                     v-on="on"
                     color="blue"
-                    large
                     dark
                     @click.native="mostrarRegistroCuentaAlert"
                   >
@@ -158,11 +189,12 @@
                 <span>Agregar cuenta al catálogo</span>
               </v-tooltip>
             </v-col>
-            <v-col v-if="clasificacionID == 4" cols="12" sm="12">
+            <v-col v-show="clasificacionID == 4" cols="12" sm="12">
               <div style="padding-left: 3px" class="my-2">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
+                      :disabled="accion == 3"
                       block
                       v-bind="attrs"
                       v-on="on"
@@ -181,6 +213,7 @@
             <v-col cols="12" sm="12" md="12">
               <v-textarea
                 outlined
+                :readonly="accion == 3"
                 label="Observaciones"
                 v-model="observaciones"
               ></v-textarea>
@@ -188,6 +221,7 @@
             <v-col cols="6" sm="6" md="6"></v-col>
             <v-col cols="6" sm="6" md="6">
               <v-text-field
+                :readonly="accion == 3"
                 align="right"
                 label="Importe (*)"
                 required
@@ -202,11 +236,11 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn width="25%" color="error" @click.native="cancelar">
+          <v-btn width="30%" color="error" @click.native="cancelar">
             Cancelar
           </v-btn>
           <v-btn
-            width="30%"
+            width="40%"
             color="blue"
             dark
             v-if="accion != 3"
@@ -221,7 +255,6 @@
 </template>
 
 <script>
-import DatePicker from "../components/DatePicker";
 import CompanyServices from "../network/services/CompanyService";
 import Utils from "../util/utils";
 import Constants from "../util/constants";
@@ -233,7 +266,6 @@ import SubclasificacionAlert from "../components/SubclasificacionAlert";
 
 export default {
   components: {
-    DatePicker,
     AlertDialog,
     Loading,
     CuentaAlert,
@@ -248,8 +280,19 @@ export default {
     folioID: { type: Number, default: 0 },
     infoRegistro: { type: Array, default: null },
   },
-  data: () => ({
+  data: (vm) => ({
+    dateFormatted: vm.formatDate(
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
+    ),
+    Fecha: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
     CuentaPagoID: 0,
+    menu2: false,
     descripcionMovimiento: "",
     referencia: "",
     fechaRegistro: "",
@@ -278,6 +321,9 @@ export default {
     Total: 0,
   }),
   watch: {
+    Fecha() {
+      this.dateFormatted = this.formatDate(this.Fecha);
+    },
     dialog(visible) {
       if (visible) {
         if (this.accion != 0) this.getInfoRegistry();
@@ -292,6 +338,18 @@ export default {
 
   mounted() {},
   methods: {
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
     getCatalog() {
       this.overlay = true;
       this.getbankaccount();
@@ -304,7 +362,7 @@ export default {
       let params = {
         folioID: this.folioID,
       };
-
+      this.subclasificacionID = 0;
       var response = await this.CompanyServices.GetRegistryTransaction(params);
       if (response.data.success !== false) {
         this.referencia = response.data.response[0].Referencia;
@@ -318,6 +376,7 @@ export default {
         this.fechaRegistro = response.data.response[0].FechaRegistro;
         this.importe = response.data.response[0].Importe;
         this.observaciones = response.data.response[0].Observaciones;
+        
         this.subclasificacionID = response.data.response[0].SubClasificacionID;
       } else {
         this.messageCreateAccountResponse(
@@ -348,7 +407,6 @@ export default {
         mostrarInactivos: 0,
       };
       const response = await this.CompanyServices.GetSubclasifications(data);
-
       if (response.status === 200) {
         this.SubClasificaciones = response.data.response;
         this.itemsSubClasificacion = this.SubClasificaciones.filter(
@@ -406,7 +464,8 @@ export default {
         await this.CompanyServices.PostRegistryTransaction(data).then(
           (rs_registro) => {
             if (rs_registro.data.response[0].success) {
-              if (this.clasificacionID == 4) this.guardarAbono(rs_registro.data.response[0].FolioID);
+              if (this.clasificacionID == 4)
+                this.guardarAbono(rs_registro.data.response[0].FolioID);
               else {
                 this.overlay = false;
                 this.descripcionMovimiento = "";
@@ -465,7 +524,7 @@ export default {
         CreadoPor: new Utils().GetValue("correoUsuario"),
         Total: this.Total,
         TipoPagoCuentaID: this.CuentaPagoID,
-	RegistroID: folioID
+        RegistroID: folioID,
       };
 
       await this.CompanyServices.PostCollection(data).then((response) => {
@@ -535,6 +594,7 @@ export default {
       else this.itemsCuentas = this.cuentas;
     },
     cuentaSeleccionada(value) {
+      console.log(this.subclasificacionID);
       this.cuentaID = value.CuentaID;
       this.TipoCuenta = this.cuentas.filter(
         (cuenta) => cuenta.CuentaID === value.CuentaID

@@ -57,22 +57,30 @@
         </v-footer>
       </v-navigation-drawer>
 
-      <v-app-bar dark id="appBarStyle" app>
+      <v-app-bar dark id="appBarStyle" class="pa-2" app :height="$vuetify.breakpoint.xs ? 200 : 70">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <span id="spanTitle"
-          >BUEN DÍA {{ str_legal_name }}
-          <span id="spanSubtitle">{{ str_company_name }}</span></span
-        >
-        <div v-on:click="details($event)" style="cursor: pointer">
-          <v-subheader>{{ mensajePorcentaje }}</v-subheader>
-          <v-progress-linear
-            height="10"
-            color="cyan"
-            buffer-value="1"
-            :value="value"
-            stream
-          ></v-progress-linear>
-        </div>
+        <v-container class="mx-0" dense>
+          <v-row dense>
+            <v-col cols="12" sm="6" md="6" lg="6" >
+              <span id="spanTitle" class="pa-0"
+                >BUEN DÍA {{ str_legal_name }}
+                <span id="spanSubtitle">{{ str_company_name }}</span></span
+              >
+            </v-col>
+            <v-col cols="12" sm="6" md="6" lg="6" >
+              <div v-on:click="details($event)" style="cursor: pointer">
+                <v-subheader class="px-0 pb-3">{{ mensajePorcentaje }}</v-subheader>
+                <v-progress-linear
+                  height="10"
+                  color="cyan"
+                  buffer-value="1"
+                  :value="value"
+                  stream
+                ></v-progress-linear>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-app-bar>
       <v-main>
         <router-view />
@@ -156,7 +164,8 @@ export default {
   },
   methods: {
     async percentagecompletion() {
-      this.mensaje = "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)";
+      this.mensaje =
+        "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)";
       await this.CompanyServices.GetPercentageCompletion(
         new Utils().GetValue("EmpresaTransID")
       ).then((response) => {

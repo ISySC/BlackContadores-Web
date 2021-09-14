@@ -20,7 +20,7 @@
           <span class="text-subtitle-1" id="textDescription"
             >Consulta los resultados de tus estados.</span
           >
-          <div class="float-right text-left text-h5" v-if="reportes > 0">
+          <div class="float-right text-left text-h5 mb-2" v-if="reportes > 0">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <download-excel
@@ -120,7 +120,7 @@
             </v-col>
             <v-col cols="12" sm="3">
               <v-select
-                class="mx-7"
+                class="mx-3"
                 :value="clasificacionID"
                 ref="clasificaciones"
                 filled
@@ -137,7 +137,7 @@
             <v-col cols="12" sm="3">
               <v-select
                 v-model="subclasificacionID"
-                class="mx-7"
+                class="mx-3"
                 :value="subclasificacionID"
                 ref="subclasificaciones"
                 filled
@@ -154,7 +154,7 @@
             <v-col cols="12" sm="2">
               <v-btn
                 dark
-                class="mt-1"
+                class="mt-1 mb-2"
                 color="indigo"
                 x-large
                 block
@@ -171,7 +171,7 @@
       >
         <v-container class="pt-0 px-0 mx-0" style="max-width: 100% !important">
           <v-row no-gutters>
-            <v-col cols="12" sm="10" class="pr-7">
+            <v-col cols="12" sm="10" class="pr-sm-7">
               <v-simple-table
                 fixed-header
                 height="610px"

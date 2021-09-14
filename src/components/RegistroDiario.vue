@@ -46,30 +46,30 @@
             >Registra tus movimientos diarios, como ingresos, gastos y
             compras.</span
           >
-          <div class="float-right text-left text-h5" v-if="reportes > 0">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <download-excel
-                  :data="items"
-                  :fields="json_fields"
-                  worksheet="Registros"
-                  name="Registro_Diario"
-                >
+          <div class="float-right text-left text-h5 mb-2" v-if="reportes > 0">
+            <download-excel
+              :data="items"
+              :fields="json_fields"
+              worksheet="Registros"
+              name="Registro_Diario"
+            >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    v-bind="attrs"
-                    v-on="on"
                     class="float-right"
                     @click="GenerarReporte"
                     color="green"
                     rounded
+                    v-bind="attrs"
+                    v-on="on"
                   >
                     <v-icon>mdi-file-excel</v-icon>
                     Exportar información a excel
                   </v-btn>
-                </download-excel>
-              </template>
-              <span> Generar Reporte</span>
-            </v-tooltip>
+                </template>
+                <span> Generar Reporte</span>
+              </v-tooltip>
+            </download-excel>
           </div>
           <div class="float-right text-left text-h5" v-if="reportes <= 0">
             <v-btn
@@ -148,7 +148,7 @@
             <v-col cols="12" sm="2">
               <v-btn
                 dark
-                class="mt-1"
+                class="mt-1 mb-2"
                 color="indigo"
                 x-large
                 block
@@ -280,6 +280,7 @@
                 <td style="width: 200px">{{ item.Descripcion }}</td>
                 <td style="width: 10px">
                   <v-icon
+                    v-show="item.ClasificacionID != 4"
                     @click="
                       mostrarRegistroAlert(
                         2,

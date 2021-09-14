@@ -27,7 +27,7 @@
                 .toUpperCase()
             }}</span
           >
-          <div class="float-right text-left text-h5" v-if="reportes > 0">
+          <div class="float-right text-left text-h5 mb-2" v-if="reportes > 0">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <download-excel

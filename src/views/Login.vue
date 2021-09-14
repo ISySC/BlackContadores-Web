@@ -455,13 +455,25 @@ export default {
           );
           if (this.membershipID == 1) {
             this.mensaje = response.data.response.message;
-            this.messageCreateAccountResponse(response.data.response[0].message, false, true, "green")
-            this.dashboardPage();
+            this.messageCreateAccountResponse(
+              response.data.response[0].message,
+              false,
+              true,
+              "green"
+            );
           }
 
-          if (response.data.response[0].EmpresaActiva)
-            this.$router.push("/registro-diario");
-          else {
+          if (response.data.response[0].EmpresaActiva) {
+            this.messageCreateAccountResponse(
+              "Inicio de sesión correcto!",
+              false,
+              false,
+              "green"
+            );
+            setTimeout(() => {
+              this.$router.push("/registro-diario");
+            }, 2000);
+          } else {
             this.messageCreateAccountResponse(
               response.data.response.message,
               false,

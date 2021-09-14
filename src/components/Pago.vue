@@ -1,5 +1,6 @@
 <template>
   <v-dialog v-model="dialog">
+    <Loading :overlay="overlay" />
     <AlertDialog
       titulo="Black Administrativo - [ Problemas con el pago ]"
       :mensaje="mensaje"
@@ -328,7 +329,7 @@
         <div class="card-form__row">
           <v-btn
             rounded
-            width="44%"
+            width="40%"
             @click.native="cancelar"
             color="red"
             dark
@@ -336,7 +337,7 @@
             style="margin-right: 5px"
             >Cancelar</v-btn
           ><v-btn
-            width="55%"
+            width="58%"
             rounded
             color="light-blue"
             dark
@@ -355,11 +356,13 @@ import Vue from "vue";
 import { VueMaskDirective } from "v-mask";
 import AlertDialog from "./AlertDialog";
 import PaymentService from "../network/services/PaymentService";
+import Loading from "../components/Loading";
 Vue.directive("mask", VueMaskDirective);
 
 export default {
   components: {
     AlertDialog,
+    Loading,
   },
   name: "Pago",
   props: {
@@ -374,6 +377,7 @@ export default {
   },
   data() {
     return {
+      overlay: false,
       currentCardBackground: Math.floor(Math.random() * 25 + 1),
       cardName: "",
       cardNumber: "",
@@ -460,19 +464,29 @@ export default {
       this.Alertdialog = true;
     },
     pagar() {
-      const tokenParams = {
-        card: {
-          number: this.cardNumber,
-          name: this.cardName,
-          exp_year: this.cardYear,
-          exp_month: this.cardMonth,
-          cvc: this.cardCvv,
-        },
-      };
-      this.$emit("update:membershipSelectedYear", this.membershipSelectedYear);
-      this.$emit("update:membershipSelectedMonth", this.membershipSelectedMonth);
-      this.$emit("update:tokenParams", tokenParams);
-      this.$emit("create");
+      this.overlay = true;
+      setTimeout(() => {
+        this.overlay = false;
+        const tokenParams = {
+          card: {
+            number: this.cardNumber,
+            name: this.cardName,
+            exp_year: this.cardYear,
+            exp_month: this.cardMonth,
+            cvc: this.cardCvv,
+          },
+        };
+        this.$emit(
+          "update:membershipSelectedYear",
+          this.membershipSelectedYear
+        );
+        this.$emit(
+          "update:membershipSelectedMonth",
+          this.membershipSelectedMonth
+        );
+        this.$emit("update:tokenParams", tokenParams);
+        this.$emit("create");
+      }, 3000);
     },
     cancelar() {
       this.cardNumber = "";
