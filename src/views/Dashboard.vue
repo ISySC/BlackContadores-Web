@@ -49,27 +49,36 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-        <v-footer app style="padding: 0px">
-          <v-btn block tile color="blue" dark href="/" style="height: 60px">
+        <template v-slot:append app>
+          <v-btn block color="blue" dark href="/" style="height: 60px;" :class="$vuetify.breakpoint.xs ? 'mb-10' : '70'">
             <v-icon left> mdi-logout </v-icon>
             Cerrar Sesión
           </v-btn>
-        </v-footer>
+        </template>
+        <br />
       </v-navigation-drawer>
 
-      <v-app-bar dark id="appBarStyle" class="pa-2" app :height="$vuetify.breakpoint.xs ? 200 : 70">
+      <v-app-bar
+        dark
+        id="appBarStyle"
+        class="pa-2"
+        app
+        :height="$vuetify.breakpoint.xs ? 200 : 70"
+      >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-container class="mx-0" dense>
           <v-row dense>
-            <v-col cols="12" sm="6" md="6" lg="6" >
+            <v-col cols="12" sm="6" md="6" lg="6">
               <span id="spanTitle" class="pa-0"
                 >BUEN DÍA {{ str_legal_name }}
                 <span id="spanSubtitle">{{ str_company_name }}</span></span
               >
             </v-col>
-            <v-col cols="12" sm="6" md="6" lg="6" >
+            <v-col cols="12" sm="6" md="6" lg="6">
               <div v-on:click="details($event)" style="cursor: pointer">
-                <v-subheader class="px-0 pb-3">{{ mensajePorcentaje }}</v-subheader>
+                <v-subheader class="px-0 pb-3">{{
+                  mensajePorcentaje
+                }}</v-subheader>
                 <v-progress-linear
                   height="10"
                   color="cyan"
