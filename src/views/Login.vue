@@ -12,8 +12,8 @@
       />
       <!-- -->
       <v-container fill-height fluid id="login">
-        <v-row justify="center" align="center" no-gutters>
-          <v-col cols="12" sm="10" :md="step == 0 ? 7 : 10">
+        <v-row justify="center" align="center">
+          <v-col cols="12" sm="10" :md="step == 0 ? 7 : 10" xs="1">
             <v-card class="elevation-7">
               <v-window v-model="step">
                 <v-window-item :value="0">
@@ -65,7 +65,7 @@
                                 prepend-icon="email"
                                 type="text"
                                 color="light-blue accent-3"
-                                style="width: 400px"
+                                :style="$vuetify.breakpoint.xs ? 'width:300px;' : 'width:500px;'"
                                 v-model="emailRecovery"
                                 :rules="[rules.email]"
                                 @input="(_) => (email = _)"
@@ -108,7 +108,7 @@
                     <v-col cols="12" md="8" class="flex-grow-0 flex-shrink-0">
                       <v-card-text style="height: 500px">
                         <v-row class="text-center">
-                          <v-col cols="12 d-flex justify-center">
+                          <v-col cols="12" class="d-flex justify-center">
                             <v-img
                               :src="require('../assets/logo-black.png')"
                               class="my-3"
@@ -120,7 +120,7 @@
                         <span class="text-center mt-4"> </span>
                         <br />
                         <v-row class="text-center">
-                          <v-col cols="12" class="d-flex justify-center">
+                          <v-col cols="12" sm="12" class="d-flex justify-center">
                             <v-form class="">
                               <v-text-field
                                 ref="email"
@@ -129,7 +129,7 @@
                                 prepend-icon="email"
                                 type="text"
                                 color="light-blue accent-3"
-                                style="width: 400px"
+                                :style="$vuetify.breakpoint.xs ? 'width:250px;' : 'width:500px;'"
                                 v-model="usuario"
                               />
                               <v-text-field
