@@ -34,6 +34,14 @@ export default class CompanyService {
 
     //Saldos Iniciales
 
+    GetCollectionOpeningBalance(empresaTransID)
+    {
+        return axios.get(URL_BASE + 'company/openingbalance/collection/' + empresaTransID)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
     PostUpdateOpeningBalances(data)
     {
         return axios.put(URL_BASE + 'company/openingbalances', data)

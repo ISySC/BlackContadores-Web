@@ -61,17 +61,35 @@
                   type="text"
                   color="light-blue accent-3"
                 />
-                <v-text-field
-                  v-model="telefono"
-                  label="Numero de telefono (*)"
-                  name="telefono"
-                  id="telefono"
-                  prepend-icon="phone"
-                  type="number"
-                  color="light-blue accent-3"
-                  @keypress="validarNumero"
-                  :rules="[rules.telefono]"
-                />
+                <v-container style="padding:0px;">
+                  <v-row>
+                    <v-col cols="12" md="9">
+                      <v-text-field
+                        v-model="telefono"
+                        label="Numero de telefono (*)"
+                        name="telefono"
+                        id="telefono"
+                        prepend-icon="phone"
+                        type="number"
+                        :counter="10"
+                        color="light-blue accent-3"
+                        @keypress="validarNumero"
+                        :rules="[rules.telefono]"
+                      />
+                    </v-col>
+                    <v-col cols="12" md="3">
+                      <v-select
+                        :value="anio"
+                        ref="anio"
+                        label="Año de inicio de operaciones (*)"
+                        required
+                        hint="Esta fecha no puede ser modificada despues"
+                        persistent-hint
+                        :items="anios"
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                </v-container>
                 <v-text-field
                   v-model="companyName"
                   :label="str_txt_company_name"
@@ -152,6 +170,8 @@ export default {
   },
 
   data: () => ({
+    anios :[],
+    anio : new Date().getFullYear(),
     tokenParams: [],
     dialogPago: false,
     legalNamePerson: "",
@@ -219,6 +239,8 @@ export default {
     this.PaymentService = new PaymentService();
     this.membershipID = this.ItemMembership[0].MembresiaID;
     if (this.membershipID == 1) this.membershipSelectedMonth = true;
+    for( let x = 2000 ; x <= new Date().getFullYear() ; x++)
+      this.anios.push(x);
   },
   methods: {
     backToPlans() {
@@ -284,7 +306,6 @@ export default {
         },
         (error) => {
           this.messageCreateAccountResponse(error.message_to_purchaser, "red");
-          console.log(error);
         }
       );
     },
@@ -334,11 +355,13 @@ export default {
             membershipID: 1,
             frecuency: "Mensual",
             Telefono: this.telefono,
+            AnioOperacion: this.anio
           };
 
           await this.AccountService.PostCreateAccount(accountData).then(
             (response) => {
               if (response.data.token != "") {
+                this.Utils.SetValue(this.anio, "AnioOperacion");
                 this.Utils.SetValue(response.data.token, "authToken");
                 this.Utils.SetValue(
                   response.data.response[0].empresaTransID,

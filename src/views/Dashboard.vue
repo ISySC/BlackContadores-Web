@@ -34,7 +34,7 @@
               :key="item.title"
               link
               id="btnLnk"
-              :disabled="!activa"
+              :disabled="!activa || cxcinicial > 0 || cxcinicial > 0"
             >
               <v-list-item-icon>
                 <v-icon>{{ item.icon }}</v-icon>
@@ -50,7 +50,14 @@
           </v-list-item-group>
         </v-list>
         <template v-slot:append app>
-          <v-btn block color="blue" dark href="/" style="height: 60px;" :class="$vuetify.breakpoint.xs ? 'mb-10' : '70'">
+          <v-btn
+            block
+            color="blue"
+            dark
+            href="/"
+            style="height: 60px"
+            :class="$vuetify.breakpoint.xs ? 'mb-10' : '70'"
+          >
             <v-icon left> mdi-logout </v-icon>
             Cerrar Sesión
           </v-btn>
@@ -66,15 +73,15 @@
         :height="$vuetify.breakpoint.xs ? 200 : 70"
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-container class="mx-0" dense>
+        <v-container class="mx-0 pt-0" dense>
           <v-row dense>
-            <v-col cols="12" sm="6" md="6" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6" class="pt-0">
               <span id="spanTitle" class="pa-0"
                 >BUEN DÍA {{ str_legal_name }}
                 <span id="spanSubtitle">{{ str_company_name }}</span></span
               >
             </v-col>
-            <v-col cols="12" sm="6" md="6" lg="6">
+            <v-col cols="12" sm="6" md="6" lg="6" class="pt-0">
               <div v-on:click="details($event)" style="cursor: pointer">
                 <v-subheader class="px-0 pb-3">{{
                   mensajePorcentaje
@@ -123,6 +130,8 @@ export default {
     str_company_name: "",
     activa: true,
     value: 0,
+    cxcinicial: 0,
+    cxpinicial: 0,
     dialogAlert: false,
     mensaje:
       "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)",
@@ -170,8 +179,23 @@ export default {
   },
   mounted() {
     this.percentagecompletion();
+    this.collectionOpeningBalances();
   },
   methods: {
+    async collectionOpeningBalances() {
+      await this.CompanyServices.GetCollectionOpeningBalance(
+        new Utils().GetValue("EmpresaTransID")
+      ).then((response) => {
+        this.cxcinicial = response.data.response[0].cxcinicial;
+        this.cxpinicial = response.data.response[0].cxpinicial;
+        console.log( this.cxcinicial, this.cxpinicial);
+        if (
+          (this.cxcinicial > 0 || this.cxpinicial > 0) &&
+          this.$route.name != "saldos-iniciales"
+        )
+          this.$router.push("/saldos-iniciales");
+      });
+    },
     async percentagecompletion() {
       this.mensaje =
         "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)";

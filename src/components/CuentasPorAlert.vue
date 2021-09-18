@@ -13,6 +13,7 @@
     <SubclasificacionAlert
       :dialog.sync="dialogsub"
       title="Agregar nueva subclasificación"
+      :clasificacionID="4"
       :itemsClasificacion="itemsClasificacion"
       @getSubclasificaciones="getsubclasifications"
     />

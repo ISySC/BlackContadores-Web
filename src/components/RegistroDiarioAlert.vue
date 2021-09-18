@@ -81,8 +81,18 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                  locale="es-mx"
                   v-model="Fecha"
                   @input="menu2 = false"
+                  :min="this.Utils.GetValue('AnioOperacion') + '-01-01'"
+                  :max="
+                    new Date(
+                      new Date().getTime() -
+                        new Date().getTimezoneOffset() * 60000
+                    )
+                      .toISOString()
+                      .substr(0, 10)
+                  "
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -97,7 +107,7 @@
             </v-col>
             <v-col cols="12" sm="12">
               <v-select
-                :readonly="accion == 3"
+                :readonly="accion == 3 || $props.registroInicial"
                 :value="clasificacionID"
                 ref="clasificaciones"
                 outlined
@@ -155,7 +165,7 @@
             </v-col>
             <v-col cols="10" sm="10" xs="10">
               <v-select
-                :readonly="accion == 3"
+                :readonly="accion == 3 || $props.registroInicial"
                 required
                 outlined
                 :value="cuentaID"
@@ -175,7 +185,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    :disabled="accion == 3"
+                    :disabled="accion == 3 || $props.registroInicial"
                     block
                     v-bind="attrs"
                     v-on="on"
@@ -226,8 +236,8 @@
                 label="Importe (*)"
                 required
                 outlined
-                type="number"
                 :min="0"
+                :value="importe"
                 v-model="importe"
                 @keypress="validarNumero"
               ></v-text-field>
@@ -236,7 +246,12 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn width="30%" color="error" @click.native="cancelar">
+          <v-btn
+            width="30%"
+            color="error"
+            @click.native="cancelar"
+            v-show="!$props.registroInicial"
+          >
             Cancelar
           </v-btn>
           <v-btn
@@ -255,6 +270,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import CompanyServices from "../network/services/CompanyService";
 import Utils from "../util/utils";
 import Constants from "../util/constants";
@@ -263,6 +279,8 @@ import Loading from "../components/Loading";
 import CuentaAlert from "../components/CuentaAlert";
 import CuentaPorAlert from "../components/CuentasPorAlert";
 import SubclasificacionAlert from "../components/SubclasificacionAlert";
+import { VueMaskDirective } from 'v-mask'
+Vue.directive('mask', VueMaskDirective);
 
 export default {
   components: {
@@ -274,6 +292,8 @@ export default {
   },
   props: {
     dialog: { type: Boolean, default: false },
+    registroInicial: { type: Boolean, default: false },
+    esCxCInicial: { type: Boolean, default: false },
     title: { type: String, default: "" },
     accion: { type: Number, default: 0 },
     folio: { type: Number, default: 0 },
@@ -281,6 +301,7 @@ export default {
     infoRegistro: { type: Array, default: null },
   },
   data: (vm) => ({
+    numericFormat: "$###,###.##",
     dateFormatted: vm.formatDate(
       new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
@@ -322,10 +343,71 @@ export default {
   }),
   watch: {
     Fecha() {
-      this.dateFormatted = this.formatDate(this.Fecha);
+      var datefin = new Date();
+      var date = new Date(this.Fecha);
+
+      if (date.getFullYear() < this.Utils.GetValue("AnioOperacion")) {
+        this.messageCreateAccountResponse(
+          "El año del movimiento no puede ser anterior al año de inicio de operaciones.",
+          false,
+          true,
+          "red"
+        );
+        this.dateFormatted = this.formatDate(this.Fecha.toString());
+        this.Fecha = new Date().toISOString().substr(0, 10);
+      }
+
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(datefin.toString());
+        this.Fecha = datefin.toISOString().substr(0, 10);
+      } else this.dateFormatted = this.formatDate(this.Fecha.toString());
     },
     dialog(visible) {
       if (visible) {
+        if (this.$props.registroInicial) {
+          if (this.cuentas.length > 0) {
+            if (this.$props.esCxCInicial) {
+              this.clasificacionID = 1;
+              this.cuentaID = this.cuentas.filter(
+                (cuenta) => cuenta.TipoCuentaID == 3
+              )[0].CuentaID;
+              this.TipoCuenta = 3;
+            } else {
+              this.clasificacionID = 2;
+              this.cuentaID = this.cuentas.filter(
+                (cuenta) => cuenta.TipoCuentaID == 4
+              )[0].CuentaID;
+              this.TipoCuenta = 4;
+            }
+          } else
+            this.getbankaccount().then(() => {
+              if (this.$props.esCxCInicial) {
+                this.clasificacionID = 1;
+                this.cuentaID = this.cuentas.filter(
+                  (cuenta) => cuenta.TipoCuentaID == 3
+                )[0].CuentaID;
+                this.TipoCuenta = 3;
+              } else {
+                this.clasificacionID = 2;
+                this.cuentaID = this.cuentas.filter(
+                  (cuenta) => cuenta.TipoCuentaID == 4
+                )[0].CuentaID;
+                this.TipoCuenta = 4;
+              }
+            });
+          if (this.SubClasificaciones.length > 0) {
+            this.itemsSubClasificacion = this.SubClasificaciones.filter(
+              (Subclasificacion) =>
+                Subclasificacion.ClasificacionID == this.clasificacionID
+            );
+          } else
+            this.getbankaccount().then(() => {
+              this.itemsSubClasificacion = this.SubClasificaciones.filter(
+                (Subclasificacion) =>
+                  Subclasificacion.ClasificacionID == this.clasificacionID
+              );
+            });
+        }
         if (this.accion != 0) this.getInfoRegistry();
       }
     },
@@ -376,7 +458,7 @@ export default {
         this.fechaRegistro = response.data.response[0].FechaRegistro;
         this.importe = response.data.response[0].Importe;
         this.observaciones = response.data.response[0].Observaciones;
-        
+
         this.subclasificacionID = response.data.response[0].SubClasificacionID;
       } else {
         this.messageCreateAccountResponse(
@@ -447,7 +529,7 @@ export default {
       let data = {
         empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
         descripcion: this.descripcionMovimiento,
-        fechaRegistro: this.currentDate(),
+        fechaRegistro: this.formatDate(this.Fecha),
         referencia: this.referencia,
         clasificacionID: this.clasificacionID,
         cuentaID: this.cuentaID,
@@ -458,6 +540,7 @@ export default {
         tipoPagoCuenta: this.CuentaPagoID,
         CreadoPor: new Utils().GetValue("correoUsuario"),
         EsCxC: this.TipoCuenta == 3 ? true : false,
+        EsCobranzaInicial: this.$props.registroInicial,  
       };
 
       if (this.accion == 0)
@@ -506,6 +589,15 @@ export default {
             }
           }
         );
+    },
+    messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
+      this.mensaje = message;
+      this.esCancelar = esCancelar;
+      this.esAceptar = esAceptar;
+      this.vToolBarColor = color;
+      this.dialogAlert = true;
+
+      this.overlay = false;
     },
     async guardarAbono(folioID) {
       if (this.CxCID == 0) {
@@ -594,7 +686,6 @@ export default {
       else this.itemsCuentas = this.cuentas;
     },
     cuentaSeleccionada(value) {
-      console.log(this.subclasificacionID);
       this.cuentaID = value.CuentaID;
       this.TipoCuenta = this.cuentas.filter(
         (cuenta) => cuenta.CuentaID === value.CuentaID

@@ -137,7 +137,7 @@
                   </v-icon>
                 </td>
                 <td style="width: 10px">
-                  <v-icon @click="onDelete(item.CuentaID, item.Descripcion)">
+                  <v-icon @click="onDelete(item.CuentaID, item.Descripcion)" v-show="item.EsCuentaEmpresa">
                     mdi-delete
                   </v-icon>
                 </td>

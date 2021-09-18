@@ -112,6 +112,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                locale="es-mx"
                   v-model="FechaInicio"
                   @input="menu2 = false"
                 ></v-date-picker>
@@ -140,6 +141,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                locale="es-mx"
                   v-model="FechaFin"
                   @input="menu = false"
                 ></v-date-picker>

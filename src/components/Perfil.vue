@@ -86,24 +86,33 @@
                       </v-card-title>
                       <hr />
                       <v-card-text class="text-center white">
-                        <v-text-field
-                          class="mr-2"
-                          :disabled="!editar"
-                          :label="str_txt_company_name"
-                          required
-                          prepend-icon="house"
-                          type="text"
-                          :value="Empresa"
-                          @input="(_) => (Empresa = _)"
-                        ></v-text-field>
                         <v-container>
                           <v-row>
+                            <v-col cols="12" sm="8">
+                              <v-text-field
+                                :disabled="!editar"
+                                :label="str_txt_company_name"
+                                required
+                                prepend-icon="house"
+                                type="text"
+                                :value="Empresa"
+                                @input="(_) => (Empresa = _)"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="4">
+                             <v-text-field
+                                readonly
+                                label="Año de inicio de operaciones"
+                                prepend-icon="mdi-calendar"
+                                type="text"
+                                :value="anio"
+                              ></v-text-field>
+                            </v-col>
                             <v-col cols="12" sm="4">
                               <v-select
                                 :disabled="!editar"
                                 :value="GiroID"
                                 prepend-icon="mdi-map"
-                                style="width: 90%"
                                 label="Giro de la empresa"
                                 :items="itemsGiros"
                                 item-text="NombreGiro"
@@ -118,7 +127,6 @@
                                 :disabled="!editar"
                                 :value="SubGiroID"
                                 prepend-icon="mdi-map"
-                                style="width: 90%"
                                 label="Subgiro de la empresa"
                                 :items="itemsSubGiros"
                                 item-text="NombreSubGiro"
@@ -133,7 +141,6 @@
                                 :disabled="!editar"
                                 :value="ActividadID"
                                 prepend-icon="mdi-map"
-                                style="width: 90%"
                                 label="Actividad de la empresa"
                                 :items="itemsActividades"
                                 item-text="NombreActividad"
@@ -320,6 +327,7 @@ export default {
     Pago,
   },
   data: () => ({
+    anio: "",
     telefono: "",
     tokenParams: [],
     dialogPago: false,
@@ -525,7 +533,7 @@ export default {
         this.membershipsList = JSON.parse(
           response.data.response.membresias[0].Membresias
         );
-
+        this.anio = response.data.response.perfil[0].AnioOperacion;
         this.itemsGiros = response.data.response.giros;
         this.SubGiros = response.data.response.subgiros;
         this.Actividades = response.data.response.actividades;

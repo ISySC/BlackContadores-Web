@@ -85,6 +85,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                  locale="es-mx"
                   v-model="FechaInicio"
                   @input="menu2 = false"
                 ></v-date-picker>
@@ -113,6 +114,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
+                locale="es-mx"
                   v-model="FechaFin"
                   @input="menu = false"
                 ></v-date-picker>
@@ -315,7 +317,7 @@
                 <v-text-field
                   dark
                   readonly
-                  label="Utilidad Bruta"
+                  label="Utilidad / Perdida"
                   :value="(totalIngresos - totalCompras) | formatoMoneda"
                   outlined
                   rounded

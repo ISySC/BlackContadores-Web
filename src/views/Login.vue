@@ -187,7 +187,7 @@
                           Black Administrativo, es un sistema contable en línea
                           que te permite registrar en tiempo real tus
                           operaciones diarias para que tengas una correcta
-                          información financiera, además podrás crea reportes en
+                          información financiera, además podrás crear reportes en
                           segundos para ayudarte en la correcta toma de
                           decisiones.
                           <br />
@@ -418,6 +418,7 @@ export default {
         var response = await this.AccountService.PostLogin(accountData);
         this.loading = false;
         if (response.data.response.success != "false") {
+          console.log(response.data.response);
           this.Utils.SetValue(response.data.token, "authToken");
           this.Utils.SetValue(usuario, "correoUsuario");
           this.Utils.SetValue(
@@ -449,6 +450,7 @@ export default {
             "company_name"
           );
           this.Utils.SetValue(response.data.response[0].UsuarioID, "UsuarioID");
+          this.Utils.SetValue(response.data.response[0].AnioOperacion, "AnioOperacion");
           this.Utils.SetValue(
             response.data.response[0].MembresiaID,
             "MembresiaID"

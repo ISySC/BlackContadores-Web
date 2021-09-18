@@ -11,6 +11,16 @@
       :dialog.sync="dialogAlert"
     />
     <!-- -->
+    <RegistroDiarioAlert
+      :dialog.sync="dialog"
+      :title="titulo"
+      :accion="0"
+      :folioID="0"
+      :folio="0"
+      @getregistries="validarCuadreCuentas"
+      :registroInicial="true"
+      :esCxCInicial="esCxCInicial"
+    />
     <base-material-card color="blue pa-0" style="height: 97%">
       <template v-slot:heading>
         <p class="text-left text-h5">
@@ -284,7 +294,8 @@
                           parseFloat(activofijo) +
                             parseFloat(deudaxc) +
                             parseFloat(bancos) +
-                            parseFloat(efectivo)
+                            parseFloat(efectivo) -
+                            parseFloat(deudaxp)
                         )
                       }}</span>
                     </v-list-item-content>
@@ -299,7 +310,7 @@
                       style="display: block"
                     >
                       <span class="text-subtitle-1 font-weight-bold">{{
-                        formatter.format(parseFloat(deudaxp))
+                        formatter.format(parseFloat(0))
                       }}</span>
                     </v-list-item-content>
                   </v-list-item>
@@ -353,6 +364,7 @@
   </v-main>
 </template>
 <script>
+import RegistroDiarioAlert from "../components/RegistroDiarioAlert";
 import Utils from "../util/utils";
 import Loading from "../components/Loading";
 import AlertDialog from "../components/AlertDialog";
@@ -362,8 +374,12 @@ export default {
   components: {
     Loading,
     AlertDialog,
+    RegistroDiarioAlert,
   },
   data: () => ({
+    esCxCInicial: false,
+    titulo: "",
+    dialog: false,
     loading: false,
     mensaje: "",
     esCancelar: false,
@@ -388,8 +404,39 @@ export default {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
     this.getOpeningBalances();
+    this.validarCuadreCuentas();
   },
   methods: {
+    validarCuadreCuentas() {
+      this.dialogAlert = false;
+      this.$root.$refs.Dashboard.collectionOpeningBalances().then(() => {
+        if (this.$root.$refs.Dashboard.cxcinicial > 0) {
+          this.messageCreateAccountResponse(
+            "Tus cuentas por cobrar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+            false,
+            false,
+            "red"
+          );
+          setTimeout(() => {
+            this.titulo = "Registrar cuenta por cobrar inicial";
+            this.esCxCInicial = true;
+            this.dialog = true;
+          }, 2000);
+        } else if (this.$root.$refs.Dashboard.cxpinicial > 0) {
+          this.messageCreateAccountResponse(
+            "Tus cuentas por pagar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+            false,
+            false,
+            "red"
+          );
+          setTimeout(() => {
+            this.titulo = "Registrar cuenta por pagar inicial";
+            this.esCxCInicial = false;
+            this.dialog = true;
+          }, 2000);
+        }
+      });
+    },
     onChange(tipo) {
       switch (tipo) {
         case "efectivo":
@@ -427,7 +474,8 @@ export default {
           parseFloat(this.activofijo) +
           parseFloat(this.deudaxc) +
           parseFloat(this.bancos) +
-          parseFloat(this.efectivo),
+          parseFloat(this.efectivo) -
+          parseFloat(this.deudaxp),
         CapitalFinal:
           parseFloat(this.activofijo) +
           parseFloat(this.deudaxc) +
@@ -456,6 +504,7 @@ export default {
         );
         this.$root.$refs.Dashboard.percentagecompletion();
         this.editar = this.overlay = false;
+        this.validarCuadreCuentas();
       }
 
       this.loading = false;

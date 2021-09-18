@@ -23,7 +23,6 @@
             ></span
           >
         </v-card-title>
-
         <v-container>
           <v-row no-gutters>
             <v-col cols="12" sm="12" md="12">
@@ -49,6 +48,7 @@
                 item-value="ClasificacionID"
                 item-key="itemsClasificacion"
                 return-object
+                :disabled="pagos"
                 @change="clasificacionSeleccionada"
               ></v-select>
             </v-col>
@@ -104,6 +104,7 @@ export default {
     activo: { type: Boolean, default: false },
   },
   data: () => ({
+    pagos:false,
     ClasificacionID: 0,
     itemsClasificacion: [],
     Activo: true,
@@ -137,6 +138,9 @@ export default {
   },
   mounted() {
     this.getclasifications();
+    this.ClasificacionID = this.$props.clasificacionID;
+    if(this.ClasificacionID == 4)
+      this.pagos = true;
   },
   methods: {
     clasificacionSeleccionada(value) {
