@@ -61,7 +61,7 @@
                   type="text"
                   color="light-blue accent-3"
                 />
-                <v-container style="padding:0px;">
+                <v-container style="padding: 0px">
                   <v-row>
                     <v-col cols="12" md="9">
                       <v-text-field
@@ -80,12 +80,14 @@
                     <v-col cols="12" md="3">
                       <v-select
                         :value="anio"
+                        v-model="anio"
                         ref="anio"
                         label="Año de inicio de operaciones (*)"
                         required
                         hint="Esta fecha no puede ser modificada despues"
                         persistent-hint
                         :items="anios"
+                        @input="setSelected"
                       ></v-select>
                     </v-col>
                   </v-row>
@@ -170,8 +172,8 @@ export default {
   },
 
   data: () => ({
-    anios :[],
-    anio : new Date().getFullYear(),
+    anios: [],
+    anio: new Date().getFullYear(),
     tokenParams: [],
     dialogPago: false,
     legalNamePerson: "",
@@ -239,10 +241,12 @@ export default {
     this.PaymentService = new PaymentService();
     this.membershipID = this.ItemMembership[0].MembresiaID;
     if (this.membershipID == 1) this.membershipSelectedMonth = true;
-    for( let x = 2000 ; x <= new Date().getFullYear() ; x++)
-      this.anios.push(x);
+    for (let x = 2000; x <= new Date().getFullYear(); x++) this.anios.push(x);
   },
   methods: {
+    setSelected(value) {
+      this.anio = value;
+    },
     backToPlans() {
       this.membershipSelectedYear = false;
       this.membershipSelectedMonth = true;
@@ -355,7 +359,7 @@ export default {
             membershipID: 1,
             frecuency: "Mensual",
             Telefono: this.telefono,
-            AnioOperacion: this.anio
+            AnioOperacion: this.anio,
           };
 
           await this.AccountService.PostCreateAccount(accountData).then(

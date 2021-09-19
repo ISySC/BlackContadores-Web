@@ -521,6 +521,7 @@ export default {
         this.getRegistriesOfDay();
       }
       this.getRegistriesOfDay();
+      this.$root.$refs.Dashboard.collectionOpeningBalances();
       this.overlay = false;
       this.eliminar = false;
     },

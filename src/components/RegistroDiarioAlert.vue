@@ -43,6 +43,7 @@
         <v-card-title id="titleStyle">
           <span class="headline"
             >{{ title }}
+            <span v-if="$props.registroInicial"><br> | Saldo pendiente: ${{ parseFloat($props.esCxCInicial ? $root.$refs.Dashboard.cxcinicial : $root.$refs.Dashboard.cxpinicial) }}</span>
             <span v-if="folio != ''"> | Folio: {{ folio }}</span></span
           >
         </v-card-title>
@@ -279,8 +280,8 @@ import Loading from "../components/Loading";
 import CuentaAlert from "../components/CuentaAlert";
 import CuentaPorAlert from "../components/CuentasPorAlert";
 import SubclasificacionAlert from "../components/SubclasificacionAlert";
-import { VueMaskDirective } from 'v-mask'
-Vue.directive('mask', VueMaskDirective);
+import { VueMaskDirective } from "v-mask";
+Vue.directive("mask", VueMaskDirective);
 
 export default {
   components: {
@@ -521,35 +522,73 @@ export default {
       return date;
     },
     async guardarRegistro() {
-      if (this.fechaRegistro == "") this.fechaRegistro = this.currentDate();
-      this.overlay = true;
+      if (
+        (this.$props.registroInicial &&
+          this.importe > this.$root.$refs.Dashboard.cxcinicial &&
+          this.TipoCuenta == 3) ||
+        (this.$props.registroInicial &&
+          this.importe > this.$root.$refs.Dashboard.cxpinicial &&
+          this.TipoCuenta == 4)
+      )
+        this.messageCreateAccountResponse(
+          "El importe no puede ser mayor al saldo de cuentas por " +
+            (this.TipoCuenta == 3 ? "cobrar" : "pagar"),
+          false,
+          true,
+          "red"
+        );
+      else {
+        if (this.fechaRegistro == "") this.fechaRegistro = this.currentDate();
+        this.overlay = true;
 
-      let empresaTransID = this.Utils.GetValue("EmpresaTransID");
+        let empresaTransID = this.Utils.GetValue("EmpresaTransID");
 
-      let data = {
-        empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
-        descripcion: this.descripcionMovimiento,
-        fechaRegistro: this.formatDate(this.Fecha),
-        referencia: this.referencia,
-        clasificacionID: this.clasificacionID,
-        cuentaID: this.cuentaID,
-        observaciones: this.observaciones,
-        importe: this.importe,
-        folioID: this.folioID,
-        subclasificacionID: this.subclasificacionID,
-        tipoPagoCuenta: this.CuentaPagoID,
-        CreadoPor: new Utils().GetValue("correoUsuario"),
-        EsCxC: this.TipoCuenta == 3 ? true : false,
-        EsCobranzaInicial: this.$props.registroInicial,  
-      };
+        let data = {
+          empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
+          descripcion: this.descripcionMovimiento,
+          fechaRegistro: this.formatDate(this.Fecha),
+          referencia: this.referencia,
+          clasificacionID: this.clasificacionID,
+          cuentaID: this.cuentaID,
+          observaciones: this.observaciones,
+          importe: this.importe,
+          folioID: this.folioID,
+          subclasificacionID: this.subclasificacionID,
+          tipoPagoCuenta: this.CuentaPagoID,
+          CreadoPor: new Utils().GetValue("correoUsuario"),
+          EsCxC: this.TipoCuenta == 3 ? true : false,
+          EsCobranzaInicial: this.$props.registroInicial,
+        };
 
-      if (this.accion == 0)
-        await this.CompanyServices.PostRegistryTransaction(data).then(
-          (rs_registro) => {
-            if (rs_registro.data.response[0].success) {
-              if (this.clasificacionID == 4)
-                this.guardarAbono(rs_registro.data.response[0].FolioID);
-              else {
+        if (this.accion == 0)
+          await this.CompanyServices.PostRegistryTransaction(data).then(
+            (rs_registro) => {
+              if (rs_registro.data.response[0].success) {
+                if (this.clasificacionID == 4)
+                  this.guardarAbono(rs_registro.data.response[0].FolioID);
+                else {
+                  this.overlay = false;
+                  this.descripcionMovimiento = "";
+                  this.fechaRegistro = "";
+                  this.referencia = "";
+                  this.observaciones = "";
+                  this.importe = "";
+                  this.clasificacionID = 0;
+                  this.subclasificacionID = 0;
+                  this.cuentaID = 0;
+                  this.$refs["clasificaciones"].reset();
+                  this.$refs["cuentas"].reset();
+                  this.$emit("update:dialog", false);
+                  this.$emit("getregistries");
+                  this.overlay = false;
+                }
+              }
+            }
+          );
+        else
+          await this.CompanyServices.PostUpdateRegistryTransaction(data).then(
+            (rs_registro) => {
+              if (rs_registro.data.response[0].success) {
                 this.overlay = false;
                 this.descripcionMovimiento = "";
                 this.fechaRegistro = "";
@@ -566,29 +605,8 @@ export default {
                 this.overlay = false;
               }
             }
-          }
-        );
-      else
-        await this.CompanyServices.PostUpdateRegistryTransaction(data).then(
-          (rs_registro) => {
-            if (rs_registro.data.response[0].success) {
-              this.overlay = false;
-              this.descripcionMovimiento = "";
-              this.fechaRegistro = "";
-              this.referencia = "";
-              this.observaciones = "";
-              this.importe = "";
-              this.clasificacionID = 0;
-              this.subclasificacionID = 0;
-              this.cuentaID = 0;
-              this.$refs["clasificaciones"].reset();
-              this.$refs["cuentas"].reset();
-              this.$emit("update:dialog", false);
-              this.$emit("getregistries");
-              this.overlay = false;
-            }
-          }
-        );
+          );
+      }
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
       this.mensaje = message;
