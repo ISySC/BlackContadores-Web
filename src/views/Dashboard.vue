@@ -188,7 +188,6 @@ export default {
       ).then((response) => {
         this.cxcinicial = response.data.response[0].cxcinicial;
         this.cxpinicial = response.data.response[0].cxpinicial;
-        console.log( this.cxcinicial, this.cxpinicial);
         if (
           (this.cxcinicial > 0 || this.cxpinicial > 0) &&
           this.$route.name != "saldos-iniciales"

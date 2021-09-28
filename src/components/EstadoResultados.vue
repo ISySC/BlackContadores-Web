@@ -317,7 +317,7 @@
                 <v-text-field
                   dark
                   readonly
-                  label="Utilidad / Perdida"
+                  label="Utilidad / Perdida Bruta"
                   :value="(totalIngresos - totalCompras) | formatoMoneda"
                   outlined
                   rounded
@@ -339,7 +339,7 @@
                 <v-text-field
                   dark
                   readonly
-                  label="Utilidad Neta"
+                  label="Utilidad / Perdida Neta"
                   :value="utilidadNeta | formatoMoneda"
                   outlined
                   rounded

@@ -112,7 +112,7 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                locale="es-mx"
+                  locale="es-mx"
                   v-model="FechaInicio"
                   @input="menu2 = false"
                 ></v-date-picker>
@@ -141,11 +141,27 @@
                   ></v-text-field>
                 </template>
                 <v-date-picker
-                locale="es-mx"
+                  locale="es-mx"
                   v-model="FechaFin"
                   @input="menu = false"
                 ></v-date-picker>
               </v-menu>
+            </v-col>
+            <v-col cols="10" sm="2">
+              <v-select
+                required
+                outlined
+                :value="cuentaID"
+                ref="cuentas"
+                :items="itemsCuentas"
+                item-value="CuentaID"
+                item-text="Descripcion"
+                no-data-text="Sin cuentas disponibles"
+                item-key="itemsCuentas"
+                return-object
+                @change="cuentaSeleccionada"
+                style="padding-left: 1px"
+              ></v-select>
             </v-col>
             <v-col cols="12" sm="2">
               <v-btn
@@ -391,6 +407,8 @@ export default {
       IMPORTE: "Importe",
       CUENTA: "Descripcion",
     },
+    itemsCuentas: [],
+    cuentaID: 0,
     menu2: false,
     menu: false,
     eliminar: false,
@@ -437,8 +455,29 @@ export default {
     this.Utils = new Utils();
     this.getRegistriesOfDay();
     this.validarGenerarReporte();
+    this.getbankaccount();
   },
   methods: {
+    async getbankaccount() {
+      let data = {
+        empresaTransID: this.Utils.GetValue("EmpresaTransID"),
+        mostrarInactivos: 0,
+      };
+
+      const rs_itemscuentas = await this.CompanyServices.GetBankaccounts(data);
+
+      if (rs_itemscuentas.status === 200) {
+        this.itemsCuentas = rs_itemscuentas.data.response;
+      }
+
+      this.itemsCuentas.push({
+        CuentaID: 0,
+        Descripcion: "Todas",
+      });
+    },
+    cuentaSeleccionada(value) {
+      this.cuentaID = value.CuentaID;
+    },
     async validarGenerarReporte() {
       this.overlay = true;
 
@@ -577,11 +616,12 @@ export default {
     async getRegistriesOfDay() {
       this.overlay = true;
       let params = {
-        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"), //new Utils().GetValue("empresaTransID"),
+        EmpresaTransID: this.Utils.GetValue("EmpresaTransID"),
         FechaInicio: this.formatDate(this.FechaInicio),
         FechaFin: Vue.filter("formatoFecha")(
           new Date(this.FechaFin).toISOString().substr(0, 10)
         ),
+        CuentaID: this.cuentaID,
       };
 
       const rs_registriesitems =

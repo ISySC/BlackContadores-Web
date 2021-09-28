@@ -4,6 +4,8 @@
       :dialog.sync="dialogsub"
       title="Agregar nueva subclasificación"
       :itemsClasificacion="itemsClasificacion"
+      :saldos="$props.registroInicial"
+      :clasificacionID="$props.esCxCInicial ? 1 : 3"
       @getSubclasificaciones="getsubclasifications"
     />
     <CuentaAlert
@@ -43,7 +45,16 @@
         <v-card-title id="titleStyle">
           <span class="headline"
             >{{ title }}
-            <span v-if="$props.registroInicial"><br> | Saldo pendiente: ${{ parseFloat($props.esCxCInicial ? $root.$refs.Dashboard.cxcinicial : $root.$refs.Dashboard.cxpinicial) }}</span>
+            <span v-if="$props.registroInicial"
+              ><br />
+              | Saldo pendiente: ${{
+                parseFloat(
+                  $props.esCxCInicial
+                    ? $root.$refs.Dashboard.cxcinicial
+                    : $root.$refs.Dashboard.cxpinicial
+                )
+              }}</span
+            >
             <span v-if="folio != ''"> | Folio: {{ folio }}</span></span
           >
         </v-card-title>
@@ -55,12 +66,12 @@
                 label="Descripción del movimiento (*)"
                 required
                 outlined
-                :readonly="accion == 3"
+                :readonly="accion == 3 || (accion != 0 && registroInicial)"
                 v-model="descripcionMovimiento"
                 style="padding-left: 1px"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="4">
+            <v-col cols="12" sm="4" v-if="!$props.registroInicial">
               <v-menu
                 v-model="menu2"
                 :close-on-content-click="false"
@@ -99,7 +110,7 @@
             </v-col>
             <v-col cols="12" sm="8">
               <v-text-field
-                :readonly="accion == 3"
+                :readonly="accion == 3 || (accion != 0 && registroInicial)"
                 v-model="referencia"
                 outlined
                 style="padding-left: 1px"
@@ -108,7 +119,11 @@
             </v-col>
             <v-col cols="12" sm="12">
               <v-select
-                :readonly="accion == 3 || $props.registroInicial"
+                :readonly="
+                  accion == 3 ||
+                  ($props.registroInicial && $props.esCxCInicial) ||
+                  (accion != 0 && registroInicial)
+                "
                 :value="clasificacionID"
                 ref="clasificaciones"
                 outlined
@@ -125,7 +140,7 @@
             </v-col>
             <v-col cols="10" sm="10" v-show="clasificacionID !== 4">
               <v-select
-                :readonly="accion == 3"
+                :readonly="accion == 3 || (accion != 0 && registroInicial)"
                 :v-model="subclasificacionID"
                 :value="subclasificacionID"
                 ref="subclasificaciones"
@@ -247,12 +262,7 @@
         </v-container>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            width="30%"
-            color="error"
-            @click.native="cancelar"
-            v-show="!$props.registroInicial"
-          >
+          <v-btn width="30%" color="error" @click.native="cancelar">
             Cancelar
           </v-btn>
           <v-btn
@@ -260,7 +270,7 @@
             color="blue"
             dark
             v-if="accion != 3"
-            @click.native="aceptar"
+            @click.passive="aceptar"
           >
             Guardar
           </v-btn>
@@ -341,23 +351,13 @@ export default {
     Abono: 0,
     CxCID: 0,
     Total: 0,
+    importeInicial: 0,
+    guardando: false,
   }),
   watch: {
     Fecha() {
       var datefin = new Date();
       var date = new Date(this.Fecha);
-
-      if (date.getFullYear() < this.Utils.GetValue("AnioOperacion")) {
-        this.messageCreateAccountResponse(
-          "El año del movimiento no puede ser anterior al año de inicio de operaciones.",
-          false,
-          true,
-          "red"
-        );
-        this.dateFormatted = this.formatDate(this.Fecha.toString());
-        this.Fecha = new Date().toISOString().substr(0, 10);
-      }
-
       if (date > datefin) {
         this.dateFormatted = this.formatDate(datefin.toString());
         this.Fecha = datefin.toISOString().substr(0, 10);
@@ -375,6 +375,11 @@ export default {
               this.TipoCuenta = 3;
             } else {
               this.clasificacionID = 2;
+              this.itemsClasificacion = this.itemsClasificacion.filter(
+                (Clasificacion) =>
+                  Clasificacion.ClasificacionID == 2 ||
+                  Clasificacion.ClasificacionID == 3
+              );
               this.cuentaID = this.cuentas.filter(
                 (cuenta) => cuenta.TipoCuentaID == 4
               )[0].CuentaID;
@@ -446,29 +451,34 @@ export default {
         folioID: this.folioID,
       };
       this.subclasificacionID = 0;
-      var response = await this.CompanyServices.GetRegistryTransaction(params);
-      if (response.data.success !== false) {
-        this.referencia = response.data.response[0].Referencia;
-        this.clasificacionID = response.data.response[0].ClasificacionID;
-        this.itemsSubClasificacion = this.SubClasificaciones.filter(
-          (Subclasificacion) =>
-            Subclasificacion.ClasificacionID == this.clasificacionID
-        );
-        this.cuentaID = response.data.response[0].CuentaID;
-        this.descripcionMovimiento = response.data.response[0].Descripcion;
-        this.fechaRegistro = response.data.response[0].FechaRegistro;
-        this.importe = response.data.response[0].Importe;
-        this.observaciones = response.data.response[0].Observaciones;
+      await this.CompanyServices.GetRegistryTransaction(params).then(
+        (response) => {
+          if (response.data.success !== false) {
+            this.referencia = response.data.response[0].Referencia;
+            this.clasificacionID = response.data.response[0].ClasificacionID;
+            this.itemsSubClasificacion = this.SubClasificaciones.filter(
+              (Subclasificacion) =>
+                Subclasificacion.ClasificacionID == this.clasificacionID
+            );
+            this.cuentaID = response.data.response[0].CuentaID;
+            this.descripcionMovimiento = response.data.response[0].Descripcion;
+            this.fechaRegistro = response.data.response[0].FechaRegistro;
+            this.importe = response.data.response[0].Importe;
+            this.importeInicial = this.importe;
+            this.observaciones = response.data.response[0].Observaciones;
 
-        this.subclasificacionID = response.data.response[0].SubClasificacionID;
-      } else {
-        this.messageCreateAccountResponse(
-          response.data.message,
-          false,
-          true,
-          "red"
-        );
-      }
+            this.subclasificacionID =
+              response.data.response[0].SubClasificacionID;
+          } else {
+            this.messageCreateAccountResponse(
+              response.data.message,
+              false,
+              true,
+              "red"
+            );
+          }
+        }
+      );
     },
 
     async getbankaccount() {
@@ -497,7 +507,6 @@ export default {
             Subclasificacion.ClasificacionID == this.clasificacionID
         );
       }
-      //this.itemsSubClasificacion = response.data.response;
     },
     async getclasifications() {
       const rs_itemsclasificacion =
@@ -544,9 +553,12 @@ export default {
         let empresaTransID = this.Utils.GetValue("EmpresaTransID");
 
         let data = {
-          empresaTransID: empresaTransID, //new Utils().GetValue("empresaTransID"),
+          empresaTransID: empresaTransID,
           descripcion: this.descripcionMovimiento,
-          fechaRegistro: this.formatDate(this.Fecha),
+          fechaRegistro: this.$props.registroInicial
+            ? "31/12/" +
+              (parseInt(this.Utils.GetValue("AnioOperacion")) - 1).toString()
+            : this.formatDate(this.Fecha),
           referencia: this.referencia,
           clasificacionID: this.clasificacionID,
           cuentaID: this.cuentaID,
@@ -581,7 +593,16 @@ export default {
                   this.$emit("update:dialog", false);
                   this.$emit("getregistries");
                   this.overlay = false;
+                  this.guardando = false;
                 }
+              } else {
+                this.messageCreateAccountResponse(
+                  rs_registro.data.response[0].message,
+                  false,
+                  true,
+                  "red"
+                );
+                this.guardando = false;
               }
             }
           );
@@ -603,12 +624,14 @@ export default {
                 this.$emit("update:dialog", false);
                 this.$emit("getregistries");
                 this.overlay = false;
+                this.guardando = false;
               }
             }
           );
       }
     },
     messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
+      this.guardando = false;
       this.mensaje = message;
       this.esCancelar = esCancelar;
       this.esAceptar = esAceptar;
@@ -624,7 +647,7 @@ export default {
         this.esCancelar = false;
         this.esAceptar = true;
         this.vToolBarColor = "red";
-
+        this.guardando = false;
         this.dialogAlert = true;
         return false;
       }
@@ -657,24 +680,82 @@ export default {
       });
     },
     async aceptar() {
-      if (
-        this.descripcionMovimiento != "" &&
-        this.clasificacionID != "" &&
-        this.cuentaID != "" &&
-        this.subclasificacionID != "" &&
-        this.importe != ""
-      ) {
-        this.guardarRegistro();
-      } else {
-        this.mensaje = Constants.str_error_registry;
-        this.esCancelar = false;
-        this.esAceptar = true;
-        this.vToolBarColor = "red";
+      if (!this.guardando) {
+        this.guardando = true;
+        if (
+          this.descripcionMovimiento != "" &&
+          this.clasificacionID != "" &&
+          this.cuentaID != "" &&
+          this.subclasificacionID != "" &&
+          this.importe != ""
+        ) {
+          if (this.$props.registroInicial && this.accion != 0)
+            this.guardarRegistroInicial();
+          else this.guardarRegistro();
+        } else {
+          this.mensaje = Constants.str_error_registry;
+          this.esCancelar = false;
+          this.esAceptar = true;
+          this.vToolBarColor = "red";
 
-        this.dialogAlert = true;
+          this.dialogAlert = true;
+        }
+      }
+    },
+    async guardarRegistroInicial() {
+      this.overlay = true;
+      if (
+        (this.$props.registroInicial &&
+          this.importe - this.importeInicial >
+            this.$root.$refs.Dashboard.cxcinicial &&
+          this.TipoCuenta == 3) ||
+        (this.$props.registroInicial &&
+          this.importe - this.importeInicial >
+            this.$root.$refs.Dashboard.cxpinicial &&
+          this.TipoCuenta == 4)
+      ) {
+        this.messageCreateAccountResponse(
+          "El importe no puede ser mayor al saldo de cuentas por " +
+            (this.TipoCuenta == 3 ? "cobrar" : "pagar"),
+          false,
+          true,
+          "red"
+        );
+      } else {
+        await this.CompanyServices.PostAccountsOpeningBalance(
+          this.folioID,
+          this.importe
+        ).then((response) => {
+          if (response.status === 0 || response.status === 500) {
+            this.messageCreateAccountResponse(
+              response.message,
+              false,
+              true,
+              "red"
+            );
+            this.guardando = false;
+          } else {
+            this.guardando = false;
+            this.overlay = false;
+            this.descripcionMovimiento = "";
+            this.fechaRegistro = "";
+            this.referencia = "";
+            this.observaciones = "";
+            this.importe = "";
+            this.clasificacionID = 0;
+            this.subclasificacionID = 0;
+            this.cuentaID = 0;
+            this.$refs["clasificaciones"].reset();
+            this.$refs["cuentas"].reset();
+            this.$emit("update:dialog", false);
+            this.$emit("getregistries");
+            this.overlay = false;
+          }
+        });
       }
     },
     cancelar() {
+      this.guardando = false;
       this.clasificacionID = 0;
       this.$refs["clasificaciones"].reset();
       this.$refs["subclasificaciones"].reset();

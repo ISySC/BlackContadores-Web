@@ -11,16 +11,7 @@
       :dialog.sync="dialogAlert"
     />
     <!-- -->
-    <RegistroDiarioAlert
-      :dialog.sync="dialog"
-      :title="titulo"
-      :accion="0"
-      :folioID="0"
-      :folio="0"
-      @getregistries="validarCuadreCuentas"
-      :registroInicial="true"
-      :esCxCInicial="esCxCInicial"
-    />
+    <Saldos :dialog.sync="dialog" :titulo="titulo" :esCxC="esCxCInicial" :ver="ver"/>
     <base-material-card color="blue pa-0" style="height: 97%">
       <template v-slot:heading>
         <p class="text-left text-h5">
@@ -157,6 +148,8 @@
                         v-model="deudaxc"
                         @keypress="validarNumero"
                         @change="onChange('deudaxc')"
+                        :append-icon="'mdi-eye'"
+                        @click:append="ver = true; esCxCInicial= true; dialog = true;"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -250,6 +243,8 @@
                         v-model="deudaxp"
                         @keypress="validarNumero"
                         @change="onChange('deudaxp')"
+                        :append-icon="'mdi-eye'"
+                        @click:append="ver = true; esCxCInicial= false; dialog = true;"
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -364,7 +359,7 @@
   </v-main>
 </template>
 <script>
-import RegistroDiarioAlert from "../components/RegistroDiarioAlert";
+import Saldos from "../components/Saldos";
 import Utils from "../util/utils";
 import Loading from "../components/Loading";
 import AlertDialog from "../components/AlertDialog";
@@ -374,12 +369,12 @@ export default {
   components: {
     Loading,
     AlertDialog,
-    RegistroDiarioAlert,
+    Saldos,
   },
   data: () => ({
-    esCxCInicial: false,
-    titulo: "",
-    dialog: false,
+    esCxCInicial: true,
+    titulo: "Cuentas Iniciales",
+    dialog: true,
     loading: false,
     mensaje: "",
     esCancelar: false,
@@ -394,6 +389,7 @@ export default {
     utilidad_perdida: 0,
     editar: false,
     overlay: true,
+    ver: false,
     formatter: new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -405,36 +401,39 @@ export default {
     this.Utils = new Utils();
     this.getOpeningBalances();
     this.validarCuadreCuentas();
+    this.$root.$refs.SaldosIniciales = this;
   },
   methods: {
     validarCuadreCuentas() {
       this.dialogAlert = false;
       this.$root.$refs.Dashboard.collectionOpeningBalances().then(() => {
         if (this.$root.$refs.Dashboard.cxcinicial > 0) {
-          this.messageCreateAccountResponse(
-            "Tus cuentas por cobrar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
-            false,
-            false,
-            "red"
-          );
+          if (!this.dialog)
+            this.messageCreateAccountResponse(
+              "Tus cuentas por cobrar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+              false,
+              false,
+              "red"
+            );
           setTimeout(() => {
-            this.titulo = "Registrar cuenta por cobrar inicial";
+            this.titulo = "Cuenta por cobrar iniciales";
             this.esCxCInicial = true;
             this.dialog = true;
           }, 2000);
         } else if (this.$root.$refs.Dashboard.cxpinicial > 0) {
-          this.messageCreateAccountResponse(
-            "Tus cuentas por pagar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
-            false,
-            false,
-            "red"
-          );
+          if (!this.dialog)
+            this.messageCreateAccountResponse(
+              "Tus cuentas por pagar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+              false,
+              false,
+              "red"
+            );
           setTimeout(() => {
-            this.titulo = "Registrar cuenta por pagar inicial";
+            this.titulo = "Cuenta por pagar iniciales";
             this.esCxCInicial = false;
             this.dialog = true;
           }, 2000);
-        }
+        } else this.dialog = false;
       });
     },
     onChange(tipo) {

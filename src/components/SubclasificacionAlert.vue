@@ -19,7 +19,7 @@
           <span class="headline"
             >{{ title }}
             <span v-if="subclasificacion != ''">
-              | Subclasificación: <br>{{ subclasificacion }}</span
+              | Subclasificación: <br />{{ subclasificacion }}</span
             ></span
           >
         </v-card-title>
@@ -102,9 +102,10 @@ export default {
     clasificacionID: { type: Number, default: 0 },
     infoRegistro: { type: Array, default: null },
     activo: { type: Boolean, default: false },
+    saldos: { type: Boolean, default: false },
   },
   data: () => ({
-    pagos:false,
+    pagos: false,
     ClasificacionID: 0,
     itemsClasificacion: [],
     Activo: true,
@@ -123,11 +124,22 @@ export default {
   watch: {
     dialog(visible) {
       if (visible) {
-        if (this.accion != 0) 
-        {
+        if (this.accion != 0) {
           this.nombre = this.$props.subclasificacion;
           this.ClasificacionID = this.$props.clasificacionID;
           this.Activo = this.$props.activo;
+        }
+        if (this.$props.saldos) {
+          if (this.$props.clasificacionID == 1)
+            this.itemsClasificacion = this.itemsClasificacion.filter(
+              (Clasificacion) => Clasificacion.ClasificacionID == 1
+            );
+          else
+            this.itemsClasificacion = this.itemsClasificacion.filter(
+              (Clasificacion) =>
+                Clasificacion.ClasificacionID == 2 ||
+                Clasificacion.ClasificacionID == 3
+            );
         }
       }
     },
@@ -139,8 +151,7 @@ export default {
   mounted() {
     this.getclasifications();
     this.ClasificacionID = this.$props.clasificacionID;
-    if(this.ClasificacionID == 4)
-      this.pagos = true;
+    if (this.ClasificacionID == 4) this.pagos = true;
   },
   methods: {
     clasificacionSeleccionada(value) {
@@ -164,7 +175,7 @@ export default {
           EmpresaTransID: EmpresaTransID,
           Concepto: this.nombre,
           ClasificacionID: this.ClasificacionID,
-          EsActivo: this.Activo
+          EsActivo: this.Activo,
         };
 
         let rs_registro = null;
@@ -197,7 +208,7 @@ export default {
           this.mensaje = rs_registro.data.message;
           this.esCancelar = false;
           this.esAceptar = true;
-          this.vToolBarColor = "GREEB";
+          this.vToolBarColor = "red";
 
           this.dialogAlert = true;
         }

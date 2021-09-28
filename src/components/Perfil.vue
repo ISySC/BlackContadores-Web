@@ -100,13 +100,16 @@
                               ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="4">
-                             <v-text-field
-                                readonly
-                                label="Año de inicio de operaciones"
-                                prepend-icon="mdi-calendar"
-                                type="text"
+                              <v-select
                                 :value="anio"
-                              ></v-text-field>
+                                v-model="anio"
+                                ref="anio"
+                                label="Año de inicio de operaciones (*)"
+                                required
+                                :items="anios"
+                                @input="setSelected"
+                                :readonly="CapitalFinal > 0"
+                              ></v-select>
                             </v-col>
                             <v-col cols="12" sm="4">
                               <v-select
@@ -149,6 +152,18 @@
                                 return-object
                                 @change="actividadSeleccionado"
                               ></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="12" v-if="otraActividad">
+                              <v-text-field
+                                :disabled="!editar"
+                                v-model="actividad"
+                                id="actividad"
+                                label="Descripcion de la actividad"
+                                name="actividad"
+                                prepend-icon="mdi-map"
+                                color="light-blue accent-3"
+                                @click:append="() => (value = !value)"
+                              />
                             </v-col>
                           </v-row>
                         </v-container>
@@ -327,6 +342,9 @@ export default {
     Pago,
   },
   data: () => ({
+    otraActividad: false,
+    actividad: "",
+    anios: [],
     anio: "",
     telefono: "",
     tokenParams: [],
@@ -354,6 +372,7 @@ export default {
     password_old: "",
     email: "",
     Nombre: "",
+    CapitalFinal: 0,
     Empresa: "",
     items: [],
     dialog: false,
@@ -407,6 +426,7 @@ export default {
   }),
 
   created() {
+    for (let x = 2000; x <= new Date().getFullYear(); x++) this.anios.push(x);
     this.AccountService = new AccountService();
     this.Utils = new Utils();
     this.activa = /true/i.test(new Utils().GetValue("EmpresaActiva"));
@@ -422,6 +442,9 @@ export default {
   },
 
   methods: {
+    setSelected(value) {
+      this.anio = value;
+    },
     payment() {
       window.Conekta.setPublicKey("key_CpeARyuQqyrzxxsYKUw6Lrg");
       window.Conekta.Token.create(
@@ -489,6 +512,7 @@ export default {
         companyTransID: empresaTransID,
         Telefono: this.telefono,
         EsCambiarContrasena: this.password != this.password_old,
+        OtraActividad: this.otraActividad ? this.actividad : "",
       };
 
       var response = await this.AccountService.PostUpdateProfile(accountData);
@@ -533,7 +557,8 @@ export default {
         this.membershipsList = JSON.parse(
           response.data.response.membresias[0].Membresias
         );
-        this.anio = response.data.response.perfil[0].AnioOperacion;
+        this.anio = parseInt(response.data.response.perfil[0].AnioOperacion);
+        this.CapitalFinal = response.data.response.perfil[0].CapitalFinal;
         this.itemsGiros = response.data.response.giros;
         this.SubGiros = response.data.response.subgiros;
         this.Actividades = response.data.response.actividades;
@@ -551,6 +576,8 @@ export default {
         this.MembresiaID = response.data.response.perfil[0].MembresiaID;
         this.plan = response.data.response.perfil[0].PeriodoVigente;
         this.precio = response.data.response.perfil[0].PrecioVigente;
+        this.actividad = response.data.response.perfil[0].OtraActividad;
+        this.otraActividad = response.data.response.perfil[0].OtraActividad;
         this.fechaActivacion = response.data.response.perfil[0].FechaActivacion;
         this.fechaVencimiento =
           response.data.response.perfil[0].FechaVencimiento;
@@ -593,18 +620,21 @@ export default {
         this.ItemMembershipSelected[0].MembresiaID !== this.MembresiaID && true;
     },
     giroSeleccionado(value) {
+      this.otraActividad = false;
       this.GiroID = value.GiroID;
       this.itemsSubGiros = this.SubGiros.filter(
         (Giro) => Giro.GiroID == value.GiroID
       );
     },
     subGiroSeleccionado(value) {
+      this.otraActividad = false;
       this.SubGiroID = value.SubGiroID;
       this.itemsActividades = this.Actividades.filter(
         (Actividad) => Actividad.SubGiroID == value.SubGiroID
       );
     },
     actividadSeleccionado(value) {
+      this.otraActividad = value.NombreActividad == "Otro";
       this.ActividadID = value.ActividadID;
     },
   },

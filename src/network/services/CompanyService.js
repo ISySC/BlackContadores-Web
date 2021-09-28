@@ -34,6 +34,30 @@ export default class CompanyService {
 
     //Saldos Iniciales
 
+    GetAccountsOpeningBalance(empresaTransID, EsCxC)
+    {
+        return axios.get(URL_BASE + 'company/initcxc/' + empresaTransID + '/' + EsCxC)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
+    DeleteAccountsOpeningBalance(registroID)
+    {
+        return axios.delete(URL_BASE + 'company/initcxc/' + registroID)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
+    PostAccountsOpeningBalance(registroID, total)
+    {
+        return axios.put(URL_BASE + 'company/initcxc/' + registroID + '/' + total)
+        .catch(error => {
+            return handlererroapi(error)
+        });
+    }
+
     GetCollectionOpeningBalance(empresaTransID)
     {
         return axios.get(URL_BASE + 'company/openingbalance/collection/' + empresaTransID)

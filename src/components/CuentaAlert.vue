@@ -18,7 +18,7 @@
         <v-card-title id="titleStyle">
           <span class="headline"
             >{{ title }}
-            <span v-if="cuenta != ''"> | Cuenta:  <br>{{ cuenta }}</span></span
+            <span v-if="cuenta != ''"> | Cuenta: <br />{{ cuenta }}</span></span
           >
         </v-card-title>
 
@@ -119,7 +119,6 @@ export default {
   watch: {
     dialog() {
       if (this.accion != 0) this.getInfoCuenta();
-      
     },
   },
   created() {
@@ -128,15 +127,15 @@ export default {
     this.getTypeAccount();
   },
   methods: {
-    tipoSeleccionada(value){
+    tipoSeleccionada(value) {
       this.tipoID = value.TipoCuentaID;
     },
     async getTypeAccount() {
-      const response = await this.CompanyServices.GetTypeAccount();
-
-      if (response.status === 200) {
-        this.itemsTipo = response.data.response;
-      }
+      await this.CompanyServices.GetTypeAccount().then((response) => {
+        if (response.status === 200) {
+          this.itemsTipo = response.data.response;
+        }
+      });
     },
     async getInfoCuenta() {
       let params = {
@@ -171,7 +170,7 @@ export default {
           descripcionCuenta: this.nombre,
           correoUsuario: this.Utils.GetValue("correoUsuario"),
           esActivo: this.activo,
-          tipoCuentaID: this.tipoID
+          tipoCuentaID: this.tipoID,
         };
 
         let rs_registro = null;
