@@ -217,17 +217,16 @@ export default {
     this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
     this.getInitCxc();
+    this.$root.$refs.Saldos = this;
   },
   methods: {
     cancelar() {
       this.$emit("update:dialog", false);
     },
     async getInitCxc() {
-      if (!this.$props.ver)
-        this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
       await this.CompanyServices.GetAccountsOpeningBalance(
         this.Utils.GetValue("EmpresaTransID"),
-        this.$props.esCxC
+        this.$root.$refs.SaldosIniciales.esCxCInicial
       ).then((response) => {
         if (response.status === 200) this.items = response.data.response;
         this.overlay = false;
@@ -247,9 +246,11 @@ export default {
             true,
             "red"
           );
+        } else {
+          this.$root.$refs.SaldosIniciales.ver = false;
+          this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
         }
 
-        this.getInitCxc();
         this.overlay = false;
         this.eliminar = false;
       });

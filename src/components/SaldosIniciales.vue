@@ -11,7 +11,12 @@
       :dialog.sync="dialogAlert"
     />
     <!-- -->
-    <Saldos :dialog.sync="dialog" :titulo="titulo" :esCxC="esCxCInicial" :ver="ver"/>
+    <Saldos
+      :dialog.sync="dialog"
+      :titulo="titulo"
+      :esCxC="esCxCInicial"
+      :ver="ver"
+    />
     <base-material-card color="blue pa-0" style="height: 97%">
       <template v-slot:heading>
         <p class="text-left text-h5">
@@ -149,7 +154,12 @@
                         @keypress="validarNumero"
                         @change="onChange('deudaxc')"
                         :append-icon="'mdi-eye'"
-                        @click:append="ver = true; esCxCInicial= true; dialog = true;"
+                        @click:append="
+                          ver = true;
+                          esCxCInicial = true;
+                          titulo = 'Cuenta por cobrar iniciales';
+                          dialog = true;
+                        "
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -244,7 +254,12 @@
                         @keypress="validarNumero"
                         @change="onChange('deudaxp')"
                         :append-icon="'mdi-eye'"
-                        @click:append="ver = true; esCxCInicial= false; dialog = true;"
+                        @click:append="
+                          ver = true;
+                          esCxCInicial = false;
+                          titulo = 'Cuenta por pagar iniciales';
+                          dialog = true;
+                        "
                       ></v-text-field>
                     </v-list-item-content>
                   </v-list-item>
@@ -374,7 +389,7 @@ export default {
   data: () => ({
     esCxCInicial: true,
     titulo: "Cuentas Iniciales",
-    dialog: true,
+    dialog: false,
     loading: false,
     mensaje: "",
     esCancelar: false,
@@ -404,7 +419,7 @@ export default {
     this.$root.$refs.SaldosIniciales = this;
   },
   methods: {
-    validarCuadreCuentas() {
+    async validarCuadreCuentas() {
       this.dialogAlert = false;
       this.$root.$refs.Dashboard.collectionOpeningBalances().then(() => {
         if (this.$root.$refs.Dashboard.cxcinicial > 0) {
@@ -415,10 +430,12 @@ export default {
               false,
               "red"
             );
+          this.esCxCInicial = true;
           setTimeout(() => {
             this.titulo = "Cuenta por cobrar iniciales";
-            this.esCxCInicial = true;
             this.dialog = true;
+            this.ver = false;
+            this.$root.$refs.Saldos.getInitCxc();
           }, 2000);
         } else if (this.$root.$refs.Dashboard.cxpinicial > 0) {
           if (!this.dialog)
@@ -428,13 +445,16 @@ export default {
               false,
               "red"
             );
+          this.esCxCInicial = false;
           setTimeout(() => {
             this.titulo = "Cuenta por pagar iniciales";
-            this.esCxCInicial = false;
             this.dialog = true;
+            this.ver = false;
+            this.$root.$refs.Saldos.getInitCxc();
           }, 2000);
         } else this.dialog = false;
       });
+
     },
     onChange(tipo) {
       switch (tipo) {

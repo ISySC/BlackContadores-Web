@@ -71,7 +71,7 @@
                 style="padding-left: 1px"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="4" v-if="!$props.registroInicial">
+            <v-col cols="12" sm="4">
               <v-menu
                 v-model="menu2"
                 :close-on-content-click="false"
@@ -82,7 +82,7 @@
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                    :disabled="accion == 3"
+                    :disabled="accion == 3 || $props.registroInicial"
                     outlined
                     v-model="dateFormatted"
                     label="Fecha Registro"
@@ -365,10 +365,15 @@ export default {
     },
     dialog(visible) {
       if (visible) {
+        console.log(this.$props.esCxCInicial);
         if (this.$props.registroInicial) {
           if (this.cuentas.length > 0) {
             if (this.$props.esCxCInicial) {
               this.clasificacionID = 1;
+              this.itemsClasificacion = this.itemsClasificacion.filter(
+                (Clasificacion) =>
+                  Clasificacion.ClasificacionID == 1
+              );
               this.cuentaID = this.cuentas.filter(
                 (cuenta) => cuenta.TipoCuentaID == 3
               )[0].CuentaID;
@@ -413,6 +418,9 @@ export default {
                   Subclasificacion.ClasificacionID == this.clasificacionID
               );
             });
+          this.Fecha =
+            parseInt(this.Utils.GetValue("AnioOperacion")) - 1 + "-12-31";
+          this.dateFormatted = this.formatDate(this.Fecha.toString());
         }
         if (this.accion != 0) this.getInfoRegistry();
       }
@@ -579,6 +587,7 @@ export default {
                 if (this.clasificacionID == 4)
                   this.guardarAbono(rs_registro.data.response[0].FolioID);
                 else {
+                  this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
                   this.overlay = false;
                   this.descripcionMovimiento = "";
                   this.fechaRegistro = "";
@@ -735,6 +744,7 @@ export default {
             );
             this.guardando = false;
           } else {
+            this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
             this.guardando = false;
             this.overlay = false;
             this.descripcionMovimiento = "";

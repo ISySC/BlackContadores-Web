@@ -108,7 +108,7 @@
                                 required
                                 :items="anios"
                                 @input="setSelected"
-                                :readonly="CapitalFinal > 0"
+                                :readonly="CapitalFinal > 0 || !editar"
                               ></v-select>
                             </v-col>
                             <v-col cols="12" sm="4">
@@ -513,6 +513,7 @@ export default {
         Telefono: this.telefono,
         EsCambiarContrasena: this.password != this.password_old,
         OtraActividad: this.otraActividad ? this.actividad : "",
+        AnioOperacion: this.anio
       };
 
       var response = await this.AccountService.PostUpdateProfile(accountData);
