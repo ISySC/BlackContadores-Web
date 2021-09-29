@@ -371,8 +371,7 @@ export default {
             if (this.$props.esCxCInicial) {
               this.clasificacionID = 1;
               this.itemsClasificacion = this.itemsClasificacion.filter(
-                (Clasificacion) =>
-                  Clasificacion.ClasificacionID == 1
+                (Clasificacion) => Clasificacion.ClasificacionID == 1
               );
               this.cuentaID = this.cuentas.filter(
                 (cuenta) => cuenta.TipoCuentaID == 3
@@ -394,12 +393,20 @@ export default {
             this.getbankaccount().then(() => {
               if (this.$props.esCxCInicial) {
                 this.clasificacionID = 1;
+                this.itemsClasificacion = this.itemsClasificacion.filter(
+                  (Clasificacion) => Clasificacion.ClasificacionID == 1
+                );
                 this.cuentaID = this.cuentas.filter(
                   (cuenta) => cuenta.TipoCuentaID == 3
                 )[0].CuentaID;
                 this.TipoCuenta = 3;
               } else {
                 this.clasificacionID = 2;
+                this.itemsClasificacion = this.itemsClasificacion.filter(
+                  (Clasificacion) =>
+                    Clasificacion.ClasificacionID == 2 ||
+                    Clasificacion.ClasificacionID == 3
+                );
                 this.cuentaID = this.cuentas.filter(
                   (cuenta) => cuenta.TipoCuentaID == 4
                 )[0].CuentaID;
