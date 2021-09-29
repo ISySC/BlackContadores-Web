@@ -145,6 +145,10 @@
           </template>
         </v-simple-table>
         <v-btn
+          v-show="
+            $root.$refs.Dashboard.cxcinicial != 0 ||
+            $root.$refs.Dashboard.cxpinicial != 0
+          "
           @click="mostrarRegistroAlert(0, 'Agregar nueva cuenta', 0, 0)"
           color="blue"
           dark

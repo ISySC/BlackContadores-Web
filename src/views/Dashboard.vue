@@ -189,7 +189,7 @@ export default {
         this.cxcinicial = response.data.response[0].cxcinicial;
         this.cxpinicial = response.data.response[0].cxpinicial;
         if (
-          (this.cxcinicial > 0 || this.cxpinicial > 0) &&
+          (this.cxcinicial != 0 || this.cxpinicial != 0) &&
           this.$route.name != "saldos-iniciales"
         )
           this.$router.push("/saldos-iniciales");

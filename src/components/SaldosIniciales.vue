@@ -422,10 +422,10 @@ export default {
     async validarCuadreCuentas() {
       this.dialogAlert = false;
       this.$root.$refs.Dashboard.collectionOpeningBalances().then(() => {
-        if (this.$root.$refs.Dashboard.cxcinicial > 0) {
+        if (this.$root.$refs.Dashboard.cxcinicial != 0) {
           if (!this.dialog)
             this.messageCreateAccountResponse(
-              "Tus cuentas por cobrar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+              "Se detectaron cambios en tus saldos de deudas por cobrar inicales, para continuar utilizando el sistema es necesario que ajustes tus ssaldos de deuda.",
               false,
               false,
               "red"
@@ -437,10 +437,10 @@ export default {
             this.ver = false;
             this.$root.$refs.Saldos.getInitCxc();
           }, 2000);
-        } else if (this.$root.$refs.Dashboard.cxpinicial > 0) {
+        } else if (this.$root.$refs.Dashboard.cxpinicial != 0) {
           if (!this.dialog)
             this.messageCreateAccountResponse(
-              "Tus cuentas por pagar iniciales no se encuentran registradas, para continuar usando el sistema es necesario que las registres.",
+              "Se detectaron cambios en tus saldos de deudas por pagar inicales, para continuar utilizando el sistema es necesario que ajustes tus ssaldos de deuda.",
               false,
               false,
               "red"
@@ -523,7 +523,9 @@ export default {
         );
         this.$root.$refs.Dashboard.percentagecompletion();
         this.editar = this.overlay = false;
-        this.validarCuadreCuentas();
+        setTimeout(() => {
+            this.validarCuadreCuentas();
+          }, 2000);
       }
 
       this.loading = false;
