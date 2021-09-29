@@ -333,6 +333,7 @@ export default {
     cuentaID: 0,
     observaciones: "",
     importe: "",
+    Clasificacions: [],
     itemsClasificacion: [],
     itemsSubClasificacion: [],
     itemsCuentas: [],
@@ -370,7 +371,7 @@ export default {
           if (this.cuentas.length > 0) {
             if (this.$props.esCxCInicial) {
               this.clasificacionID = 1;
-              this.itemsClasificacion = this.itemsClasificacion.filter(
+              this.itemsClasificacion = this.Clasificacions.filter(
                 (Clasificacion) => Clasificacion.ClasificacionID == 1
               );
               this.cuentaID = this.cuentas.filter(
@@ -379,7 +380,7 @@ export default {
               this.TipoCuenta = 3;
             } else {
               this.clasificacionID = 2;
-              this.itemsClasificacion = this.itemsClasificacion.filter(
+              this.itemsClasificacion = this.Clasificacions.filter(
                 (Clasificacion) =>
                   Clasificacion.ClasificacionID == 2 ||
                   Clasificacion.ClasificacionID == 3
@@ -393,7 +394,7 @@ export default {
             this.getbankaccount().then(() => {
               if (this.$props.esCxCInicial) {
                 this.clasificacionID = 1;
-                this.itemsClasificacion = this.itemsClasificacion.filter(
+                this.itemsClasificacion = this.Clasificacions.filter(
                   (Clasificacion) => Clasificacion.ClasificacionID == 1
                 );
                 this.cuentaID = this.cuentas.filter(
@@ -402,7 +403,7 @@ export default {
                 this.TipoCuenta = 3;
               } else {
                 this.clasificacionID = 2;
-                this.itemsClasificacion = this.itemsClasificacion.filter(
+                this.itemsClasificacion = this.Clasificacions.filter(
                   (Clasificacion) =>
                     Clasificacion.ClasificacionID == 2 ||
                     Clasificacion.ClasificacionID == 3
@@ -528,7 +529,10 @@ export default {
         await this.CompanyServices.GetClasifications();
 
       if (rs_itemsclasificacion.status === 200)
+      {
         this.itemsClasificacion = rs_itemsclasificacion.data.response;
+        this.Clasificacions = rs_itemsclasificacion.data.response;
+      }
     },
 
     fechaSeleccionada(fecha) {
