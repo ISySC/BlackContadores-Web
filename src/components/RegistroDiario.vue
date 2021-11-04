@@ -18,7 +18,7 @@
       :esCancelar="esCancelar"
       :esAceptar="esAceptar"
       :vToolBarColor="vToolBarColor"
-      :dialog.sync="dialogAlert"
+      :dialog="dialogAlert"
     />
 
     <v-dialog v-model="eliminar" persistent max-width="490">

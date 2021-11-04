@@ -38,7 +38,7 @@
     />
     <!-- -->
 
-    <Loading :overlay="overlay" />
+    <Loading :overlay="overlay" style='z-index:20001;'/>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
@@ -528,8 +528,7 @@ export default {
       const rs_itemsclasificacion =
         await this.CompanyServices.GetClasifications();
 
-      if (rs_itemsclasificacion.status === 200)
-      {
+      if (rs_itemsclasificacion.status === 200) {
         this.itemsClasificacion = rs_itemsclasificacion.data.response;
         this.Clasificacions = rs_itemsclasificacion.data.response;
       }
@@ -598,7 +597,8 @@ export default {
                 if (this.clasificacionID == 4)
                   this.guardarAbono(rs_registro.data.response[0].FolioID);
                 else {
-                  this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
+                  if (this.$root.$refs.SaldosIniciales)
+                    this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
                   this.overlay = false;
                   this.descripcionMovimiento = "";
                   this.fechaRegistro = "";
@@ -755,7 +755,6 @@ export default {
             );
             this.guardando = false;
           } else {
-            this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
             this.guardando = false;
             this.overlay = false;
             this.descripcionMovimiento = "";
@@ -771,6 +770,8 @@ export default {
             this.$emit("update:dialog", false);
             this.$emit("getregistries");
             this.overlay = false;
+            if (this.$root.$refs.SaldosIniciales)
+              this.$root.$refs.SaldosIniciales.validarCuadreCuentas();
           }
         });
       }
