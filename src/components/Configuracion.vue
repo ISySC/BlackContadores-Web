@@ -3,8 +3,8 @@
     <base-material-card color="blue pa-0" style="height: 97%">
       <template v-slot:heading>
         <p class="text-left text-h5">
-          CONFIGURACIONES DEL SISTEMA |
-          <span class="text-subtitle-1" id="textDescription">Ajustes</span>
+          CONFIGURACIONES |
+          <span class="text-subtitle-1" id="textDescription">Ajustes del sistema</span>
         </p>
       </template>
       <v-card-text class="px-0 pt-0">
@@ -80,7 +80,7 @@
                   :disabled="membresiaID == 1"
                   :sub-text="
                     membresiaID == 1
-                      ? 'Para tener esta funcionalidad adquiera una membresia para mas de 1 usuario.'
+                      ? 'Adquiere una membresia para mas de 1 usuario.'
                       : 'Gestiona los usuarios que acceden a tu empresa.'
                   "
                   :subTextColor="membresiaID == 1 ? 'red' : 'gray'"

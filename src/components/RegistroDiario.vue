@@ -13,12 +13,12 @@
 
     <!-- mostrar pantalla alerta para mensajes -->
     <AlertDialog
-      titulo="Black Administrativo - [ Registro Diario ]"
+      titulo="Black Administrativo - [ Problemas con el servicio ]"
       :mensaje="mensaje"
       :esCancelar="esCancelar"
       :esAceptar="esAceptar"
       :vToolBarColor="vToolBarColor"
-      :dialog="dialogAlert"
+      :dialog.sync="dialogAlert"
     />
 
     <v-dialog v-model="eliminar" persistent max-width="490">
@@ -64,7 +64,7 @@
                     v-on="on"
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Exportar información a excel
+                    Exportar a Excel
                   </v-btn>
                 </template>
                 <span> Generar Reporte</span>
@@ -81,7 +81,7 @@
               rounded
             >
               <v-icon>mdi-file-excel</v-icon>
-              Exportar información a excel
+              Exportar a Excel
             </v-btn>
           </div>
         </div>
@@ -351,7 +351,7 @@
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
-        <h2 class="pt-3 pl-4">Total movimientos : {{ items.length }}</h2>
+        <h2 class="pt-3 pl-4">Registros del día: {{ items.length }}</h2>
       </v-card-text>
     </base-material-card>
   </v-main>

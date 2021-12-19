@@ -39,7 +39,7 @@
                     rounded
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Exportar información a excel
+                    Exportar a Excel
                   </v-btn>
                 </download-excel>
               </template>
@@ -54,7 +54,7 @@
               rounded
             >
               <v-icon>mdi-file-excel</v-icon>
-              Exportar información a excel
+              Exportar a Excel
             </v-btn>
           </div>
         </div>

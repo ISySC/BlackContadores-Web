@@ -46,7 +46,7 @@
                     rounded
                   >
                     <v-icon>mdi-file-excel</v-icon>
-                    Exportar información a excel
+                    Exportar a Excel
                   </v-btn>
                 </download-excel>
               </template>
@@ -63,7 +63,7 @@
               rounded
             >
               <v-icon>mdi-file-excel</v-icon>
-              Exportar información a excel
+              Exportar a Excel
             </v-btn>
           </div>
         </div>
@@ -128,7 +128,7 @@
                   <v-list-item class="pt-4 pb-4">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de activo circulante:</v-list-item-content
+                      >Total activo circulante:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -180,7 +180,7 @@
                   <v-list-item class="pt-2">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de activo no circulante:</v-list-item-content
+                      >Total activo no circulante:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -194,7 +194,7 @@
                   <v-list-item>
                     <v-list-item-content
                       class="text-h6 indigo--text font-weight-bold"
-                      >TOTAL DE ACTIVO:</v-list-item-content
+                      >TOTAL ACTIVO:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -240,7 +240,7 @@
                   <v-list-item class="pt-4 pb-4">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de pasivo:</v-list-item-content
+                      >Total pasivo:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -280,7 +280,7 @@
                   <v-list-item>
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Utilidad / Perdida:</v-list-item-content
+                      >Utilidad/Perdida:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -308,8 +308,8 @@
                   <v-divider />
                   <v-list-item class="pt-5 pb-1">
                     <v-list-item-content
-                      class="text-h5 indigo--text font-weight-bold"
-                      >TOTAL DE PASIVO MAS CAPITAL:</v-list-item-content
+                      class="text-h6 indigo--text font-weight-bold"
+                      >TOTAL PASIVO + CAPITAL:</v-list-item-content
                     >
                     <v-list-item-content class="align-end text-right">
                       <span class="text-h5 indigo--text font-weight-bold">{{

@@ -24,7 +24,7 @@ export default {
     str_txt_repassword: 'Confirmar contraseña',
 
     //create account string view
-    str_txt_company_name: 'Nombre de la empresa / negocio',
+    str_txt_company_name: 'Nombre de la empresa/negocio',
     str_txt_legal_name: 'Nombre del representante legal (*)',
     str_error_create_account: 'Para continuar, favor de ingresar los datos solicitados (nombre, correo, contraseña, telefono)',
     str_error_validate_email_password: 'Favor de ingresar correo y/o contraseña con el formato especificado',
@@ -35,7 +35,7 @@ export default {
 
     //registry transaction
     str_error_registry: 'Favor de ingresar todos los campos solicitados como requeridos (*) para continuar',
-    str_no_data: 'Aun no has registro movimientos al dia de hoy',
+    str_no_data: 'Sin registros hasta el momento',
 
     //error code response
     error_500s: 'Una disculpa, estamos presentando problemas al intentar establecer comunicación con el servidor. Favor de verificar su conexión a internet y vuelva a intentar',

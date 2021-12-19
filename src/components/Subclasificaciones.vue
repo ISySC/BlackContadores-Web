@@ -14,7 +14,7 @@
     <v-dialog v-model="eliminar" persistent max-width="500">
       <v-card>
         <v-card-title class="text-h5">
-          ¿Eliminar la subclasificacion "{{ nombreSubClasificacion }}" ?
+          ¿Eliminar la subclasificación "{{ nombreSubClasificacion }}" ?
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>

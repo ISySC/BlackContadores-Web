@@ -8,7 +8,7 @@
         :mensaje="mensaje"
         :esCancelar="false"
         :esAceptar="true"
-        vToolBarColor="indigo"
+        vToolBarColor="blue"
         :dialog.sync="dialogAlert"
       />
       <!-- -->
@@ -134,7 +134,7 @@ export default {
     cxpinicial: 0,
     dialogAlert: false,
     mensaje:
-      "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)",
+             "* Registra subclasificaciones para tus registros diarios\n* Asigna un giro comercial y actividad a tu empresa\n* Ingresa saldos iniciales (bancos, efectivo, deudas, cobranza, pagos, etc)",
     menu: [
       {
         title: Constants.str_registro_diario,
@@ -197,7 +197,7 @@ export default {
     },
     async percentagecompletion() {
       this.mensaje =
-        "* Categorice sus movimientos mediante subclasificaciones\n* Asigne un giro y actividad a su cuenta de perfil\n* Ingrese sus saldos iniciales para un mejor balance general (bancos, efectivo, deudas, cobranza, etc)";
+        "* Registra subclasificaciones para tus registros diarios\n* Asigna un giro comercial y actividad a tu empresa\n* Ingresa saldos iniciales (bancos, efectivo, deudas, cobranza, pagos, etc)";
       await this.CompanyServices.GetPercentageCompletion(
         new Utils().GetValue("EmpresaTransID")
       ).then((response) => {
@@ -208,7 +208,7 @@ export default {
             "Tu perfil se encuentra configurado al " +
             this.value +
             "%  (click para ver tips)";
-        else this.mensajePorcentaje = "Tu perfil esta completado al 100%";
+        else this.mensajePorcentaje = "Tu perfil se ha completado al 100%";
       });
     },
     details() {

@@ -120,7 +120,7 @@
                   <v-list-item class="pt-4 pb-4">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de activo circulante:</v-list-item-content
+                      >Total activo circulante:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -189,7 +189,7 @@
                   <v-list-item class="pt-2">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de activo no circulante:</v-list-item-content
+                      >Total activo no circulante:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -205,7 +205,7 @@
                   <v-list-item>
                     <v-list-item-content
                       class="text-h6 indigo--text font-weight-bold"
-                      >TOTAL DE ACTIVO:</v-list-item-content
+                      >TOTAL ACTIVO:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -267,7 +267,7 @@
                   <v-list-item class="pt-4 pb-4">
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Total de pasivo:</v-list-item-content
+                      >Total pasivo:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -313,7 +313,7 @@
                   <v-list-item>
                     <v-list-item-content
                       class="text-subtitle-1 font-weight-bold"
-                      >Utilidad / Perdida:</v-list-item-content
+                      >Utilidad/Perdida:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -348,7 +348,7 @@
                   <v-list-item class="pt-7 pb-1">
                     <v-list-item-content
                       class="text-h6 indigo--text font-weight-bold"
-                      >TOTAL DE PASIVO MAS CAPITAL:</v-list-item-content
+                      >TOTAL PASIVO + CAPITAL:</v-list-item-content
                     >
                     <v-list-item-content
                       class="align-end text-right"
@@ -425,7 +425,7 @@ export default {
         if (this.$root.$refs.Dashboard.cxcinicial != 0) {
           if (!this.dialog)
             this.messageCreateAccountResponse(
-              "Se detectaron cambios en tus saldos de deudas por cobrar inicales, para continuar utilizando el sistema es necesario que ajustes tus ssaldos de deuda.",
+              "Se detectaron cambios en tus saldos de deudas por cobrar inicales, para continuar utilizando el sistema es necesario que ajustes tus saldos de deuda.",
               false,
               false,
               "red"
@@ -440,7 +440,7 @@ export default {
         } else if (this.$root.$refs.Dashboard.cxpinicial != 0) {
           if (!this.dialog)
             this.messageCreateAccountResponse(
-              "Se detectaron cambios en tus saldos de deudas por pagar inicales, para continuar utilizando el sistema es necesario que ajustes tus ssaldos de deuda.",
+              "Se detectaron cambios en tus saldos de deudas por pagar inicales, para continuar utilizando el sistema es necesario que ajustes tus saldos de deuda.",
               false,
               false,
               "red"
