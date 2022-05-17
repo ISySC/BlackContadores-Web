@@ -446,7 +446,7 @@ export default {
       this.anio = value;
     },
     payment() {
-      window.Conekta.setPublicKey("key_CpeARyuQqyrzxxsYKUw6Lrg");
+      window.Conekta.setPublicKey("key_cMSsgqZ1uJXGmrCfdVAzxyg");
       window.Conekta.Token.create(
         this.tokenParams,
         async (token) => {

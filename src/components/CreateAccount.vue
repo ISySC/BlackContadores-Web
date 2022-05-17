@@ -304,7 +304,7 @@ export default {
           this.membershipID = this.ItemMembership[0].MembresiaID;
 
           if (this.membershipID != 1) {
-            window.Conekta.setPublicKey("key_CpeARyuQqyrzxxsYKUw6Lrg");
+            window.Conekta.setPublicKey("key_cMSsgqZ1uJXGmrCfdVAzxyg");
             window.Conekta.Token.create(
               this.tokenParams,
               async (token) => {
