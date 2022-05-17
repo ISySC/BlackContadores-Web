@@ -446,7 +446,7 @@ export default {
       this.anio = value;
     },
     payment() {
-      window.Conekta.setPublicKey("key_cMSsgqZ1uJXGmrCfdVAzxyg");
+      window.Conekta.setPublicKey("key_CpeARyuQqyrzxxsYKUw6Lrg");
       window.Conekta.Token.create(
         this.tokenParams,
         async (token) => {
@@ -618,7 +618,7 @@ export default {
       this.nombre_Nueva_Membresia =
         this.ItemMembershipSelected[0].TipoMembresia[0].Descripcion;
       this.dialogPago =
-        this.ItemMembershipSelected[0].MembresiaID !== this.MembresiaID && true;
+        (this.ItemMembershipSelected[0].MembresiaID !== this.MembresiaID || this.vencida) && true;
     },
     giroSeleccionado(value) {
       this.otraActividad = false;
