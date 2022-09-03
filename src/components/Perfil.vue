@@ -607,6 +607,7 @@ export default {
       this.overlay = false;
     },
     createAccountPage(MembresiaID) {
+     
       this.ItemMembershipSelected = Enumerable.from(this.membershipsList)
         .where((m) => m.MembresiaID == MembresiaID)
         .toArray();
@@ -617,8 +618,8 @@ export default {
       this.nueva_MembresiaID = this.ItemMembershipSelected[0].MembresiaID;
       this.nombre_Nueva_Membresia =
         this.ItemMembershipSelected[0].TipoMembresia[0].Descripcion;
-      this.dialogPago =
-        (this.ItemMembershipSelected[0].MembresiaID !== this.MembresiaID || this.vencida) && true;
+      this.dialogPago = true;
+
     },
     giroSeleccionado(value) {
       this.otraActividad = false;
