@@ -49,7 +49,7 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-        <template v-slot:append app>
+        <template v-slot:append>
           <v-btn
             block
             color="blue"
@@ -154,12 +154,6 @@ export default {
         id: 8,
         path: "cobranza-cxp",
       },
-      /*{
-        title: Constants.str_saldo_bancos,
-        icon: "mdi-bank",
-        id: 9,
-        path: "saldos-bancos",
-      },*/
       {
         title: Constants.str_edo_resultados,
         icon: "mdi-file-document-multiple",
