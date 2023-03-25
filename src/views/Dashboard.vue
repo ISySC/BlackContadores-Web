@@ -143,6 +143,24 @@ export default {
         path: "registro-diario",
       },
       {
+        title: Constants.str_cuentas_cobrar,
+        icon: "mdi-hand-coin",
+        id: 7,
+        path: "cobranza-cxc",
+      },
+      {
+        title: Constants.str_cuentas_pagar,
+        icon: "mdi-hand-coin-outline",
+        id: 8,
+        path: "cobranza-cxp",
+      },
+      /*{
+        title: Constants.str_saldo_bancos,
+        icon: "mdi-bank",
+        id: 9,
+        path: "saldos-bancos",
+      },*/
+      {
         title: Constants.str_edo_resultados,
         icon: "mdi-file-document-multiple",
         id: 2,

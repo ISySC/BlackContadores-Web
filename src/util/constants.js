@@ -10,6 +10,9 @@ export default {
     //menu
     str_registro_diario: 'Registro diario',
     str_edo_resultados: 'Estado de resultados',
+    str_cuentas_cobrar: 'Cuentas por cobrar',
+    str_cuentas_pagar: 'Cuentas por pagar',
+    str_saldo_bancos: 'Saldos en Bancos',
     str_balance_general: 'Balance general',
     str_deuda: 'Deudas',
     str_configuracion: 'Configuración',

@@ -43,7 +43,7 @@
         <v-card-title id="titleStyle">
           <span class="headline mr-2">{{ $props.titulo }}</span>
           <span>
-            | Saldo pendiente: ${{
+            | Saldo pendiente por registrar: ${{
               parseFloat(
                 $props.esCxC
                   ? $root.$refs.Dashboard.cxcinicial

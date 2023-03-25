@@ -59,7 +59,22 @@ const routes = new Router({
           path: '/perfil',
           name: 'perfil',
           component: () => import('../components/Perfil')
-        }
+        },
+        {
+          path: '/cobranza-cxc',
+          name: 'cobranza-cxc',
+          component: () => import('../components/CuentasCobrar')
+        },
+        {
+          path: '/cobranza-cxp',
+          name: 'cobranza-cxp',
+          component: () => import('../components/CuentasPagar')
+        },
+        {
+          path: '/saldos-bancos',
+          name: 'saldos-bancos',
+          component: () => import('../components/SaldoBancos')
+        },
       ]
     },
   ],

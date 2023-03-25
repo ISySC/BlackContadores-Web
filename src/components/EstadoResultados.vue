@@ -288,7 +288,7 @@
               </v-simple-table>
             </v-col>
             <v-col cols="12" sm="2" style="height: 100%">
-              <v-card :elevation="6" class="px-4 pt-5 pb-0 blue-grey darken-4">
+              <v-card :elevation="6" class="px-4 pt-5 pb-0 black">
                 <h3 class="text-center white--text">Totales</h3>
                 <br />
                 <v-text-field

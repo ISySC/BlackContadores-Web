@@ -93,7 +93,6 @@ export default class CompanyService {
 
     //Cxc and Cxp
     GetCollections(data) {
-
         return axios.post(URL_BASE + collection, data)
             .catch(error => {
                 return handlererroapi(error)
