@@ -1,4 +1,3 @@
-
 export const URL_BASE = 'https://blacksystem.mx:3001/api/'
 //export const URL_BASE = 'http://localhost:3001/api/'
 
@@ -36,3 +35,4 @@ export const subclasifications = 'company/subclasifications'
 export const subclasification = 'company/subclasification/'
 export const collection = 'company/collections'
 export const collections = 'company/collection/payment'
+export const collectionByDate = 'company/collections/bydate'

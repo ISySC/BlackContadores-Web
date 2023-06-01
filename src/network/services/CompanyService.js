@@ -3,7 +3,7 @@ import Vue from 'vue'
 import VueAxios from 'vue-axios'
 import { URL_BASE, bankaccounts, bankaccount, clasifications, addregistry, 
         getregistries, registry, updateregistry, deleteregistry, addaccount, 
-        updateaccount, subclasifications, subclasification, collection, collections  } from '../api'
+        updateaccount, subclasifications, subclasification, collection, collections, collectionByDate } from '../api'
 import handlererroapi from '../handlererroapi'
 
 Vue.use(VueAxios, axios)
@@ -94,6 +94,14 @@ export default class CompanyService {
     //Cxc and Cxp
     GetCollections(data) {
         return axios.post(URL_BASE + collection, data)
+            .catch(error => {
+                return handlererroapi(error)
+            });
+    }
+
+    //cxc and cxp
+    GetCollectionsByDate(data) {
+        return axios.post(URL_BASE + collectionByDate, data)
             .catch(error => {
                 return handlererroapi(error)
             });

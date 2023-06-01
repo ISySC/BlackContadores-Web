@@ -49,8 +49,8 @@
             <download-excel
               :data="items"
               :fields="json_fields"
-              worksheet="Registros"
-              name="Registro_Diario"
+              worksheet="CuentasPorPagar"
+              name="Cuentas_Por_Pagar"
             >
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -85,6 +85,96 @@
           </div>
         </div>
       </template>
+
+      <v-card-text style="padding: 0px">
+        <v-container class="pb-0 px-0 mx-0">
+          <v-row dense>
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted"
+                    label="Fecha Inicio"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  locale="es-mx"
+                  v-model="FechaInicio"
+                  @input="menu2 = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    class="mx-3"
+                    filled
+                    v-model="dateFormatted2"
+                    label="Fecha Fin"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    @blur="date = parseDate(dateFormatted2)"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                locale="es-mx"
+                  v-model="FechaFin"
+                  @input="menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-btn
+                dark
+                class="mt-1 mb-2"
+                color="indigo"
+                x-large
+                block
+                @click="getRegistriesbyDay"
+              >
+                Filtrar
+              </v-btn>
+            </v-col>
+
+            <v-col cols="12" sm="1">
+              <v-btn
+                dark
+                class="mt-1 mb-2"
+                color="indigo"
+                x-large
+                block
+                @click="getInitCxc"
+              >
+                Restablecer
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
       
       <v-card-text style="padding: 0px">
         <v-simple-table fixed-header height="660px" class="grey lighten-3">
@@ -155,6 +245,17 @@
                   FECHA REGISTRO
                 </th>
 
+                <th
+                  class="
+                    text-center text-truncate
+                    font-weight-regular
+                    black
+                    white--text
+                  "
+                >
+                  DIAS (atraso)
+                </th>
+
               </tr>
             </thead>
             
@@ -185,6 +286,9 @@
                 </td>
                 <td style="text-align: center">
                   {{ item.FechaRegistro }}
+                </td>
+                <td style="text-align: center">
+                  {{ item.diasAtraso }}
                 </td>
 
               </tr>
@@ -261,6 +365,7 @@ import Vue from "vue";
 import Loading from "../components/Loading";
 import AlertDialog from "../components/AlertDialog";
 import JsonExcel from "vue-json-excel";
+import ReportService from "../network/services/ReportService";
 
 Vue.component("downloadExcel", JsonExcel);
 
@@ -270,11 +375,47 @@ export default {
     Loading,
     AlertDialog,
   },
-  data: () => ({
+  data: (vm) => ({
+    dateFormatted: vm.formatDate(
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
+    ),
+    dateFormatted2: vm.formatDate(
+      new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10)
+    ),
+    FechaInicio: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
+    FechaFin: new Date(
+      new Date().getTime() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10),
    items: [],
    total: 0,
    abono: 0,
    saldo: 0,
+   reportes: 0,
+   descontarReporte: true,
+   dialogAlert: false,
+   esCancelar: false,
+   esAceptar: false,
+   vToolBarColor: "",
+   mensaje: "",
+   json_fields: {
+      FOLIO: "Folio",
+      DESCRIPCIÓN: "Descripcion",
+      TOTAL: "Total",
+      ABONO: "Abono",
+      SALDO: "Saldo",
+      FECHAREGISTRO: "FechaRegistro",
+      ATRASO: "diasAtraso",
+    },
    overlay: true,
    formatter: new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -296,12 +437,37 @@ export default {
         return this.items.reduce((sum, transaction) => {
             return this.saldo += transaction.Saldo;
         }, 0);
-    }
+    },
+    computedDateFormatted() {
+      return this.formatDate(this.date);
+    },
   },
   created() {
-   this.CompanyServices = new CompanyServices();
+    this.ReportService = new ReportService();
+    this.CompanyServices = new CompanyServices();
     this.Utils = new Utils();
     this.getInitCxc();
+    this.validarGenerarReporte();
+  },
+  watch: {
+    FechaInicio() {
+      var datefin = new Date(this.FechaFin);
+      var date = new Date(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
+      this.dateFormatted2 = this.formatDate(this.FechaFin);
+    },
+    FechaFin() {
+      var datefin = new Date(this.FechaFin);
+      var date = new Date(this.FechaInicio);
+      if (date > datefin) {
+        this.dateFormatted = this.formatDate(this.FechaFin);
+        this.FechaInicio = this.FechaFin;
+      } else this.dateFormatted = this.formatDate(this.FechaInicio);
+      this.dateFormatted2 = this.formatDate(this.FechaFin);
+    },
   },
   methods: {
    async getInitCxc() {
@@ -313,6 +479,9 @@ export default {
       var response = await this.CompanyServices.GetCollections(params);
 
       if (response.data.success !== false) {
+        this.total = 0
+        this.abono = 0
+        this.saldo = 0
         this.items = response.data.response;
       } else {
         this.messageCreateAccountResponse(
@@ -322,6 +491,145 @@ export default {
           "red"
         );
       }
+      this.overlay = false;
+    },
+    async validarGenerarReporte() {
+      this.overlay = true;
+
+      const response = await this.ReportService.GetNumberReports(
+        this.Utils.GetValue("EmpresaTransID")
+      );
+
+      if (response.status === 0 || response.status === 500)
+        this.messageCreateAccountResponse(response.message, false, true, "red");
+      else if (response.data.success) {
+        this.reportes = response.data.response[0].NoReportes;
+      }
+
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    async GenerarReporte() {
+      if (this.items.length > 0) {
+        if (this.reportes > 0) {
+          this.overlay = true;
+          if (this.descontarReporte) {
+              const response = await this.ReportService.UpdateNumberReports(
+              this.Utils.GetValue("EmpresaTransID")
+            );
+
+            if (response.status === 0 || response.status === 500)
+              this.messageCreateAccountResponse(
+                response.message,
+                false,
+                true,
+                "red"
+              );
+            else {
+              if (response.data.success) {
+                this.reportes--;
+                this.descontarReporte = false;
+                this.messageCreateAccountResponse(
+                  "Reporte generado de manera exitosa",
+                  false,
+                  true,
+                  "green"
+                );
+              }
+            }
+          } else {
+            this.messageCreateAccountResponse(
+              "Reporte generado de manera exitosa",
+              false,
+              true,
+              "green"
+            );
+          }
+        } else
+          this.messageCreateAccountResponse(
+            "No cuentas con reportes disponibles para la descarga. Favor de mejorar tu membresía.",
+            false,
+            true,
+            "red"
+          );
+      } else {
+        this.messageCreateAccountResponse(
+          "No existen registros para generar un reporte.",
+          false,
+          true,
+          "red"
+        );
+      }
+      this.overlay = false;
+      this.eliminar = false;
+    },
+    messageCreateAccountResponse(message, esCancelar, esAceptar, color) {
+      this.mensaje = message;
+      this.esCancelar = esCancelar;
+      this.esAceptar = esAceptar;
+      this.vToolBarColor = color;
+      this.dialogAlert = true;
+
+      this.overlay = false;
+    },
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    },
+    parseDate(date) {
+      if (!date) return null;
+
+      const [month, day, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+    onChangeFechaInicio(value) {
+      console.log(value);
+    },
+    fechaSeleccionada(fecha) {
+      this.FechaInicio = fecha;
+    },
+    Dateformat(date) {
+      date = new Date(date);
+      date = `${date.getDate()}/${
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1
+      }/${date.getFullYear()}`;
+      return date;
+    },
+    async getRegistriesbyDay() {
+      this.overlay = true;
+
+      let empresaTransID = this.Utils.GetValue("EmpresaTransID");
+      let params = {
+        EmpresaTransID: empresaTransID,
+        TipoCuentaID: 4,
+        FechaInicio: this.formatDate(this.FechaInicio),
+        FechaFin: Vue.filter("formatoFecha")(
+          new Date(this.FechaFin).toISOString().substr(0, 10)
+        ),
+      };
+
+      const rs_registriesitems =
+        await this.CompanyServices.GetCollectionsByDate(params);
+
+      if (rs_registriesitems.status === 0 || rs_registriesitems.status === 500)
+        this.messageCreateAccountResponse(
+          rs_registriesitems.message,
+          false,
+          true,
+          "red"
+        );
+      else if (rs_registriesitems.data.success) {
+        this.total = 0
+        this.abono = 0
+        this.saldo = 0
+        this.registros = rs_registriesitems.data.response;
+        this.items = rs_registriesitems.data.response;
+      }
+
       this.overlay = false;
     },
   },
