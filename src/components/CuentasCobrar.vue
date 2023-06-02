@@ -415,7 +415,7 @@ export default {
    overlay: true,
    formatter: new Intl.NumberFormat("es-MX", {
       style: "currency",
-      currency: "MNX",
+      currency: "MXN",
     }),
   }),
   computed: {
