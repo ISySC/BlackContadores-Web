@@ -1,4 +1,4 @@
-export const URL_BASE = 'http://lnxsrvateneaservices.eastus2.cloudapp.azure.com:3003/api/'
+export const URL_BASE = 'https://api.blacksystem.mx/api/'
 //export const URL_BASE = 'http://localhost:3001/api/'
 
 export const headers = {
