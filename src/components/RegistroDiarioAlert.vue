@@ -215,6 +215,26 @@
                 <span>Agregar cuenta al catálogo</span>
               </v-tooltip>
             </v-col>
+
+            <v-col v-show="clasificacionID == 5" cols="12" sm="12">
+              <v-select
+                :readonly="accion == 3 || $props.registroInicial"
+                required
+                outlined
+                :value="subcuentaID"
+                ref="subcuentas"
+                :items="itemsSubCuentas"
+                item-value="CuentaID"
+                item-text="Descripcion"
+                no-data-text="Sin cuentas disponibles"
+                item-key="itemsSubCuentas"
+                return-object
+                label="Subcuenta afectar (*)"
+                style="padding-left: 1px"
+                @change="subcuentaSeleccionada"
+              ></v-select>
+            </v-col>
+
             <v-col v-show="clasificacionID == 4" cols="12" sm="12">
               <div style="padding-left: 3px" class="my-2">
                 <v-tooltip bottom>
@@ -331,13 +351,16 @@ export default {
     clasificacionID: 0,
     subclasificacionID: 0,
     cuentaID: 0,
+    subcuentaID: 0,
     observaciones: "",
     importe: "",
     Clasificacions: [],
     itemsClasificacion: [],
     itemsSubClasificacion: [],
     itemsCuentas: [],
+    itemsSubCuentas: [],
     cuentas: [],
+    subcuentas: [],
     esAceptar: false,
     esCancelar: false,
     dialogAlert: false,
@@ -476,15 +499,17 @@ export default {
               (Subclasificacion) =>
                 Subclasificacion.ClasificacionID == this.clasificacionID
             );
+            
             this.cuentaID = response.data.response[0].CuentaID;
+            this.subcuentaID = response.data.response[0].SubCuentaID;
             this.descripcionMovimiento = response.data.response[0].Descripcion;
             this.fechaRegistro = response.data.response[0].FechaRegistro;
             this.importe = response.data.response[0].Importe;
             this.importeInicial = this.importe;
             this.observaciones = response.data.response[0].Observaciones;
-
             this.subclasificacionID =
               response.data.response[0].SubClasificacionID;
+
           } else {
             this.messageCreateAccountResponse(
               response.data.message,
@@ -507,7 +532,13 @@ export default {
 
       if (rs_itemscuentas.status === 200) {
         this.cuentas = rs_itemscuentas.data.response;
+        this.subcuentas = rs_itemscuentas.data.response;
         this.itemsCuentas = rs_itemscuentas.data.response;
+        this.itemsSubCuentas = rs_itemscuentas.data.response;
+
+        this.itemsSubCuentas = this.subcuentas.filter((item) => {
+            return (item.TipoCuentaID != 3 && item.TipoCuentaID != 4)
+        })
       }
     },
     async getsubclasifications() {
@@ -585,6 +616,7 @@ export default {
           folioID: this.folioID,
           subclasificacionID: this.subclasificacionID,
           tipoPagoCuenta: this.CuentaPagoID,
+          subcuentaID: this.subcuentaID,
           CreadoPor: new Utils().GetValue("correoUsuario"),
           EsCxC: this.TipoCuenta == 3 ? true : false,
           EsCobranzaInicial: this.$props.registroInicial,
@@ -608,8 +640,10 @@ export default {
                   this.clasificacionID = 0;
                   this.subclasificacionID = 0;
                   this.cuentaID = 0;
+                  this.subcuentaID=0;
                   this.$refs["clasificaciones"].reset();
                   this.$refs["cuentas"].reset();
+                  this.$refs["subcuentas"].reset();
                   this.$emit("update:dialog", false);
                   this.$emit("getregistries");
                   this.overlay = false;
@@ -639,8 +673,10 @@ export default {
                 this.clasificacionID = 0;
                 this.subclasificacionID = 0;
                 this.cuentaID = 0;
+                this.subcuentaID = 0;
                 this.$refs["clasificaciones"].reset();
                 this.$refs["cuentas"].reset();
+                this.$refs["subcuentas"].reset();
                 this.$emit("update:dialog", false);
                 this.$emit("getregistries");
                 this.overlay = false;
@@ -691,8 +727,10 @@ export default {
           this.clasificacionID = 0;
           this.subclasificacionID = 0;
           this.cuentaID = 0;
+          this.subcuentaID = 0;
           this.$refs["clasificaciones"].reset();
           this.$refs["cuentas"].reset();
+          this.$refs["subcuentas"].reset();
           this.$emit("update:dialog", false);
           this.$emit("getregistries");
           this.overlay = false;
@@ -765,8 +803,10 @@ export default {
             this.clasificacionID = 0;
             this.subclasificacionID = 0;
             this.cuentaID = 0;
+            this.subcuentaID = 0;
             this.$refs["clasificaciones"].reset();
             this.$refs["cuentas"].reset();
+            this.$refs["subcuentas"].reset();
             this.$emit("update:dialog", false);
             this.$emit("getregistries");
             this.overlay = false;
@@ -782,11 +822,13 @@ export default {
       this.$refs["clasificaciones"].reset();
       this.$refs["subclasificaciones"].reset();
       this.$refs["cuentas"].reset();
+      this.$refs["subcuentas"].reset();
       this.importe = "";
       this.descripcionMovimiento = "";
       this.referencia = "";
       this.observaciones = "";
       this.cuentaID = 0;
+      this.subcuentaID= 0;
       this.sizecol = 6;
       this.$emit("update:dialog", false);
     },
@@ -805,12 +847,18 @@ export default {
           (cuenta) => cuenta.TipoCuentaID == 3 || cuenta.TipoCuentaID == 4
         );
       else this.itemsCuentas = this.cuentas;
+
+      if(value.ClasificacionID == 5)
+          this.itemsCuentas = this.subcuentas.filter((item) => item.TipoCuentaID == 3 || item.TipoCuentaID == 4);
     },
     cuentaSeleccionada(value) {
       this.cuentaID = value.CuentaID;
       this.TipoCuenta = this.cuentas.filter(
         (cuenta) => cuenta.CuentaID === value.CuentaID
       )[0]["TipoCuentaID"];
+    },
+    subcuentaSeleccionada(value) {
+       this.subcuentaID =  value.CuentaID
     },
     mostrarRegistroSubAlert() {
       this.dialogsub = true;
