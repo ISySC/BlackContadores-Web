@@ -186,7 +186,7 @@
                 outlined
                 :value="cuentaID"
                 ref="cuentas"
-                :items="itemsCuentas"
+                :items="$props.registroInicial ? itemsCuentas : (clasificacionID == 1 || clasificacionID == 2 || clasificacionID == 3 || clasificacionID == 6 ? itemsSubCuentas : itemsCuentas)"
                 item-value="CuentaID"
                 item-text="Descripcion"
                 no-data-text="Sin cuentas disponibles"
@@ -216,7 +216,7 @@
               </v-tooltip>
             </v-col>
 
-            <v-col v-show="clasificacionID == 5" cols="12" sm="12">
+            <v-col v-show="clasificacionID == 5 || clasificacionID == 6" cols="12" sm="12">
               <v-select
                 :readonly="accion == 3 || $props.registroInicial"
                 required
