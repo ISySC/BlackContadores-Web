@@ -38,7 +38,7 @@
     />
     <!-- -->
 
-    <Loading :overlay="overlay" style='z-index:20001;'/>
+    <Loading :overlay="overlay" style='z-index:20001'/>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
