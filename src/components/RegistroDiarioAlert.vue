@@ -186,7 +186,7 @@
                 outlined
                 :value="cuentaID"
                 ref="cuentas"
-                :items="$props.registroInicial ? itemsCuentas : (clasificacionID == 1 || clasificacionID == 2 || clasificacionID == 3 || clasificacionID == 6 ? itemsSubCuentas : itemsCuentas)"
+                :items="itemsCuentas"
                 item-value="CuentaID"
                 item-text="Descripcion"
                 no-data-text="Sin cuentas disponibles"
