@@ -38,7 +38,7 @@
     />
     <!-- -->
 
-    <Loading :overlay="overlay" style='z-index:20001;'/>
+    <Loading :overlay="overlay" style='z-index:20001'/>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
@@ -216,7 +216,7 @@
               </v-tooltip>
             </v-col>
 
-            <v-col v-show="clasificacionID == 5" cols="12" sm="12">
+            <v-col v-show="clasificacionID == 5 || clasificacionID == 6" cols="12" sm="12">
               <v-select
                 :readonly="accion == 3 || $props.registroInicial"
                 required
