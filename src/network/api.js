@@ -1,5 +1,5 @@
-export const URL_BASE = 'https://api.blacksystem.mx/api/'
-//export const URL_BASE = 'http://localhost:3001/api/'
+//export const URL_BASE = 'https://api.blacksystem.mx/api/'
+export const URL_BASE = 'http://82.197.95.95:3003/api/'
 
 export const headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
