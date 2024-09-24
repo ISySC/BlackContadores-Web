@@ -15,6 +15,7 @@ export default class PaymentService {
     PostPayment(data) {
         return axios.post(URL_BASE + payment, data)
             .catch(error => {
+                console.log(error)
                 return handlererroapi(error)
             });
     }
